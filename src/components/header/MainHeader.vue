@@ -4,7 +4,7 @@
 
       <div class="flex items-center">
         <router-link to="/">
-          <img src="../components/icons/logo.png" alt="logo_SaborIA" class="w-12 h-12 object-contain">
+          <img src="../icons/logo.png" alt="logo_SaborIA" class="w-12 h-12 object-contain">
         </router-link>
       </div>
 
