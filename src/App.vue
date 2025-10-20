@@ -10,6 +10,7 @@
 
     <!-- O router-view deve ser o principal bloco de conteúdo, com flex-grow: 1 para empurrar o footer -->
     <router-view class="flex-grow" />
+    <ChatBot />
     <!-- NOVO: O seu componente de rodapé é inserido aqui, no final do corpo da aplicação -->
     <FooterComponent />
   </div>
@@ -21,6 +22,8 @@ import MainHeader from '@/components/header/MainHeader.vue';
 import SearchHeader from '@/components/header/SearchHeader.vue';
 import HeaderLogin from '@/components/header/HeaderLogin.vue';
 import HeaderPainelControle from '@/components/header/HeaderPainelControle.vue';
+import ChatBot from '@/components/chatbot/ChatBot.vue'; 
+
 
 // NOVO: Importe o seu componente de Footer
 // CORREÇÃO: O caminho foi ajustado de '@/components/FooterComponent.vue' para '@/components/footer/footer.vue'
@@ -34,7 +37,8 @@ export default {
     HeaderLogin,
     HeaderPainelControle,
     // NOVO: Registrar o FooterComponent para que ele possa ser usado no template
-    FooterComponent 
+    FooterComponent,
+    ChatBot 
   },
   computed: {
     // 1. Define qual componente de Header deve ser usado
