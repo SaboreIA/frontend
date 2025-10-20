@@ -124,8 +124,8 @@
         
         <router-link @click="isNavOpen = false" to="/" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150 block md:inline-block py-2 md:py-0">Início</router-link>
         <router-link @click="isNavOpen = false" to="/restaurantes" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150 block md:inline-block py-2 md:py-0">Restaurantes</router-link>
+        <router-link @click="isNavOpen = false" to="/sobre" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150 block md:inline-block py-2 md:py-0">Sobre</router-link>
         
-        <a href="#sobre" @click.prevent="scrollToSection('sobre'); isNavOpen = false" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150 block md:inline-block py-2 md:py-0">Sobre</a>
         <a href="#destaques" @click.prevent="scrollToSection('destaques'); isNavOpen = false" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150 block md:inline-block py-2 md:py-0">Destaques</a>
         <a href="#planos" @click.prevent="scrollToSection('planos'); isNavOpen = false" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150 block md:inline-block py-2 md:py-0">Planos</a>
         <a href="#contato" @click.prevent="scrollToSection('contato'); isNavOpen = false" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150 block md:inline-block py-2 md:py-0">Contato</a>

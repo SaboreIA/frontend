@@ -1,28 +1,24 @@
 <template>
     <div>
-      <!-- Ícone flutuante do chatbot -->
       <button 
         @click="toggleChat" 
-        class="fixed bottom-6 right-6 bg-[#B8860B] hover:bg-yellow-700 text-white rounded-full p-4 shadow-lg z-50 flex items-center justify-center"
+        class="fixed bottom-4 right-4 bg-yellow-600 hover:bg-yellow-700 text-white text-2xl rounded-full p-2 shadow-lg z-50 flex items-center justify-center"
         aria-label="Abrir chatbot"
-      >
-        <!-- Usando emoji ou altere para um ícone SVG se quiser -->
-        💬
+      >💬
       </button>
-      
-      <!-- Chat modal/box -->
+
       <transition name="fade">
         <div 
           v-if="isOpen" 
           class="fixed bottom-24 right-6 bg-white rounded-xl shadow-xl w-80 z-50"
         >
-          <div class="p-4 border-b font-bold text-[#B8860B] flex justify-between items-center">
+          <div class="p-4 border-b font-bold text-yellow-600 flex justify-between items-center">
             Chatbot
             <button @click="toggleChat" class="text-gray-400 hover:text-gray-600 text-lg font-bold ml-2" aria-label="Fechar">×</button>
           </div>
           <div class="h-64 overflow-y-auto p-4">
             <div v-for="(msg, idx) in messages" :key="idx" class="mb-2" :class="msg.user ? 'text-right' : 'text-left'">
-              <span class="px-3 py-1 rounded" :class="msg.user ? 'bg-[#B8860B] text-white' : 'bg-gray-200 text-gray-700'">
+              <span class="px-3 py-1 rounded" :class="msg.user ? 'bg-yellow-600 text-white' : 'bg-gray-200 text-gray-700'">
                 {{ msg.text }}
               </span>
             </div>
@@ -34,7 +30,7 @@
               placeholder="Digite sua mensagem..."
               class="flex-1 px-2 py-1 border rounded-l focus:outline-none"
             />
-            <button type="submit" class="bg-[#B8860B] text-white px-4 py-1 rounded-r">Enviar</button>
+            <button type="submit" class="bg-yellow-600 text-white px-4 py-1 rounded-r">Enviar</button>
           </form>
         </div>
       </transition>
