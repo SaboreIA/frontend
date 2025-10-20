@@ -134,7 +134,7 @@ onUnmounted(() => {
                 </h1>
                 
                 <div class="bg-white text-2xl font-bold p-3 lg:p-4 rounded-xl shadow-2xl transition duration-500 ease-in-out text-black w-fit z-20">
-                    <span class="text-yellow-700">
+                    <span class="text-yellow-600">
                         {{ displayedText }}<span class="animate-pulse">|</span>
                     </span>
                 </div>
@@ -174,7 +174,7 @@ onUnmounted(() => {
                         <img 
                             :src="currentSlide.prato" 
                             :alt="'Prato de ' + currentSlide.texto.replace('?', '')" 
-                            class="w-full h-auto object-cover"
+                            class="w-full h-full object-contain"
                         />
                     </div>
                 </Transition>

@@ -1,28 +1,29 @@
 <template>
-  <div>
-    <MainHeader /> 
-    
-    <MainContent />
-    
-    <div class="max-w-7xl px-4 sm:px-6 lg:px-8">
-      </div>
-  </div>
+  <div>
+    <MainHeader /> 
+      
+        <MainContent class="-mt-28" /> 
+
+    <DestaquesContent class="mt-10"/>
+
+  </div>
 </template>
 
 <script>
-// Ajuste o caminho de SearchHeader se ele estiver em um local diferente
+// (Seu script de importação e registro permanece o mesmo)
 import SearchHeader from '@/components/header/SearchHeader.vue'; 
+import DestaquesContent from '@/components/HomeView/DestaquesContent.vue';
 import MainContent from '@/components/HomeView/MainContent.vue';
 
 export default {
-  // A chave 'components' é obrigatória na Options API para registrar o componente
-  components: {
-    SearchHeader, // Agora o Vue sabe o que é a tag <SearchHeader>
-    MainContent   // Agora o Vue sabe o que é a tag <MainContent />
-  }
+  components: {
+    SearchHeader, 
+    MainContent,
+    DestaquesContent
+  }
 };
 </script>
 
 <style scoped>
-/* Removemos o estilo .home-view-container antigo, pois não será usado para limitação de largura */
+/* Seu estilo permanece o mesmo */
 </style>
