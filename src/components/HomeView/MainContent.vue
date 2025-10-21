@@ -114,7 +114,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <main class="relative max-w-7xl mx-auto h-[50vh] overflow-hidden flex items-center justify-center bg-white shadow-2xl rounded-xl font-roboto">
+    <main class="relative w-full h-[50vh] overflow-hidden flex items-center justify-center bg-white shadow-2xl rounded-xl font-roboto">
 
         <div 
             :style="{ backgroundImage: 'url(' + currentSlide.fundo + ')' }"

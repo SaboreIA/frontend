@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto p-4 sm:p-6 lg:p-8 bg-white">
+  <div class="max-w-[1450px] mx-auto p-4 sm:p-6 lg:p-8 bg-white -mt-28">
     <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Restaurantes</h1>
 
     <div class="mb-8 flex flex-wrap gap-2 justify-center">
