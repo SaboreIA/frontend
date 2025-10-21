@@ -3,8 +3,8 @@
     
     <div class="flex-shrink-0 text-center pr-8 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0">
       <p class="text-4xl font-extrabold text-gray-900">{{ averageRating }}</p>
-      <p class="text-sm font-semibold mt-1 text-amber-600">{{ excellentText }}</p> 
-      <p class="text-xs text-gray-500 mt-1">Baseado em X avaliações</p>
+      <p class="text-sm font-semibold mt-1 text-yellow-600">{{ excellentText }}</p> 
+      <p class="text-xs text-gray-500 mt-1">Baseado em 120 avaliações</p>
     </div>
 
     <div class="flex-grow w-full">
@@ -17,8 +17,7 @@
           <div 
             :class="[
                 'h-2 rounded-full transition-all duration-500', 
-                // ⚡ MUDANÇA AQUI: Cor da barra de progresso para âmbar (amber-500)
-                'bg-amber-500' 
+                'bg-yellow-500' 
             ]"
             :style="{ width: rating.percentage }"
           ></div>
@@ -42,14 +41,8 @@ defineProps({
     type: String,
     default: 'Muito Bom',
   },
-  // ⚡ REMOVEMOS accentColor pois fixamos para amber
-  // accentColor: {
-  //   type: String,
-  //   default: 'fuchsia', 
-  // }
 });
 
-// Dados de exemplo para as barras de progresso (MANTIDOS)
 const ratingsData = [
   { label: 'Excelente', percentage: '70%' },
   { label: 'Muito Bom', percentage: '15%' },

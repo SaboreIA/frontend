@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import axios from 'axios'; // Importe o Axios
+import axios from 'axios';
 
 export default {
   name: 'RestauranteView',
@@ -17,14 +17,10 @@ export default {
       loading: true
     };
   },
-  // O hook `created` é um bom lugar para carregar dados iniciais.
   created() {
     this.fetchRestauranteData();
   },
   watch: {
-    // ESSENCIAL: Observar mudanças na rota. Se o usuário navegar de 
-    // /restaurantes/1 para /restaurantes/2, o componente é reutilizado
-    // e o `created()` não roda novamente. O `watch` resolve isso.
     '$route': 'fetchRestauranteData'
   },
   methods: {
@@ -32,18 +28,17 @@ export default {
       // 1. Pega o ID da URL
       const restauranteId = this.$route.params.id;
       this.loading = true;
-      
+
       try {
         // 2. Faz a chamada Axios usando o ID
         const response = await axios.get(`sua_api/restaurantes/${restauranteId}`);
-        
+
         // 3. Salva os dados no estado do componente
         this.restaurante = response.data;
         this.loading = false;
       } catch (error) {
         console.error("Erro ao carregar restaurante:", error);
         this.loading = false;
-        // Tratar erro (ex: mostrar mensagem ao usuário)
       }
     }
   }

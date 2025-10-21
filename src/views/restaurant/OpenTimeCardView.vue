@@ -11,7 +11,7 @@
       </div>
     </div>
     
-    <p class="mt-4 text-xs text-amber-600 font-semibold">
+    <p class="mt-4 text-xs text-yellow-600 font-semibold">
       Pode variar em feriados. Ligue para confirmar.
     </p>
   </div>
@@ -20,7 +20,6 @@
 <script setup>
 import { defineProps } from 'vue';
 
-// Dados de exemplo, você pode passar isso via props se desejar
 const hoursData = [
     { label: 'Segunda', hours: '11:00 - 22:00' },
     { label: 'Terça', hours: '11:00 - 22:00' },
@@ -32,6 +31,5 @@ const hoursData = [
 ];
 
 defineProps({
-  // Se for passar via prop: hoursData: Array
 });
 </script>

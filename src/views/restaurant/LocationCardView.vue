@@ -9,7 +9,7 @@
       <h3 class="text-lg font-semibold text-gray-800 mb-2">Endereço</h3>
       <p class="text-gray-600 whitespace-pre-line">{{ address }}</p>
       
-      <a :href="mapLink" target="_blank" class="mt-2 inline-block text-amber-600 hover:text-amber-700 text-sm font-medium transition">
+      <a :href="mapLink" target="_blank" class="mt-2 inline-block text-yellow-600 hover:text-yellow-700 text-sm font-medium transition">
         Ver no mapa
       </a>
     </div>

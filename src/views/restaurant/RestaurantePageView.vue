@@ -1,5 +1,5 @@
 <template>
-  <div v-if="restaurante.id" class="max-w-6xl mx-auto p-4 md:p-8 bg-white shadow-xl rounded-lg mt-4">
+  <div v-if="restaurante.id" class="max-w-6xl mx-auto p-4 md:p-8 bg-white shadow-xl rounded-lg -mt-20">
     
     <HeaderInfoView 
       :name="restaurante.nome" 
@@ -14,11 +14,6 @@
         :mainImage="restaurante.mainImage" 
         :thumbnails="restaurante.thumbnails" 
         class="mt-4 mb-8" 
-    />
-    
-    <NavBar 
-      :tabs="['SOBRE', 'HORÁRIO DE FUNCIONAMENTO', 'IMAGENS', 'AVALIAÇÕES']" 
-      class="border-b border-gray-200 mb-6" 
     />
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -35,9 +30,8 @@
         <LocationCardView :address="restaurante.address" :mapLink="restaurante.mapLink" class="mt-6" />
         
         <div class="mt-12">
-          <div class="flex justify-between items-end mb-4 border-b border-gray-200 pb-2">
-            <h2 class="text-2xl font-bold text-gray-800">Avaliações</h2>
-            <ReviewCTA primaryColor="bg-amber-600" /> 
+          <div class="flex justify-end items-end mb-4 border-b border-gray-200 pb-2">
+            <ReviewCTA primaryColor="bg-yellow-600" /> 
           </div>
           <RatingSummary :averageRating="restaurante.nota" excellentText="Excelente" accentColor="fuchsia" />
         </div>
@@ -46,7 +40,7 @@
       <div class="lg:col-span-1">
         <OpenTimeCardView 
             :hoursData="restaurante.hoursData" 
-            class="bg-gray-100 p-6 rounded-xl shadow-inner sticky top-8" 
+            class="bg-gray-100 p-6 rounded-xl shadow-inner" 
         />
       </div>
       
@@ -63,14 +57,12 @@
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router'; 
 
-// ⚡ IMPORTAÇÕES CORRIGIDAS: Usando './' para arquivos na mesma pasta (restaurant)
-// Assumindo: HeaderInfoView.vue, GeneralInfoView.vue, etc. estão em src/views/restaurant/
 import HeaderInfoView from './HeaderInfoView.vue';
 import GeneralInfoView from './GeneralInfoView.vue';
 import LocationCardView from './LocationCardView.vue';
 import OpenTimeCardView from './OpenTimeCardView.vue';
-import RatingSummary from './RatingSummaryView.vue'; // Ou RatingSummaryView.vue
-import ReviewCTA from './ReviewCtaView.vue';       // Ou ReviewCTAView.vue
+import RatingSummary from './RatingSummaryView.vue';
+import ReviewCTA from './ReviewCtaView.vue';
 import ImageGallery from './ImageGalleryView.vue'; 
 
 
@@ -80,19 +72,22 @@ const route = useRoute();
 const restaurante = ref({}); 
 
 // 2. DADOS DE EXEMPLO (MOCK DATA)
-// ⚠️ ATENÇÃO: Os dados devem estar completos e as chaves devem ser strings ('1', '2', etc.)
 const mockData = {
     '1': { 
         id: 1, 
-        nome: 'NOME DO RESTAURANTE', 
+        nome: 'Sabor Oriental', 
         nota: '4,6', 
         nReviews: 120,
-        descricaoDetalhada: 'O Lorem ipsum is simply dummy text of the printing and typesetting industry. Este é um exemplo de descrição detalhada que aparecerá na Visão Geral.',
+        descricaoDetalhada: 'Descubra a autêntica culinária japonesa no Sabor Oriental. Nossos pratos são preparados com o máximo respeito pela tradição, utilizando ingredientes frescos e técnicas milenares. De sushis e sashimis meticulosamente elaborados a pratos quentes reconfortantes, cada mordida é uma celebração dos sabores e da arte oriental. Venha desfrutar de um ambiente sereno e de um serviço impecável.',
         isSaved: false,
-        mainImage: 'https://via.placeholder.com/800x400?text=IMAGEM+PRINCIPAL+ID+1',
-        thumbnails: ['https://via.placeholder.com/200x130?text=T1', 'https://via.placeholder.com/200x130?text=T2', 'https://via.placeholder.com/200x130?text=T3'],
+        mainImage: 'https://restauranteyu.com.br/wp-content/uploads/2024/05/AMBIENTE_YU5-1-scaled.jpg',
+        thumbnails: [
+        'https://blog.duogourmet.com.br/wp-content/uploads/2019/07/37-Duo-Gourmet-sushi.jpg',
+        'https://djapa.com.br/wp-content/uploads/2022/01/melhor-restaurante-japones-de-sao-paulo.jpg',
+        'https://www.construtoradubai.com.br/wp-content/uploads/2021/05/restaurante-japones-em-osasco-os-7-melhores.jpg'
+      ],
         status: { text: 'ABERTO', color: 'text-green-600' },
-        contactInfo: { site: '#', menu: '#', number: '11 98888-7777', mail: 'contato@email.com' },
+        contactInfo: { site: '#', menu: '#', number: '14 98894-9896', mail: 'sabororiental@contato.com' },
         address: 'Rua das Flores, 123\nCentro, São Paulo - SP',
         mapLink: '#',
         hoursData: [ 
@@ -105,7 +100,6 @@ const mockData = {
             { label: 'Domingo', hours: '12:00 - 21:00' },
         ]
     },
-    // Adicione outros restaurantes (ex: '2', '3', etc.) para testar IDs diferentes
 };
 
 
