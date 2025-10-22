@@ -12,11 +12,11 @@
         
         <router-link to="/" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Início</router-link>
         <router-link to="/restaurantes" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Restaurantes</router-link>
-        <router-link to="/sobre" @click.prevent="scrollToSection('sobre')" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Sobre</router-link>
+        <router-link to="/sobre" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Sobre</router-link>
                 
-        <a href="#destaques" @click.prevent="scrollToSection('destaques')" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Destaques</a>
-        <router-link to="/planos" @click.prevent="scrollToSection('contato')" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Planos</router-link>
-        <router-link to="/contato" @click.prevent="scrollToSection('contato')" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Contato</router-link>
+        <a href="#destaques" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Destaques</a>
+        <router-link to="/planos"class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Planos</router-link>
+        <router-link to="/contato" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Contato</router-link>
       </nav>
 
       <div class="flex items-center space-x-4">
@@ -102,24 +102,6 @@ export default {
       console.log('Animação de Dark Mode ativada:', this.isDarkModeSimulated);
     },
     
-    // MÉTODO: Rola a página suavemente até a âncora
-    scrollToSection(id) {
-        const element = document.getElementById(id);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-        } else {
-             if (this.$route.path !== '/') {
-                 this.$router.push('/').then(() => {
-                     setTimeout(() => {
-                         const target = document.getElementById(id);
-                         if (target) {
-                             target.scrollIntoView({ behavior: 'smooth' });
-                         }
-                     }, 100);
-                 });
-             }
-        }
-    }
   }
 }
 </script>
@@ -128,7 +110,7 @@ export default {
 .router-link-active, .nav-link:focus, .nav-link:active {
   font-weight: bold;
   /* Aplica o destaque também aos links de âncora */
-  color: #d97706; /* Tailwind: text-amber-700 */
+  color: #CA8A04; /* Tailwind: text-amber-700 */
 }
 /* Estilo básico para os links de âncora */
 .nav-link {

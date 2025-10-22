@@ -7,7 +7,7 @@
       
       <!-- Coluna 1: Formas de Pagamento -->
       <div class="w-full md:w-1/3">
-        <h3 class="text-lg font-bold mb-5 text-[#ff9800]">FORMAS DE PAGAMENTO</h3>
+        <h3 class="text-lg font-bold mb-5 text-yellow-600">FORMAS DE PAGAMENTO</h3>
         <ul class="list-none p-0 m-0">
           <!-- O ícone de cartão genérico foi aplicado a todas as formas de pagamento -->
           <li class="flex items-center mb-3 text-[0.95em] font-semibold text-gray-700">
@@ -41,7 +41,7 @@
 
       <!-- Coluna 2: Contatos -->
       <div class="w-full md:w-1/3">
-        <h3 class="text-lg font-bold mb-5 text-[#ff9800]">CONTATOS</h3>
+        <h3 class="text-lg font-bold mb-5 text-yellow-600">CONTATOS</h3>
         <ul class="list-none p-0 m-0">
           <li class="mb-3"><a href="mailto:saboria@gmail.com.com" class="text-gray-700 text-sm hover:text-[#ff9800] transition duration-300">saboria@gmail.com</a></li>
           <li class="mb-3"><a href="tel:+5514989224922" class="text-gray-700 text-sm hover:text-[#ff9800] transition duration-300">(14) 98922-4922</a></li>
@@ -60,7 +60,7 @@
 
       <!-- Coluna 3: Políticas do Site -->
       <div class="w-full md:w-1/3">
-        <h3 class="text-lg font-bold mb-5 text-[#ff9800]">POLÍTICAS DO SITE</h3>
+        <h3 class="text-lg font-bold mb-5 text-yellow-600">POLÍTICAS DO SITE</h3>
         <ul class="list-none p-0 m-0">
           <li class="mb-3"><a href="#" class="text-gray-700 text-sm hover:text-[#ff9800] transition duration-300">Política de Privacidade</a></li>
           <li class="mb-3"><a href="#" class="text-gray-700 text-sm hover:text-[#ff9800] transition duration-300">Termos de Uso</a></li>

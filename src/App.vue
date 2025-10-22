@@ -12,7 +12,7 @@
     <router-view class="flex-grow" />
     <ChatBot />
     <!-- NOVO: O seu componente de rodapé é inserido aqui, no final do corpo da aplicação -->
-    <FooterComponent />
+    <FooterComponent/>
   </div>
 </template>
 

@@ -1,5 +1,5 @@
 <script>
-import PlanosViewContent from '@/components/HomeView/PlanosViewContent.vue';
+import PlanosViewContent from '@/components/PlanosView/PlanosViewContent.vue';
 
 export default {
   components:{

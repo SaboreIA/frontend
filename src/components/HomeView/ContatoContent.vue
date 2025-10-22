@@ -1,5 +1,5 @@
 <template>
-    <div class="max-w-2xl mx-auto p-8">
+    <div class="max-w-2xl mx-auto p-1">
         <h2 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">Entre em Contato</h2>
         
         <form @submit.prevent="submitForm" class="space-y-6">

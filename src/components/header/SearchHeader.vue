@@ -216,27 +216,7 @@ export default {
       this.isNavOpen = false;
     },
     
-    // Rola a página suavemente até a âncora
-    scrollToSection(id) {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        // Se a âncora não estiver na página atual, navega para a home e tenta rolar
-        if (this.$route.path !== '/') {
-          this.$router.push('/').then(() => {
-            setTimeout(() => {
-              const target = document.getElementById(id);
-              if (target) {
-                target.scrollIntoView({ behavior: 'smooth' });
-              }
-            }, 100);
-          });
-        }
-      }
-      // Garante que o menu feche ao clicar em um link de âncora (em mobile)
-      this.isNavOpen = false;
-    }
+
   }
 }
 </script>
@@ -245,7 +225,7 @@ export default {
 .router-link-active, .nav-link:focus, .nav-link:active {
   font-weight: bold;
   /* Aplica o destaque também aos links de âncora */
-  color: #d97706; /* Tailwind: text-amber-700 */
+  color: #CA8A04; /* Tailwind: text-amber-700 */
 }
 /* Estilo básico para os links de âncora */
 .nav-link {
