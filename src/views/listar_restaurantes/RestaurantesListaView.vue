@@ -49,7 +49,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import RestauranteCard from './RestaurantesCardView.vue'; 
+import RestauranteCard from '../../components/HomeView/DestaqueContent_Cards.vue'; 
 // OBS: Certifique-se que o caminho de importação para 'RestauranteCard.vue' está correto.
 
 // --- DADOS E LÓGICA ---

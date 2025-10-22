@@ -39,6 +39,7 @@
       </p>
 
       <button
+        @click="handleClick"
         class="w-full bg-yellow-600 text-white py-2 rounded-lg font-medium hover:bg-yellow-700 transition duration-150"
       >
         Ver Detalhes
@@ -49,6 +50,7 @@
 
 <script setup>
 import { defineProps } from 'vue';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
   restaurante: {
@@ -56,4 +58,15 @@ const props = defineProps({
     required: true,
   },
 });
+
+const router = useRouter();
+
+const handleClick = () => {
+  const restaurantId = props.restaurante.id;
+
+  router.push({
+    name: 'restaurante-detalhe',
+    params: { id: restaurantId } 
+  });
+};
 </script>

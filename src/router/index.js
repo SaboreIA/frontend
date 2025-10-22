@@ -2,13 +2,13 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/home_logoff/HomeView.vue'
 import SobreView from '../views/home_logoff/SobreView.vue'
 import RestaurantesListaView from '../views/listar_restaurantes/RestaurantesListaView.vue' 
-import RestauranteView from '../views/restaurant/RestaurantePageView.vue'
 import DestaqueView from '../views/home_logoff/DestaqueView.vue'
 import PlanosView from '../views/home_logoff/PlanosView.vue'
 import ContatoView from '../views/home_logoff/ContatoView.vue'
 import LoginView from '../views/login/cadastro/LoginView.vue'
 import CadastroView from '../views/login/cadastro/CadastroView.vue'
 import PainelControleView from '../views/control_panel/PainelControleView.vue'
+import RestaurantePageView from '../views/restaurant/RestaurantePageView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,7 +43,7 @@ const router = createRouter({
     {
       path: '/restaurantes/:id',
       name: 'restaurante-detalhe', 
-      component: RestauranteView,
+      component: RestaurantePageView,
     
       meta: {
         searchHeader: true

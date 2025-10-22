@@ -11,9 +11,9 @@
     />
     
     <ImageGallery 
-        :mainImage="restaurante.mainImage" 
-        :thumbnails="restaurante.thumbnails" 
-        class="mt-4 mb-8" 
+      :mainImage="restaurante.mainImage" 
+      :thumbnails="restaurante.thumbnails" 
+      class="mt-4 mb-8" 
     />
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -39,12 +39,15 @@
       
       <div class="lg:col-span-1">
         <OpenTimeCardView 
-            :hoursData="restaurante.hoursData" 
-            class="bg-gray-100 p-6 rounded-xl shadow-inner" 
+          :hoursData="restaurante.hoursData" 
+          class="bg-gray-100 p-6 rounded-xl shadow-inner" 
         />
       </div>
       
     </div>
+    
+    <CommentsSection class="mt-12" />
+    
   </div>
   
   <div v-else class="text-center py-20 text-gray-500">
@@ -57,14 +60,14 @@
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router'; 
 
-import HeaderInfoView from './HeaderInfoView.vue';
-import GeneralInfoView from './GeneralInfoView.vue';
-import LocationCardView from './LocationCardView.vue';
-import OpenTimeCardView from './OpenTimeCardView.vue';
-import RatingSummary from './RatingSummaryView.vue';
-import ReviewCTA from './ReviewCtaView.vue';
-import ImageGallery from './ImageGalleryView.vue'; 
-
+import HeaderInfoView from '../../components/restaurant_page/HeaderInfo.vue';
+import GeneralInfoView from '../../components/restaurant_page/GeneralInfo.vue';
+import LocationCardView from '../../components/restaurant_page/LocationCard.vue';
+import OpenTimeCardView from '../../components/restaurant_page/OpenTimeCard.vue';
+import RatingSummary from '../../components/restaurant_page/RatingSummary.vue';
+import ReviewCTA from '../../components/restaurant_page/ReviewCta.vue';
+import ImageGallery from '../../components/restaurant_page/ImageGallery.vue'; 
+import CommentsSection from '../../components/comments/CommentsSection.vue';
 
 
 // 1. OBTENÇÃO DA ROTA E ESTADO
@@ -85,7 +88,7 @@ const mockData = {
         'https://blog.duogourmet.com.br/wp-content/uploads/2019/07/37-Duo-Gourmet-sushi.jpg',
         'https://djapa.com.br/wp-content/uploads/2022/01/melhor-restaurante-japones-de-sao-paulo.jpg',
         'https://www.construtoradubai.com.br/wp-content/uploads/2021/05/restaurante-japones-em-osasco-os-7-melhores.jpg'
-      ],
+        ],
         status: { text: 'ABERTO', color: 'text-green-600' },
         contactInfo: { site: '#', menu: '#', number: '14 98894-9896', mail: 'sabororiental@contato.com' },
         address: 'Rua das Flores, 123\nCentro, São Paulo - SP',
@@ -103,7 +106,7 @@ const mockData = {
 };
 
 
-// 3. FUNÇÃO DE CARREGAMENTO (SINCRONA para evitar problemas de timeout)
+// 3. FUNÇÃO DE CARREGAMENTO
 const carregarRestaurante = (id) => {
     const restaurantId = String(id); 
     restaurante.value = {}; 
@@ -111,10 +114,8 @@ const carregarRestaurante = (id) => {
     const data = mockData[restaurantId];
     
     if (data) {
-        // Preenche o objeto reativo e o v-if é ativado
         restaurante.value = data;
     } else {
-        // Se ID não for encontrada, o v-if (restaurante.id) continua falso
         restaurante.value = { id: null, nome: 'Não Encontrado' }; 
         console.warn(`Dados mock para ID ${restaurantId} não encontrados. Verifique o mockData.`);
     }
