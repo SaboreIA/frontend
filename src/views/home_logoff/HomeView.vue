@@ -1,11 +1,10 @@
 <template>
   <div>
     <MainHeader /> 
-      
-        <MainContent class="max-w-[1450px] mx-auto bg-white shadow-2xl rounded-xl -mt-20" /> 
-
+    <MainContent class="max-w-[1450px] mx-auto bg-white shadow-2xl rounded-xl -mt-20" /> 
     <DestaquesContent class="mt-10"/>
     <SobreContent />
+    <PlanosContent />
     <ContatoContent />
   </div>
 </template>
@@ -16,6 +15,7 @@ import SearchHeader from '@/components/header/SearchHeader.vue';
 import ContatoContent from '@/components/HomeView/ContatoContent.vue';
 import DestaquesContent from '@/components/HomeView/DestaquesContent.vue';
 import MainContent from '@/components/HomeView/MainContent.vue';
+import PlanosContent from '@/components/HomeView/PlanosContent.vue';
 import SobreContent from '@/components/HomeView/SobreContent.vue';
 
 export default {
@@ -24,7 +24,8 @@ export default {
     MainContent,
     DestaquesContent,
     SobreContent,
-    ContatoContent
+    ContatoContent,
+    PlanosContent
   }
 };
 </script>

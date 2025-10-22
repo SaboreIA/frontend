@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-3xl mx-auto mt-12 mb-16 p-8">
+  <div class="max-w-3xl mx-auto -mt-12 mb-16 p-8">
     <h1 class="text-4xl text-center font-bold mb-6 text-yellow-600">Sobre Nós</h1>
     <p class="text-lg text-gray-700 mb-4">
       Nosso sistema usa inteligência artificial para te ajudar a encontrar o restaurante perfeito de forma rápida e personalizada. Basta dizer o que você procura e, em segundos, mostramos as melhores opções levando em conta seu gosto, o clima e até o horário!

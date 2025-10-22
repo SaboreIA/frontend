@@ -1,5 +1,5 @@
 <template>
-<SobreContent />
+<SobreContent/>
 </template>
 
 <script>

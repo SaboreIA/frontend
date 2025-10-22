@@ -127,8 +127,8 @@
         <router-link @click="isNavOpen = false" to="/sobre" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150 block md:inline-block py-2 md:py-0">Sobre</router-link>
         
         <a href="#destaques" @click.prevent="scrollToSection('destaques'); isNavOpen = false" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150 block md:inline-block py-2 md:py-0">Destaques</a>
-        <a href="#planos" @click.prevent="scrollToSection('planos'); isNavOpen = false" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150 block md:inline-block py-2 md:py-0">Planos</a>
-        <a href="#contato" @click.prevent="scrollToSection('contato'); isNavOpen = false" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150 block md:inline-block py-2 md:py-0">Contato</a>
+        <router-link to="/planos" @click.prevent="scrollToSection('contato')" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Planos</router-link>
+        <router-link to="/contato" @click.prevent="scrollToSection('contato')" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Contato</router-link>
         
       </nav>
       

@@ -15,8 +15,8 @@
         <router-link to="/sobre" @click.prevent="scrollToSection('sobre')" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Sobre</router-link>
                 
         <a href="#destaques" @click.prevent="scrollToSection('destaques')" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Destaques</a>
-        <a href="#planos" @click.prevent="scrollToSection('planos')" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Planos</a>
-        <a href="#contato" @click.prevent="scrollToSection('contato')" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Contato</a>
+        <router-link to="/planos" @click.prevent="scrollToSection('contato')" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Planos</router-link>
+        <router-link to="/contato" @click.prevent="scrollToSection('contato')" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Contato</router-link>
       </nav>
 
       <div class="flex items-center space-x-4">

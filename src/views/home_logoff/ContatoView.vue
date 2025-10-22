@@ -1,6 +1,18 @@
 <template>
   <div>
-      <h1>Página de Contato</h1>
+      <ContatoContent/>
   </div>
 </template>
+
+<script>
+import ContatoContent from '@/components/HomeView/ContatoContent.vue';
+
+
+
+export default {
+  components: {
+    ContatoContent
+  }
+};
+</script>
 
