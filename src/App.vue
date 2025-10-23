@@ -5,7 +5,7 @@
       :is="currentHeaderComponent" 
       v-if="currentHeaderComponent" 
     />
-
+  <!--TESTANDO GITPUSH-->
     <div :class="[paddingClass]"></div>
 
     <!-- O router-view deve ser o principal bloco de conteúdo, com flex-grow: 1 para empurrar o footer -->
