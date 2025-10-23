@@ -8,7 +8,7 @@
     <div :class="[paddingClass]"></div>
 
     <!-- O router-view deve ser o principal bloco de conteúdo, com flex-grow: 1 para empurrar o footer -->
-    <router-view class="flex-grow" />
+    <router-view class="flex-grow mb-20" />
     <ChatBot />
     <!-- NOVO: O seu componente de rodapé é inserido aqui, no final do corpo da aplicação -->
     <FooterComponent/>

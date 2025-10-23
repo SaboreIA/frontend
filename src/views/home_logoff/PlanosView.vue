@@ -1,9 +1,11 @@
 <script>
+import PerguntasContent from '@/components/PlanosView/PerguntasContent.vue';
 import PlanosViewContent from '@/components/PlanosView/PlanosViewContent.vue';
 
 export default {
   components:{
-    PlanosViewContent
+    PlanosViewContent,
+    PerguntasContent
   }
 };
 
@@ -11,4 +13,5 @@ export default {
 
 <template>
   <PlanosViewContent />
+  <PerguntasContent />
 </template>
