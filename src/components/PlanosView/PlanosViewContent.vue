@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-4xl font-extrabold text-gray-900 text-center mb-10">
+      <h2 class="text-4xl font-extrabold text-gray-800 text-center mb-10">
         Impulsione seu Restaurante com nossos Planos
       </h2>
 
@@ -50,7 +50,7 @@
                 <ul class="space-y-4">
                     <li class="flex items-center text-black font-bold text-lg">
                         <svg class="w-6 h-6 mr-3 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586M17 8a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586M17 8L5 8"></path></svg>
-                        <span>Comentários Exibidos: <span class="text-black">Até 50</span></span>
+                        <span>Comentários Exibidos: <span class="text-yellow-600">Até 50</span></span>
                     </li>
                     <li class="flex items-center text-black font-bold text-lg">
                         <svg class="w-6 h-6 mr-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
@@ -75,19 +75,19 @@
                 <ul class="space-y-4">
                     <li class="flex items-center text-gray-700 font-bold text-lg">
                         <svg class="w-6 h-6 mr-3 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586M17 8a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586M17 8L5 8"></path></svg>
-                        <span>Comentários Exibidos: <span class="text-yellow-700">Até 250</span></span>
+                        <span>Comentários Exibidos: <span class="text-yellow-600">Até 250</span></span>
                     </li>
                     <li class="flex items-center text-gray-700 font-bold text-lg">
                         <svg class="w-6 h-6 mr-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        <span>Deleção de Comentários: <span class="text-red-700">5 por mês</span></span>
+                        <span>Deleção de Comentários: <span class="text-red-500">5 por mês</span></span>
                     </li>
                     <li class="flex items-center text-gray-700 font-bold text-lg">
-                        <svg class="w-6 h-6 mr-3 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.115a1 1 0 011.902 0l1.43 2.89a1 1 0 00.75.54L19 6.2a1 1 0 01.55 1.7L16.2 9.87a1 1 0 00-.34 1.05l.7 3.3a1 1 0 01-1.5 1.07l-2.7-1.42a1 1 0 00-1.1 0l-2.7 1.42a1 1 0 01-1.5-1.07l.7-3.3a1 1 0 00-.34-1.05L4.5 7.9a1 1 0 01.55-1.7l3.8-1.66a1 1 0 00.75-.54l1.43-2.89z"></path></svg>
-                        <span>Comentário em Destaque: <span class="text-yellow-700">1 por vez</span></span>
+                        <svg class="w-6 h-6 mr-3 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.115a1 1 0 011.902 0l1.43 2.89a1 1 0 00.75.54L19 6.2a1 1 0 01.55 1.7L16.2 9.87a1 1 0 00-.34 1.05l.7 3.3a1 1 0 01-1.5 1.07l-2.7-1.42a1 1 0 00-1.1 0l-2.7 1.42a1 1 0 01-1.5-1.07l.7-3.3a1 1 0 00-.34-1.05L4.5 7.9a1 1 0 01.55-1.7l3.8-1.66a1 1 0 00.75-.54l1.43-2.89z"></path></svg>
+                        <span>Comentário em Destaque: <span class="text-yellow-600">1 por vez</span></span>
                     </li>
                     <li class="flex items-center text-gray-700 font-bold text-lg">
-                        <svg class="w-6 h-6 mr-3 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        <span>Nível de Recomendação: <span class="text-yellow-700">Elevado</span></span>
+                        <svg class="w-6 h-6 mr-3 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <span>Nível de Recomendação: <span class="text-yellow-600">Elevado</span></span>
                     </li>
                 </ul>
             </div>
@@ -100,25 +100,35 @@
                 <ul class="space-y-4">
                     <li class="flex items-center text-gray-700 font-bold text-lg">
                         <svg class="w-6 h-6 mr-3 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586M17 8a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586M17 8L5 8"></path></svg>
-                        <span>Comentários Exibidos: <span class="text-yellow-700">Ilimitado</span></span>
+                        <span>Comentários Exibidos: <span class="text-yellow-600">Ilimitado</span></span>
                     </li>
                     <li class="flex items-center text-gray-700 font-bold text-lg">
                         <svg class="w-6 h-6 mr-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        <span>Deleção de Comentários: <span class="text-red-700">15 por mês</span></span>
+                        <span>Deleção de Comentários: <span class="text-red-500">15 por mês</span></span>
                     </li>
                     <li class="flex items-center text-gray-700 font-bold text-lg">
-                        <svg class="w-6 h-6 mr-3 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.115a1 1 0 011.902 0l1.43 2.89a1 1 0 00.75.54L19 6.2a1 1 0 01.55 1.7L16.2 9.87a1 1 0 00-.34 1.05l.7 3.3a1 1 0 01-1.5 1.07l-2.7-1.42a1 1 0 00-1.1 0l-2.7 1.42a1 1 0 01-1.5-1.07l.7-3.3a1 1 0 00-.34-1.05L4.5 7.9a1 1 0 01.55-1.7l3.8-1.66a1 1 0 00.75-.54l1.43-2.89z"></path></svg>
-                        <span>Comentário em Destaque: <span class="text-yellow-700">3 por vez</span></span>
+                        <svg class="w-6 h-6 mr-3 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.115a1 1 0 011.902 0l1.43 2.89a1 1 0 00.75.54L19 6.2a1 1 0 01.55 1.7L16.2 9.87a1 1 0 00-.34 1.05l.7 3.3a1 1 0 01-1.5 1.07l-2.7-1.42a1 1 0 00-1.1 0l-2.7 1.42a1 1 0 01-1.5-1.07l.7-3.3a1 1 0 00-.34-1.05L4.5 7.9a1 1 0 01.55-1.7l3.8-1.66a1 1 0 00.75-.54l1.43-2.89z"></path></svg>
+                        <span>Comentário em Destaque: <span class="text-yellow-600">3 por vez</span></span>
                     </li>
                     <li class="flex items-center text-gray-700 font-bold text-lg">
-                            <svg class="w-6 h-6 mr-3 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            <span>Nível de Recomendação: <span class="text-yellow-700">Prioritário</span></span>
+                            <svg class="w-6 h-6 mr-3 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            <span>Nível de Recomendação: <span class="text-yellow-600">Prioritário</span></span>
                         </li>
                 </ul>
             </div>
             
-            <div class="mt-4 text-gray-600 text-sm">
-                A assinatura é renovada automaticamente até ser cancelada. Consulte os <a href="#" class="text-blue-600 hover:underline">Termos e Condições</a> para mais detalhes.
+            <div class="mt-20 text-gray-600 text-sm">
+                A assinatura é renovada automaticamente até ser cancelada. Consulte os
+                <button @click="showTerms = true" class="text-blue-600 hover:underline"> 
+                    Termos e Condições
+                </button>
+                
+            </div>
+            <div v-if="showTerms" class="fixed inset-0 bg-gray-900 bg-opacity-75 z-50 flex items-center justify-center p-4">
+                <TermosCondicoes
+                @accept="handleAccept" 
+                @cancel="showTerms = false" 
+                />
             </div>
         </div>
 
@@ -177,15 +187,33 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+// Importe o use-router se estiver usando Vue Router
+import { useRouter } from 'vue-router'; 
+import TermosCondicoes from './TermosCondicoes.vue';
 
+// Inicialização do Router
+const router = useRouter();
+
+const showTerms = ref(false);
+
+const handleAccept = () => {
+    showTerms.value = false;
+};
 // 1. Variável reativa para o plano selecionado (inicia em PREMIUM)
 const selectedPlan = ref('PREMIUM'); 
 
 // 2. Variável reativa para a duração selecionada (inicia em 1 mês)
 const selectedDuration = ref(1);
 
+// -----------------------------------------------------
+// NOVIDADE: Simulação do Estado de Login
+// -----------------------------------------------------
+const isUserLoggedIn = ref(false); // Mude para 'true' para testar a rota de Checkout
+// -----------------------------------------------------
+
 // 3. Estrutura de preços por plano
 const prices = {
+// ... (seu objeto prices permanece o mesmo)
     BASICO: {
         // Essential: R$ 43,90 / R$ 114,90 / R$ 359,90 (Baseado em image_190c9a.png)
         monthly: 43.90,
@@ -199,16 +227,15 @@ const prices = {
         twelveMonths: 592.90,
     },
     VIP: {
-        // Deluxe: R$ 76,90 / R$ 219,90 / R$ 691,90 (Baseado em image_190c3a.png)
+        // Deluxe: R$ 76,90 / R$ 219,90 / R$ 691.90 (Baseado em image_190c3a.png)
         monthly: 76.90,
         threeMonths: 219.90,
         twelveMonths: 691.90,
     }
 };
 
-// 4. Funções Computadas para obter os preços e economias do plano ATUALMENTE selecionado
+// 4. Funções Computadas para obter os preços e economias
 const currentPlanData = computed(() => prices[selectedPlan.value]);
-
 const currentPrice = computed(() => currentPlanData.value.monthly);
 const currentPrice3Months = computed(() => currentPlanData.value.threeMonths);
 const currentPrice12Months = computed(() => currentPlanData.value.twelveMonths);
@@ -234,6 +261,35 @@ function formatPrice(value) {
         currency: 'BRL',
     }).format(value);
 }
+
+// -----------------------------------------------------
+// NOVIDADE: Função de lógica condicional para o carrinho
+// -----------------------------------------------------
+function handleClickAddToCart() {
+    // Aqui você faria a chamada real à API de autenticação.
+    
+    if (isUserLoggedIn.value) {
+        // Se o usuário estiver logado, redireciona para o checkout
+        router.push({ 
+            name: 'CheckoutPage', 
+            params: { 
+                plan: selectedPlan.value,
+                duration: selectedDuration.value
+            } 
+        });
+        
+        // Exemplo de console.log para ver o que seria enviado
+        console.log(`Usuário logado. Redirecionando para checkout com plano: ${selectedPlan.value} e duração: ${selectedDuration.value} meses.`);
+        
+    } else {
+        // Se o usuário NÃO estiver logado, redireciona para a tela de login
+        router.push({ name: 'LoginPage' });
+        
+        // Exemplo de console.log
+        console.log('Usuário não logado. Redirecionando para login.');
+    }
+}
+// -----------------------------------------------------
 </script>
 
 <style scoped>

@@ -1,13 +1,13 @@
 <template>
-<SobreContent/>
+<SobreViewContent/>
 </template>
 
 <script>
-import SobreContent from '@/components/HomeView/SobreContent.vue';
+import SobreViewContent from '@/components/Sobre/SobreViewContent.vue';
 
 export default {
   components: {
-    SobreContent
+    SobreViewContent
   }
 };
 
