@@ -9,6 +9,7 @@ import LoginView from '../views/login/cadastro/LoginView.vue'
 import CadastroView from '../views/login/cadastro/CadastroView.vue'
 import PainelControleView from '../views/control_panel/PainelControleView.vue'
 import RestaurantePageView from '../views/restaurant/RestaurantePageView.vue'
+import UserProfilePage from '../components/UserProfile/UserProfilePage.vue' 
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,7 +18,6 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
-
       meta: {
         searchHeader: false
       }
@@ -39,12 +39,25 @@ const router = createRouter({
       }
     },
     
-    // ROTA 2: PÁGINA DE DETALHE
+    // ROTA 2: PÁGINA DE DETALHE DO RESTAURANTE
     {
       path: '/restaurantes/:id',
       name: 'restaurante-detalhe', 
       component: RestaurantePageView,
     
+      meta: {
+        searchHeader: true
+      }
+    },
+
+    // =========================================================
+    // NOVA ROTA PARA O PERFIL DO USUÁRIO
+    // =========================================================
+    {
+      path: '/perfil/:username',
+      name: 'perfil-usuario',
+      component: UserProfilePage, 
+      props: true, 
       meta: {
         searchHeader: true
       }
