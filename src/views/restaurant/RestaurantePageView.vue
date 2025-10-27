@@ -31,8 +31,16 @@
         
         <div class="mt-12">
           <div class="flex justify-end items-end mb-4 border-b border-gray-200 pb-2">
-            <ReviewCTA primaryColor="bg-yellow-600" /> 
+            <ReviewCTA
+              @requestReview="isReviewModalOpen = true" 
+              primaryColor="bg-yellow-600"
+            />
           </div>
+          
+          <RestaurantReview 
+            v-model:modelValue="isReviewModalOpen"
+          /> 
+          
           <RatingSummary :averageRating="restaurante.nota" excellentText="Excelente" accentColor="fuchsia" />
         </div>
       </div>
@@ -51,8 +59,8 @@
   </div>
   
   <div v-else class="text-center py-20 text-gray-500">
-      <span v-if="route.params.id">Carregando detalhes do restaurante ID: {{ route.params.id }}...</span>
-      <span v-else>ID do restaurante não encontrada ou carregamento falhou.</span>
+    <span v-if="route.params.id">Carregando detalhes do restaurante ID: {{ route.params.id }}...</span>
+    <span v-else>ID do restaurante não encontrada ou carregamento falhou.</span>
   </div>
 </template>
 
@@ -60,6 +68,7 @@
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router'; 
 
+// Importação dos Componentes
 import HeaderInfoView from '../../components/restaurant_page/HeaderInfo.vue';
 import GeneralInfoView from '../../components/restaurant_page/GeneralInfo.vue';
 import LocationCardView from '../../components/restaurant_page/LocationCard.vue';
@@ -68,11 +77,16 @@ import RatingSummary from '../../components/restaurant_page/RatingSummary.vue';
 import ReviewCTA from '../../components/restaurant_page/ReviewCta.vue';
 import ImageGallery from '../../components/restaurant_page/ImageGallery.vue'; 
 import CommentsSection from '../../components/comments/CommentsSection.vue';
+import RestaurantReview from '../../components/restaurant_page/RestaurantReview.vue';
 
 
 // 1. OBTENÇÃO DA ROTA E ESTADO
 const route = useRoute();
 const restaurante = ref({}); 
+
+// Estado para controlar a abertura do modal de avaliação
+const isReviewModalOpen = ref(false); 
+
 
 // 2. DADOS DE EXEMPLO (MOCK DATA)
 const mockData = {
@@ -103,18 +117,22 @@ const mockData = {
             { label: 'Domingo', hours: '12:00 - 21:00' },
         ]
     },
+    // Adicione mais mock data se necessário...
 };
 
 
 // 3. FUNÇÃO DE CARREGAMENTO
 const carregarRestaurante = (id) => {
     const restaurantId = String(id); 
-    restaurante.value = {}; 
+    restaurante.value = {}; // Limpa o estado
     
     const data = mockData[restaurantId];
     
     if (data) {
-        restaurante.value = data;
+        // Simula um pequeno delay para carregar
+        setTimeout(() => {
+            restaurante.value = data;
+        }, 300);
     } else {
         restaurante.value = { id: null, nome: 'Não Encontrado' }; 
         console.warn(`Dados mock para ID ${restaurantId} não encontrados. Verifique o mockData.`);
@@ -138,7 +156,17 @@ watch(
   }
 );
 
+// 5. FUNÇÕES DE INTERAÇÃO
 const handleSaveToggle = () => {
-    restaurante.value.isSaved = !restaurante.value.isSaved;
+    if (restaurante.value.id) {
+        restaurante.value.isSaved = !restaurante.value.isSaved;
+        console.log(`Restaurante ${restaurante.value.nome} salvo: ${restaurante.value.isSaved}`);
+    }
 };
+
+// Não precisamos de uma função para abrir, pois o evento do ReviewCTA faz o trabalho:
+// @requestReview="isReviewModalOpen = true" 
+
+// A função de fechar é tratada pelo v-model no componente filho:
+// <RestaurantReview v-model:modelValue="isReviewModalOpen" />
 </script>

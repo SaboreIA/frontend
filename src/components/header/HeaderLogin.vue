@@ -7,7 +7,7 @@
           <img src="../icons/logo.png" alt="logo_SaborIA" class="w-12 h-12 object-contain">
         </router-link>
       </div>
-      
+    
 
       <div class="flex items-center space-x-4">
         
