@@ -28,7 +28,6 @@ const router = createRouter({
       component: SobreView,
     },
     
-    // ROTA 1: PÁGINA DE LISTAGEM
     {
       path: '/restaurantes',
       name: 'restaurantes-lista',
@@ -39,7 +38,6 @@ const router = createRouter({
       }
     },
     
-    // ROTA 2: PÁGINA DE DETALHE DO RESTAURANTE
     {
       path: '/restaurantes/:id',
       name: 'restaurante-detalhe', 
@@ -49,21 +47,7 @@ const router = createRouter({
         searchHeader: true
       }
     },
-
-    // =========================================================
-    // NOVA ROTA PARA O PERFIL DO USUÁRIO
-    // =========================================================
-    {
-      path: '/perfil/:username',
-      name: 'perfil-usuario',
-      component: UserProfilePage, 
-      props: true, 
-      meta: {
-        searchHeader: true
-      }
-    },
     
-    // ... Rotas existentes
     {
       path: '/destaque',
       name: 'destaque',
@@ -96,21 +80,13 @@ const router = createRouter({
       }
     },
     
-    // =========================================================
-    // NOVAS ROTAS PARA O PAINEL DE CONTROLE
-    // =========================================================
     {
       path: '/painel',
       name: 'painel',
       component: PainelControleView, 
       meta: {
-        // CHAVE PARA O HeaderPainelControle
-        requiresDashboardHeader: true 
       }
     },
-
-    
-    // Adicione aqui qualquer outra rota que necessite do HeaderPainelControle
   ],
 })
 

@@ -128,11 +128,9 @@
 </template>
 
 <script setup>
-// Não há lógica de script aqui, pois o componente é puramente estático/apresentacional
 </script>
 
 <style scoped>
-/* Estilo customizado para os ícones, garantindo que o cubo mantenha a proporção e centralização */
 .tool-icon {
     display: flex;
     flex-direction: column;
@@ -141,7 +139,6 @@
     margin: 0.5rem;
 }
 
-/* Mantendo o estilo original que você enviou */
 @media (min-width: 1024px) {
   .about {
 min-height: 100vh;

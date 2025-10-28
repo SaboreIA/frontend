@@ -91,9 +91,7 @@
     
     <div 
       :class="{ 
-        // Em telas pequenas, só mostra se a navegação ou a busca mobile estiver aberta
         'max-h-0 opacity-0': !isMobileSearchOpen && !isNavOpen && isScreenSmall,
-        // Em telas pequenas, expande a altura para revelar o conteúdo
         'max-h-screen opacity-100': isMobileSearchOpen || isNavOpen || !isScreenSmall
       }"
       class="bg-white border-t border-gray-200 transition-all duration-300 ease-in-out overflow-hidden md:flex md:justify-center md:items-center py-2"
@@ -149,22 +147,19 @@ export default {
       isDarkModeSimulated: false,
       searchTerm: '', 
       isMobileSearchOpen: false, 
-      isNavOpen: false, // Controla a abertura do menu de navegação em mobile
-      isScreenSmall: true, // Para lógica de reatividade de tela
+      isNavOpen: false,
+      isScreenSmall: true,
     }
   },
   mounted() {
-    // Inicializa e adiciona listener para recalcular o tamanho da tela
     this.updateScreenSize();
     window.addEventListener('resize', this.updateScreenSize);
   },
   beforeUnmount() {
-    // Remove listener ao destruir o componente
     window.removeEventListener('resize', this.updateScreenSize);
   },
   methods: {
     updateScreenSize() {
-      // Usamos o breakpoint 'md' do Tailwind (geralmente 768px)
       this.isScreenSmall = window.innerWidth < 768; 
     },
     
@@ -175,15 +170,11 @@ export default {
     
     toggleMobileSearch() {
       this.isMobileSearchOpen = !this.isMobileSearchOpen;
-      // Fechar o menu de navegação ao abrir a searchbar para evitar sobreposição
       if (this.isMobileSearchOpen) {
           this.isNavOpen = false;
       }
     },
 
-    /**
-     * Função para realizar a pesquisa e integrar com a API via Axios.
-     */
     performSearch() {
       if (!this.searchTerm.trim()) {
         console.log('O campo de pesquisa está vazio.');
@@ -192,12 +183,6 @@ export default {
 
       console.log('Termo de pesquisa:', this.searchTerm);
 
-      // 1. Navegar para a página de pesquisa (se tiver uma)
-      // Exemplo: this.$router.push({ path: '/search', query: { q: this.searchTerm } });
-
-      // 2. Integração com API via Axios
-      /*
-      // Certifique-se de que o Axios foi importado se estiver em um script separado
       axios.get('/api/search', {
         params: {
           q: this.searchTerm
@@ -209,9 +194,7 @@ export default {
       .catch(error => {
         console.error('Erro na pesquisa:', error);
       });
-      */
 
-      // 3. Fechar menus após a busca (em mobile)
       this.isMobileSearchOpen = false;
       this.isNavOpen = false;
     },

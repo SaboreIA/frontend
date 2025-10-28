@@ -50,11 +50,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import RestauranteCard from '../../components/HomeView/DestaqueContent_Cards.vue'; 
-// OBS: Certifique-se que o caminho de importação para 'RestauranteCard.vue' está correto.
 
-// --- DADOS E LÓGICA ---
-
-// Dados de exemplo
 const restaurantes = ref([
   { id: 1, nome: 'Sabor Oriental', tipo: 'Japonesa', nota: 4.8, descricao: 'Melhor sushi da cidade.', imgUrl: 'https://restauranteyu.com.br/wp-content/uploads/2024/05/AMBIENTE_YU5-1-scaled.jpg' },
   { id: 2, nome: 'O Burrito Loco', tipo: 'Mexicana', nota: 4.5, descricao: 'Tacos e burritos autênticos.', imgUrl: 'https://uploads.dicasdadisneyeorlando.com/sites/5/2019/10/comida-mexicana-orlando.jpg' },
@@ -65,27 +61,22 @@ const restaurantes = ref([
   { id: 7, nome: 'Churrasco Prime', tipo: 'Churrascaria', nota: 4.7, descricao: 'Carnes nobres e buffet variado.', imgUrl: 'https://s2-oglobo.glbimg.com/ZeRtIyym-63-0GPjjBHfxhBujPc=/0x0:4424x5538/888x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_da025474c0c44edd99332dddb09cabe8/internal_photos/bs/2024/C/u/yEIAqIRTezxh1mxSG5AA/20231023-rufino-026-alta-credtomasrangel.jpg' },
 ]);
 
-// Tipos de restaurante únicos para criar os botões de filtro
 const tiposRestaurante = computed(() => {
   const tipos = new Set(restaurantes.value.map(r => r.tipo));
   return Array.from(tipos).sort(); 
 });
 
-// Estado para guardar o filtro ativo
 const tipoSelecionado = ref('Todos');
 
-// Função para mudar o filtro ativo
 const selecionarTipo = (tipo) => {
   tipoSelecionado.value = tipo;
 };
 
-// Propriedade Computada para a Filtragem (Chave da Reatividade)
 const restaurantesFiltrados = computed(() => {
   if (tipoSelecionado.value === 'Todos') {
     return restaurantes.value;
   }
   
-  // Filtra o array original com base no tipo selecionado
   return restaurantes.value.filter(
     (restaurante) => restaurante.tipo === tipoSelecionado.value
   );

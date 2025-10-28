@@ -48,7 +48,6 @@
 <script setup>
 import { ref } from 'vue';
 
-// Definição das Perguntas e Respostas
 const faqsData = [
   {
     question: "O que significa 'Deletação de Comentários' e como funciona?",
@@ -76,17 +75,13 @@ const faqsData = [
   }
 ];
 
-// 1. Variável reativa para armazenar as FAQs
 const faqs = ref(faqsData);
 
-// 2. Função para alternar o estado de abertura da pergunta
 const toggleFaq = (index) => {
   faqs.value = faqs.value.map((item, i) => {
-    // Fecha todas as outras perguntas e abre apenas a clicada
     if (i === index) {
       return { ...item, open: !item.open };
     } else {
-      // Opcional: Para ter apenas uma pergunta aberta por vez
       return { ...item, open: false };
     }
   });

@@ -31,8 +31,16 @@
         
         <div class="mt-12">
           <div class="flex justify-end items-end mb-4 border-b border-gray-200 pb-2">
-            <ReviewCTA primaryColor="bg-yellow-600" /> 
+            <ReviewCTA
+              @requestReview="isReviewModalOpen = true" 
+              primaryColor="bg-yellow-600"
+            />
           </div>
+          
+          <RestaurantReview 
+            v-model:modelValue="isReviewModalOpen"
+          /> 
+          
           <RatingSummary :averageRating="restaurante.nota" excellentText="Excelente" accentColor="fuchsia" />
         </div>
       </div>
@@ -51,8 +59,8 @@
   </div>
   
   <div v-else class="text-center py-20 text-gray-500">
-      <span v-if="route.params.id">Carregando detalhes do restaurante ID: {{ route.params.id }}...</span>
-      <span v-else>ID do restaurante não encontrada ou carregamento falhou.</span>
+    <span v-if="route.params.id">Carregando detalhes do restaurante ID: {{ route.params.id }}...</span>
+    <span v-else>ID do restaurante não encontrada ou carregamento falhou.</span>
   </div>
 </template>
 
@@ -68,13 +76,14 @@ import RatingSummary from '../../components/restaurant_page/RatingSummary.vue';
 import ReviewCTA from '../../components/restaurant_page/ReviewCta.vue';
 import ImageGallery from '../../components/restaurant_page/ImageGallery.vue'; 
 import CommentsSection from '../../components/comments/CommentsSection.vue';
+import RestaurantReview from '../../components/restaurant_page/RestaurantReview.vue';
 
 
-// 1. OBTENÇÃO DA ROTA E ESTADO
 const route = useRoute();
 const restaurante = ref({}); 
 
-// 2. DADOS DE EXEMPLO (MOCK DATA)
+const isReviewModalOpen = ref(false); 
+
 const mockData = {
     '1': { 
         id: 1, 
@@ -106,7 +115,6 @@ const mockData = {
 };
 
 
-// 3. FUNÇÃO DE CARREGAMENTO
 const carregarRestaurante = (id) => {
     const restaurantId = String(id); 
     restaurante.value = {}; 
@@ -114,7 +122,9 @@ const carregarRestaurante = (id) => {
     const data = mockData[restaurantId];
     
     if (data) {
-        restaurante.value = data;
+        setTimeout(() => {
+            restaurante.value = data;
+        }, 300);
     } else {
         restaurante.value = { id: null, nome: 'Não Encontrado' }; 
         console.warn(`Dados mock para ID ${restaurantId} não encontrados. Verifique o mockData.`);
@@ -122,7 +132,6 @@ const carregarRestaurante = (id) => {
 };
 
 
-// 4. CICLO DE VIDA E WATCHER
 onMounted(() => {
     if (route.params.id) {
         carregarRestaurante(route.params.id);
@@ -139,6 +148,10 @@ watch(
 );
 
 const handleSaveToggle = () => {
-    restaurante.value.isSaved = !restaurante.value.isSaved;
+    if (restaurante.value.id) {
+        restaurante.value.isSaved = !restaurante.value.isSaved;
+        console.log(`Restaurante ${restaurante.value.nome} salvo: ${restaurante.value.isSaved}`);
+    }
 };
+
 </script>

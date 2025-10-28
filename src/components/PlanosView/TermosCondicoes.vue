@@ -63,14 +63,11 @@
 </template>
 
 <script setup>
-// Define os eventos que este componente pode emitir
 const emit = defineEmits(['accept', 'cancel']);
 
-// O componente não precisa de variáveis reativas (ref) se for apenas estático.
 </script>
 
 <style scoped>
-/* Estilo customizado para a barra de rolagem (opcional, para navegadores baseados em WebKit) */
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
 }

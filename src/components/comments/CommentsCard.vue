@@ -66,7 +66,6 @@ const props = defineProps({
   comment: {
     type: Object,
     required: true,
-    // ... default props
   },
 });
 

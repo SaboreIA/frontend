@@ -130,9 +130,6 @@
 </template>
 
 <script>
-// Removemos: import axios from 'axios';
-
-// Removemos: const API_URL...
 
 export default {
   name: 'CadastroView',
@@ -145,35 +142,28 @@ export default {
     };
   },
   methods: {
-    // A função é agora síncrona, pois não espera mais uma chamada de rede
     handleRegister() {
-      // 1. Validação de campos vazios
       if (!this.name || !this.email || !this.password || !this.confirmPassword) {
         alert('Por favor, preencha todos os campos.');
         return;
       }
       
-      // 2. Validação de Confirmação de Senha
       if (this.password !== this.confirmPassword) {
         alert('As senhas digitadas não coincidem. Verifique a confirmação.');
         return;
       }
       
-      // 3. Validação de complexidade local
       if (this.password.length < 6) {
           alert('A senha deve ter no mínimo 6 caracteres.');
           return;
       }
 
-      // === SIMULAÇÃO DE SUCESSO DO CADASTRO ===
       alert(`Sucesso! O cadastro do usuário "${this.name}" foi simulado. Você será redirecionado para o login.`);
       this.$router.push('/login'); 
-      // === FIM DA SIMULAÇÃO ===
     }
   }
 };
 </script>
 
 <style scoped>
-/* Estilos para centralização permanecem eficazes */
 </style>
