@@ -90,7 +90,6 @@ const mockData = {
         nome: 'Sabor Oriental', 
         nota: '4,6', 
         nReviews: 120,
-        descricaoDetalhada: 'Descubra a autêntica culinária japonesa no Sabor Oriental. Nossos pratos são preparados com o máximo respeito pela tradição, utilizando ingredientes frescos e técnicas milenares. De sushis e sashimis meticulosamente elaborados a pratos quentes reconfortantes, cada mordida é uma celebração dos sabores e da arte oriental. Venha desfrutar de um ambiente sereno e de um serviço impecável.',
         isSaved: false,
         mainImage: 'https://restauranteyu.com.br/wp-content/uploads/2024/05/AMBIENTE_YU5-1-scaled.jpg',
         thumbnails: [

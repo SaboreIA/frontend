@@ -8,6 +8,8 @@
     </div>
 
     <div v-else-if="restaurant" class="space-y-8">
+      
+      
       <header class="relative rounded-lg overflow-hidden shadow-lg">
         <img
           :src="restaurant.coverImageUrl"
@@ -20,18 +22,10 @@
           </h1>
         </div>
       </header>
-
+      
       <section>
         <h2 class="text-2xl font-semibold mb-3">Sobre o Restaurante</h2>
         <p class="text-gray-700">{{ restaurant.description }}</p>
-      </section>
-
-      <section>
-        <h2 class="text-2xl font-semibold mb-4">Informações e Contato</h2>
-        <GeneralInfo
-          :status="restaurantStatus"
-          :contactInfo="restaurantContactInfo"
-        />
       </section>
 
       <section v-if="restaurant.address">
@@ -53,7 +47,6 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import GeneralInfo from "./GeneralInfo.vue";
 import api from "../../api/api";
 
 const restaurantId = 1;
