@@ -9,6 +9,7 @@ import LoginView from '../views/login/cadastro/LoginView.vue'
 import CadastroView from '../views/login/cadastro/CadastroView.vue'
 import PainelControleView from '../views/control_panel/PainelControleView.vue'
 import RestaurantePageView from '../views/restaurant/RestaurantePageView.vue'
+import UserProfilePage from '../components/UserProfile/UserProfilePage.vue' 
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,7 +18,6 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
-
       meta: {
         searchHeader: false
       }
