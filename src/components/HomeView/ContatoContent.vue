@@ -75,18 +75,11 @@ const submitForm = () => {
     isSubmitting.value = true;
     successMessage.value = '';
 
-    // Simulação de envio de formulário (substitua por sua lógica de API real)
     setTimeout(() => {
         isSubmitting.value = false;
         
         if (formData.value.name && formData.value.email && formData.value.description) {
             successMessage.value = 'Sua mensagem foi enviada com sucesso! Em breve entraremos em contato.';
-            
-            // Opcional: Resetar o formulário após sucesso
-            // formData.value.name = '';
-            // formData.value.email = '';
-            // formData.value.description = '';
-            
         } else {
             console.error("Erro ao enviar formulário: Dados incompletos.");
         }

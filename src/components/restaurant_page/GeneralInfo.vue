@@ -53,26 +53,20 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import GeneralInfo from "./GeneralInfo.vue"; // Ajuste o caminho conforme sua estrutura
+import GeneralInfo from "./GeneralInfo.vue";
 import api from "../../api/api";
 
-// O ID do restaurante a ser buscado (você pode substituir por uma rota dinâmica se estiver usando vue-router)
 const restaurantId = 1;
 
-// Variáveis reativas para o estado da página
 const restaurant = ref(null);
 const loading = ref(true);
 const error = ref(false);
 
-// ------------------------------------
-// 1. Lógica de Busca de Dados (API Call)
-// ------------------------------------
 
 const fetchRestaurant = async () => {
   loading.value = true;
   error.value = false;
   try {
-    // Altere a URL base conforme o endereço da sua API (.NET)
     const response = await api.get(`/restaurants/${restaurantId}`);
     restaurant.value = response.data;
   } catch (e) {
@@ -83,14 +77,8 @@ const fetchRestaurant = async () => {
   }
 };
 
-// Chama a função de busca assim que o componente é montado
 onMounted(fetchRestaurant);
 
-// ------------------------------------
-// 2. Computed Properties para Mapear Props
-// ------------------------------------
-
-// Cria a prop 'status' a partir dos dados do restaurante
 const restaurantStatus = computed(() => {
   if (!restaurant.value) return {};
 
@@ -101,23 +89,14 @@ const restaurantStatus = computed(() => {
   };
 });
 
-// Cria a prop 'contactInfo' a partir dos dados do restaurante
 const restaurantContactInfo = computed(() => {
   if (!restaurant.value) return {};
 
   return {
-    // Usa o phoneNumber do JSON (14 99855-2372)
-    // Se você quer "14 98894-9896", terá que mudar na API ou aqui manualmente
     number: restaurant.value.phoneNumber || null,
 
-    // Mapeia site do JSON para site da prop e adiciona o protocolo HTTP/HTTPS
     site: restaurant.value.site ? `http://${restaurant.value.site}` : null,
-
-    // **NOVOS VALORES ADICIONADOS PARA SIMULAR A IMAGEM 1**
-    // Estes campos não existem no seu JSON de exemplo da Imagem 2,
-    // então estou fornecendo valores fixos aqui para a visualização.
-    // O ideal é que eles venham da sua API se forem dados reais do restaurante.
-    menu: "https://seumenu.com.br/sabor-oriental", // Exemplo de link para o menu
+    menu: "https://seumenu.com.br/sabor-oriental",
     mail: "sabororiental@contato.com",
   };
 });

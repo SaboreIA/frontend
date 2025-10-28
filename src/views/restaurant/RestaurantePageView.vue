@@ -68,7 +68,6 @@
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router'; 
 
-// Importação dos Componentes
 import HeaderInfoView from '../../components/restaurant_page/HeaderInfo.vue';
 import GeneralInfoView from '../../components/restaurant_page/GeneralInfo.vue';
 import LocationCardView from '../../components/restaurant_page/LocationCard.vue';
@@ -80,15 +79,11 @@ import CommentsSection from '../../components/comments/CommentsSection.vue';
 import RestaurantReview from '../../components/restaurant_page/RestaurantReview.vue';
 
 
-// 1. OBTENÇÃO DA ROTA E ESTADO
 const route = useRoute();
 const restaurante = ref({}); 
 
-// Estado para controlar a abertura do modal de avaliação
 const isReviewModalOpen = ref(false); 
 
-
-// 2. DADOS DE EXEMPLO (MOCK DATA)
 const mockData = {
     '1': { 
         id: 1, 
@@ -117,19 +112,16 @@ const mockData = {
             { label: 'Domingo', hours: '12:00 - 21:00' },
         ]
     },
-    // Adicione mais mock data se necessário...
 };
 
 
-// 3. FUNÇÃO DE CARREGAMENTO
 const carregarRestaurante = (id) => {
     const restaurantId = String(id); 
-    restaurante.value = {}; // Limpa o estado
+    restaurante.value = {}; 
     
     const data = mockData[restaurantId];
     
     if (data) {
-        // Simula um pequeno delay para carregar
         setTimeout(() => {
             restaurante.value = data;
         }, 300);
@@ -140,7 +132,6 @@ const carregarRestaurante = (id) => {
 };
 
 
-// 4. CICLO DE VIDA E WATCHER
 onMounted(() => {
     if (route.params.id) {
         carregarRestaurante(route.params.id);
@@ -156,7 +147,6 @@ watch(
   }
 );
 
-// 5. FUNÇÕES DE INTERAÇÃO
 const handleSaveToggle = () => {
     if (restaurante.value.id) {
         restaurante.value.isSaved = !restaurante.value.isSaved;
@@ -164,9 +154,4 @@ const handleSaveToggle = () => {
     }
 };
 
-// Não precisamos de uma função para abrir, pois o evento do ReviewCTA faz o trabalho:
-// @requestReview="isReviewModalOpen = true" 
-
-// A função de fechar é tratada pelo v-model no componente filho:
-// <RestaurantReview v-model:modelValue="isReviewModalOpen" />
 </script>

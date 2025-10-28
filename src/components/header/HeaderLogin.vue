@@ -64,7 +64,7 @@ export default {
   name: 'HeaderLogin',
   data() {
     return {
-      isDarkModeSimulated: false, // Mantido apenas a variável de dark mode
+      isDarkModeSimulated: false,
     }
   },
   methods: {
@@ -72,7 +72,6 @@ export default {
       this.isDarkModeSimulated = !this.isDarkModeSimulated;
       console.log('Animação de Dark Mode ativada:', this.isDarkModeSimulated);
     },
-    // Métodos de navegação e pesquisa foram removidos
   }
 }
 </script>

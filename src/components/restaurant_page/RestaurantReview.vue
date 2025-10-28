@@ -141,9 +141,6 @@
 <script setup>
 import { ref, reactive, watch, defineProps, defineEmits } from "vue";
 
-// --- SUB-COMPONENTES EMBUTIDOS ---
-
-// 1. Componente para o grupo de avaliação (RatingGroup)
 const RatingGroup = {
   props: ["label", "name", "rating"],
   emits: ["update:rating"],
@@ -170,20 +167,13 @@ const RatingGroup = {
   `,
 };
 
-// **IMPORTANTE**: O ReviewElipse e ReviewCTA não são usados DENTRO deste componente (RestaurantReview)
-// Eles seriam usados no componente RestaurantPageView, para exibir os reviews.
-// Então, não há necessidade de defini-los aqui. Se você precisar do card de review final,
-// ele deve ser um componente SEPARADO no RestaurantPageView.
-
-
-// --- PROPS E EMITS PARA V-MODEL E NOME DO RESTAURANTE ---
 
 const props = defineProps({
-  modelValue: { // v-model usa modelValue como padrão (true/false para abrir/fechar)
+  modelValue: {
     type: Boolean,
     default: false
   },
-  restaurantNameProp: { // Prop para receber o nome do restaurante do componente pai
+  restaurantNameProp: {
     type: String,
     default: 'Restaurante Desconhecido'
   }
@@ -191,44 +181,33 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'reviewSubmitted']); 
 
-
-// --- ESTADO REATIVO DO FORMULÁRIO ---
-
 const fileName = ref(null);
 
-// Definição do estado inicial do formulário
 const defaultFormData = {
   restaurante: props.restaurantNameProp, 
   user_name: "Avaliador Exemplo",
-  user_photo: "https://i.pravatar.cc/150?img=47", // Foto de exemplo
+  user_photo: "https://i.pravatar.cc/150?img=47",
   review_text: "",
   image_url: null, 
   ratings: {
-    comida: null,    // Nova categoria
-    ambiente: null,  // Nova categoria
-    atendimento: null, // Nova categoria
-    precos: null,    // Nova categoria (era custo, agora preços)
+    comida: null,    
+    ambiente: null,  
+    atendimento: null, 
+    precos: null,  
   },
 };
 
-// Cria uma cópia profunda para permitir um reset completo
 const initialFormData = JSON.parse(JSON.stringify(defaultFormData)); 
 const formData = reactive({ ...initialFormData });
 
-
-// --- MÉTODOS ---
-
 function closeModal() {
-  emit('update:modelValue', false); // Fecha o modal
-  // Opcional: Você pode resetar o formulário ao fechar sem enviar
-  // resetForm(); 
+  emit('update:modelValue', false);
 }
 
 function handleFileUpload(event) {
   const file = event.target.files[0];
   if (file) {
     fileName.value = file.name;
-    // SIMULAÇÃO: No mundo real, você faria um upload para um servidor e receberia uma URL real
     formData.image_url =
       "https://images.unsplash.com/photo-1517248135460-49c7d41f71a0?q=80&w=1740&auto=format&fit=crop"; // Exemplo de URL
   } else {
@@ -238,29 +217,23 @@ function handleFileUpload(event) {
 }
 
 function submitReview() {
-  // 1. Fecha o modal
   emit('update:modelValue', false); 
 
-  // 2. Prepara os dados da avaliação para serem enviados
   const submittedData = {
-    ...JSON.parse(JSON.stringify(formData)), // Garante uma cópia independente
-    restaurante: props.restaurantNameProp, // Garante que o nome do restaurante esteja atualizado
-    date: new Date().toISOString(), // Adiciona a data/hora do envio
+    ...JSON.parse(JSON.stringify(formData)), 
+    restaurante: props.restaurantNameProp,
+    date: new Date().toISOString(),
   };
 
-  // 3. Emite o evento 'reviewSubmitted' para o componente pai
   emit('reviewSubmitted', submittedData); 
   
   console.log("Avaliação enviada (emitida para o pai):", submittedData);
 
-  // 4. Reseta o formulário para a próxima avaliação
   resetForm(); 
 }
 
 function resetForm() {
-  // Limpa o formulário, retorna aos valores iniciais
   Object.assign(formData, JSON.parse(JSON.stringify(initialFormData)));
-  // Garante que o nome do restaurante no formulário esteja atualizado com a prop
   formData.restaurante = props.restaurantNameProp; 
   
   fileName.value = null;
@@ -268,22 +241,15 @@ function resetForm() {
   if (fileInput) fileInput.value = null;
 }
 
-// Watcher para atualizar o nome do restaurante no formulário caso a prop mude dinamicamente
 watch(() => props.restaurantNameProp, (newVal) => {
   formData.restaurante = newVal;
-  // Se o modal estiver aberto e o nome mudar, isso atualiza o formulário.
-  // Se ele estiver fechado e for reaberto, o resetForm já pega o valor da prop.
 });
 </script>
 
 <style scoped>
-/* --- ESTILOS PARA O RATING GROUP NO MODAL --- */
-
-/* Esconde o input de rádio nativo */
 .rating-input {
   display: none;
 }
-/* Estiliza o label para parecer uma bolinha */
 .rating-label {
   cursor: pointer;
   width: 30px;
@@ -295,25 +261,22 @@ watch(() => props.restaurantNameProp, (newVal) => {
   font-size: 0.875rem;
   font-weight: 700;
   transition: all 0.2s;
-  border: 2px solid #d1d5db; /* gray-300 */
-  color: #4b5563; /* gray-600 */
+  border: 2px solid #d1d5db; 
+  color: #4b5563;
   user-select: none;
 }
 
-/* IMPORTANTE: Aplica flex-direction: row-reverse APENAS no contêiner das bolinhas. */
 .rating-input-container {
   flex-direction: row-reverse;
-  /* Garante que o espaçamento entre as bolinhas seja respeitado */
   justify-content: flex-start;
 }
 
 
-/* O seletor `~` (irmão subsequente) preenche as bolinhas anteriores na ordem invertida. */
 .rating-group input:checked + .rating-label,
 .rating-group input:checked ~ input + .rating-label,
 .rating-group input:hover + .rating-label,
 .rating-group input:hover ~ input + .rating-label {
-  background-color: #fbbf24; /* amber-500 */
+  background-color: #fbbf24;
   border-color: #fbbf24;
   color: white;
   transform: scale(1.1);
