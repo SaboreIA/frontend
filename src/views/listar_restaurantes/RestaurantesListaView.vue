@@ -82,3 +82,9 @@ const restaurantesFiltrados = computed(() => {
   );
 });
 </script>
+
+
+
+
+
+

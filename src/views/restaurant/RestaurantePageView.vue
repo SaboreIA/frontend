@@ -27,7 +27,7 @@
           {{ restaurante.descricaoDetalhada }}
         </p>
         
-        <LocationCardView :address="restaurante.address" :mapLink="restaurante.mapLink" class="mt-6" />
+        <LocationCardView :restaurantId="route.params.id" class="mt-6" />
         
         <div class="mt-12">
           <div class="flex justify-end items-end mb-4 border-b border-gray-200 pb-2">

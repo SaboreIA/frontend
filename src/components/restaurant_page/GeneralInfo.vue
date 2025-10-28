@@ -8,8 +8,7 @@
     </div>
 
     <div v-else-if="restaurant" class="space-y-8">
-      
-      
+           
       <header class="relative rounded-lg overflow-hidden shadow-lg">
         <img
           :src="restaurant.coverImageUrl"
@@ -21,26 +20,14 @@
             {{ restaurant.name }}
           </h1>
         </div>
-      </header>
+      </header> 
       
       <section>
         <h2 class="text-2xl font-semibold mb-3">Sobre o Restaurante</h2>
         <p class="text-gray-700">{{ restaurant.description }}</p>
       </section>
 
-      <section v-if="restaurant.address">
-        <h2 class="text-2xl font-semibold mb-3">Localização</h2>
-        <p class="text-gray-700">
-          {{ restaurant.address.street }}, {{ restaurant.address.number }}
-          <span v-if="restaurant.address.complement"
-            >({{ restaurant.address.complement }})</span
-          >
-        </p>
-        <p class="text-gray-700">
-          {{ restaurant.address.city }} - {{ restaurant.address.state }},
-          {{ restaurant.address.zipCode }}
-        </p>
-      </section>
+
     </div>
   </div>
 </template>
