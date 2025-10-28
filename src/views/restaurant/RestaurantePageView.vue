@@ -99,7 +99,6 @@ const mockData = {
         ],
         status: { text: 'ABERTO', color: 'text-green-600' },
         contactInfo: { site: '#', menu: '#', number: '14 98894-9896', mail: 'sabororiental@contato.com' },
-        address: 'Rua das Flores, 123\nCentro, São Paulo - SP',
         mapLink: '#',
         hoursData: [ 
             { label: 'Segunda', hours: '11:00 - 22:00' },
