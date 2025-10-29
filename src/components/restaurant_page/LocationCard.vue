@@ -10,10 +10,12 @@
 
     <template v-else-if="restaurant && restaurant.address">
       
-      <a :href="mapLink" target="_blank" 
-         class="bg-gray-200 h-40 flex items-center justify-center rounded-lg shadow-inner cursor-pointer hover:opacity-90 transition">
-        <span class="text-lg font-bold text-gray-600">VER MAPA</span>
-      </a>
+      <div 
+        :id="MAP_ID" 
+        class="bg-gray-200 h-40 flex items-center justify-center rounded-lg shadow-inner"
+      >
+        <span v-if="!mapInitialized" class="text-lg font-bold text-gray-600">VER MAPA</span>
+      </div>
       
       <div>
         <h3 class="text-lg font-semibold text-gray-800 mb-2">Localização</h3>
@@ -40,9 +42,13 @@
 </template>
 
 <script setup>
-// O script setup permanece o mesmo
-import { ref, onMounted, defineProps, computed, watch } from "vue";
-import api from "../../api/api"; // Módulo de API
+
+import { ref, defineProps, computed, watch } from "vue";
+import api from "../../api/api"; 
+import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
+
+const GOOGLE_MAPS_API_KEY = "COLOCAR A CHAVE DA API AQUI"; 
+const MAP_ID = "mapContainer";
 
 const props = defineProps({
     restaurantId: {
@@ -54,15 +60,23 @@ const props = defineProps({
 const restaurant = ref(null);
 const loading = ref(true);
 const error = ref(false);
+const mapInitialized = ref(false);
+
+let map; 
 
 const fetchRestaurant = async (id) => {
     loading.value = true;
     error.value = false;
     restaurant.value = null; 
-    
+    mapInitialized.value = false;
+
     try {
         const response = await api.get(`/restaurants/${id}`);
         restaurant.value = response.data; 
+        
+        if (restaurant.value && restaurant.value.address) {
+            await initMap();
+        }
     } catch (e) {
         console.error("Falha ao buscar restaurante:", e);
         error.value = true;
@@ -76,11 +90,57 @@ const mapLink = computed(() => {
     if (!restaurant.value || !restaurant.value.address) return '#';
 
     const addr = restaurant.value.address;
-    const addressString = `${addr.street} ${addr.number} ${addr.city} ${addr.state}`;
+    const addressString = `${addr.street} ${addr.number}, ${addr.city} - ${addr.state}`;
     
-    // CORRIGIDO: Use `encodeURIComponent` corretamente.
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addressString)}`;
+    const baseUrl = `https://www.google.com/maps/dir/?api=1&destination=`;
+    return `${baseUrl}${encodeURIComponent(addressString)}`;
 });
+
+async function initMap() {
+    if (mapInitialized.value) return; 
+
+    try {
+        setOptions({ 
+            apiKey: GOOGLE_MAPS_API_KEY, 
+            version: "weekly" 
+        });
+
+        const { Map } = await importLibrary("maps");
+        const { Geocoder } = await importLibrary("geocoding");
+        const { Marker } = await importLibrary("marker");
+
+        const geocoder = new Geocoder();
+
+        const fullAddress = `${restaurant.value.address.street} ${restaurant.value.address.number}, ${restaurant.value.address.city} - ${restaurant.value.address.state}`;
+
+        geocoder.geocode({ address: fullAddress }, (results, status) => {
+            if (status === 'OK' && results && results[0]) {
+                const position = results[0].geometry.location;
+                
+                map = new Map(document.getElementById(MAP_ID), {
+                    center: position,
+                    zoom: 15,
+                    mapId: "DEMO_MAP_ID" 
+                });
+
+                new Marker({
+                    position: position,
+                    map: map, 
+                    title: restaurant.value.name
+                });
+                
+                mapInitialized.value = true;
+            } else {
+                console.error("Geocodificação falhou devido a: " + status);
+            }
+        });
+
+    } catch (e) {
+        console.error("Falha ao carregar o Google Maps SDK:", e);
+        error.value = true;
+    }
+}
+
 
 watch(() => props.restaurantId, (newId) => {
     if (newId) {
