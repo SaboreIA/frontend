@@ -70,7 +70,7 @@ const fetchRestaurant = async (id) => {
     mapInitialized.value = false;
 
     try {
-        const response = await api.get(`/restaurants/${id}`);
+        const response = await api.get(`/restaurants/11`);
         restaurant.value = response.data; 
         
         if (restaurant.value && restaurant.value.address) {
@@ -94,6 +94,12 @@ const mapLink = computed(() => {
     const baseUrl = `https://www.google.com/maps/dir/?api=1&destination=`;
     return `${baseUrl}${encodeURIComponent(addressString)}`;
 });
+
+const getCoord = async () => {
+    if (!restaurant.value || !restaurant.value.address) return null;
+
+    
+}
 
 async function initMap() {
     if (mapInitialized.value || !window.google || !window.google.maps) return; 
