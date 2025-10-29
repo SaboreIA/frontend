@@ -78,11 +78,11 @@ const emit = defineEmits(['accept', 'cancel']);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #cbd5e1; /* gray-300 */
+  background: #cbd5e1;
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8; /* gray-400 */
+  background: #94a3b8; 
 }
 </style>

@@ -134,9 +134,7 @@
 </template>
 
 <script setup>
-// Nenhuma lógica de script é necessária para este componente.
 </script>
 
 <style scoped>
-/* Estilos específicos podem ser adicionados aqui se necessário */
 </style>

@@ -16,7 +16,7 @@
           <div 
             :class="[
               'w-3 h-3 rounded-full flex-shrink-0',
-              status.color === 'text-green-600' ? 'bg-green-600' : 'bg-red-600' // Cor do círculo
+              status.color === 'text-green-600' ? 'bg-green-600' : 'bg-red-600' 
             ]"
           ></div>
           <p class="text-lg font-bold" :class="status.color">

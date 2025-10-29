@@ -62,9 +62,7 @@ export default {
   name: 'DashboardView',
   methods: {
     handleLogout() {
-      // Lógica de logout simulada
       alert('Logout realizado com sucesso!');
-      // Redireciona para a página de login ou home
       this.$router.push('/login'); 
     }
   }
@@ -72,5 +70,4 @@ export default {
 </script>
 
 <style scoped>
-/* Nenhum estilo adicional é necessário, o Tailwind cuida de tudo! */
 </style>

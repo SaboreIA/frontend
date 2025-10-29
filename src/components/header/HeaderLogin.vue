@@ -77,5 +77,4 @@ export default {
 </script>
 
 <style scoped>
-/* Estilos não são estritamente necessários, já que não há links ativos */
 </style>

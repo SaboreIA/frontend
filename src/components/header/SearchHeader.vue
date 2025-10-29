@@ -114,8 +114,8 @@
       
       <nav :class="{
           'block px-4 pt-2 pb-4': isNavOpen, 
-          'hidden md:flex md:space-x-6': !isNavOpen && !isMobileSearchOpen && isScreenSmall, // Oculta em mobile se fechada
-          'flex': !isScreenSmall // Sempre flex em desktop
+          'hidden md:flex md:space-x-6': !isNavOpen && !isMobileSearchOpen && isScreenSmall, 
+          'flex': !isScreenSmall 
         }" 
         class="flex-wrap justify-center space-x-0 md:space-x-6 w-full max-w-5xl"
       >
@@ -207,14 +207,11 @@ export default {
 <style scoped>
 .router-link-active, .nav-link:focus, .nav-link:active {
   font-weight: bold;
-  /* Aplica o destaque também aos links de âncora */
-  color: #CA8A04; /* Tailwind: text-amber-700 */
+  color: #CA8A04;
 }
-/* Estilo básico para os links de âncora */
 .nav-link {
     cursor: pointer;
     text-decoration: none;
 }
 
-/* Garante que os links de âncora também tenham o estilo de 'router-link-active' quando a seção estiver visível (Apenas se você implementar Intersection Observer, o que não está neste código) */
 </style>

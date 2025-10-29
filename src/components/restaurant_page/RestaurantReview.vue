@@ -209,7 +209,7 @@ function handleFileUpload(event) {
   if (file) {
     fileName.value = file.name;
     formData.image_url =
-      "https://images.unsplash.com/photo-1517248135460-49c7d41f71a0?q=80&w=1740&auto=format&fit=crop"; // Exemplo de URL
+      "https://images.unsplash.com/photo-1517248135460-49c7d41f71a0?q=80&w=1740&auto=format&fit=crop";
   } else {
     fileName.value = null;
     formData.image_url = null;

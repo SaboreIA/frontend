@@ -87,7 +87,6 @@
 
 <script>
 export default {
-// ... seu script permanece o mesmo ...
   name: 'MainHeader',
   data() {
     return {
@@ -109,10 +108,8 @@ export default {
 <style scoped>
 .router-link-active, .nav-link:focus, .nav-link:active {
   font-weight: bold;
-  /* Aplica o destaque também aos links de âncora */
-  color: #CA8A04; /* Tailwind: text-amber-700 */
+  color: #CA8A04; 
 }
-/* Estilo básico para os links de âncora */
 .nav-link {
     cursor: pointer;
     text-decoration: none;

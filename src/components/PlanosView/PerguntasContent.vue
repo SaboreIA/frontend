@@ -89,5 +89,4 @@ const toggleFaq = (index) => {
 </script>
 
 <style scoped>
-/* Nenhum estilo adicional é necessário, o Tailwind CSS cuida de tudo. */
 </style>
