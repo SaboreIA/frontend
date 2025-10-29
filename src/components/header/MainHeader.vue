@@ -12,9 +12,7 @@
         
         <router-link to="/" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Início</router-link>
         <router-link to="/restaurantes" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Restaurantes</router-link>
-        <router-link to="/sobre" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Sobre</router-link>
-                
-        <a href="#destaques" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Destaques</a>
+        <router-link to="/sobre" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Sobre</router-link>         
         <router-link to="/planos"class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Planos</router-link>
         <router-link to="/contato" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Contato</router-link>
       </nav>
