@@ -1,7 +1,6 @@
 <template>
   <div class="min-h-screen bg-white text-gray-800 -mt-32">
     <div class="relative">
-      <!-- Banner -->
       <div
         class="h-40 bg-gray-300 md:h-64"
         :style="{
@@ -21,12 +20,9 @@
         </div>
       </div>
 
-      <!-- Conteúdo principal -->
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-10 -mt-20">
         <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <!-- Coluna Esquerda -->
           <div class="space-y-6">
-            <!-- Avatar -->
             <div
               class="relative justify-center md:justify-start -mt-4 md:-mt-[0px]"
             >
@@ -61,7 +57,6 @@
               </div>
             </div>
 
-            <!-- Nome e cargos -->
             <div class="text-center md:text-left -mt-4">
               <h1 class="text-3xl font-bold">{{ user.name }}</h1>
               <p class="text-gray-500 mt-1">@{{ user.username }}</p>
@@ -82,7 +77,6 @@
               </div>
             </div>
 
-            <!-- Infos básicas -->
             <div class="space-y-3">
               <div class="flex items-center text-sm text-gray-700">
                 <svg
@@ -117,7 +111,6 @@
               </div>
             </div>
 
-            <!-- Estatísticas -->
             <h2 class="text-xl font-bold text-gray-800 border-b pb-2">
               ESTATÍSTICAS DE AVALIAÇÃO
             </h2>
@@ -150,7 +143,6 @@
             </div>
           </div>
 
-          <!-- Coluna Direita: Comentários -->
           <div class="md:col-span-2 space-y-6 mt-24">
             <UserComment
               v-for="review in reviews"

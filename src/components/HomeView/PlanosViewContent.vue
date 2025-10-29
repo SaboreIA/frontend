@@ -178,42 +178,34 @@
 <script setup>
 import { ref, computed } from 'vue';
 
-// 1. Variável reativa para o plano selecionado (inicia em PREMIUM)
 const selectedPlan = ref('PREMIUM'); 
 
-// 2. Variável reativa para a duração selecionada (inicia em 1 mês)
 const selectedDuration = ref(1);
 
-// 3. Estrutura de preços por plano
 const prices = {
     BASICO: {
-        // Essential: R$ 43,90 / R$ 114,90 / R$ 359,90 (Baseado em image_190c9a.png)
         monthly: 43.90,
         threeMonths: 114.90,
         twelveMonths: 359.90,
     },
     PREMIUM: {
-        // Extra: R$ 65,90 / R$ 186,90 / R$ 592,90 (Baseado em image_190c56.png)
         monthly: 65.90,
         threeMonths: 186.90,
         twelveMonths: 592.90,
     },
     VIP: {
-        // Deluxe: R$ 76,90 / R$ 219,90 / R$ 691,90 (Baseado em image_190c3a.png)
         monthly: 76.90,
         threeMonths: 219.90,
         twelveMonths: 691.90,
     }
 };
 
-// 4. Funções Computadas para obter os preços e economias do plano ATUALMENTE selecionado
 const currentPlanData = computed(() => prices[selectedPlan.value]);
 
 const currentPrice = computed(() => currentPlanData.value.monthly);
 const currentPrice3Months = computed(() => currentPlanData.value.threeMonths);
 const currentPrice12Months = computed(() => currentPlanData.value.twelveMonths);
 
-// Cálculo da Economia
 const currentSavings3Months = computed(() => {
     const monthlyPrice = currentPlanData.value.monthly;
     const price3Months = currentPlanData.value.threeMonths;
@@ -226,7 +218,6 @@ const currentSavings12Months = computed(() => {
     return (monthlyPrice * 12) - price12Months;
 });
 
-// 5. Função de formatação de preço para Real Brasileiro
 function formatPrice(value) {
     if (typeof value !== 'number') return 'R$ 0,00';
     return new Intl.NumberFormat('pt-BR', {
@@ -237,9 +228,7 @@ function formatPrice(value) {
 </script>
 
 <style scoped>
-/* Estilos para Radio Buttons */
 .form-radio {
-  /* Estilização para compatibilidade com navegadores mais antigos ou customização */
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -258,13 +247,11 @@ function formatPrice(value) {
   background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
 }
 
-/* Oculta o input real e usa o label para o clique */
 label input[type="radio"] {
   position: absolute;
   opacity: 0;
 }
 
-/* Destaca o label (cartão de preço) quando o rádio está selecionado */
 label:has(input[type="radio"]:checked) {
     background-color: theme('colors.white');
     border-color: theme('colors.blue.500');

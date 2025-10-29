@@ -12,9 +12,7 @@
         
         <router-link to="/" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Início</router-link>
         <router-link to="/restaurantes" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Restaurantes</router-link>
-        <router-link to="/sobre" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Sobre</router-link>
-                
-        <a href="#destaques" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Destaques</a>
+        <router-link to="/sobre" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Sobre</router-link>         
         <router-link to="/planos"class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Planos</router-link>
         <router-link to="/contato" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Contato</router-link>
       </nav>
@@ -87,7 +85,6 @@
 
 <script>
 export default {
-// ... seu script permanece o mesmo ...
   name: 'MainHeader',
   data() {
     return {
@@ -109,10 +106,8 @@ export default {
 <style scoped>
 .router-link-active, .nav-link:focus, .nav-link:active {
   font-weight: bold;
-  /* Aplica o destaque também aos links de âncora */
-  color: #CA8A04; /* Tailwind: text-amber-700 */
+  color: #CA8A04; 
 }
-/* Estilo básico para os links de âncora */
 .nav-link {
     cursor: pointer;
     text-decoration: none;

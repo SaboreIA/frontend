@@ -84,5 +84,4 @@ export default {
 </script>
 
 <style scoped>
-/* Estilos não são estritamente necessários, mantendo a limpeza do Tailwind */
 </style>

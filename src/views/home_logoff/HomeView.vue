@@ -11,7 +11,6 @@
 </template>
 
 <script>
-// (Seu script de importação e registro permanece o mesmo)
 import SearchHeader from '@/components/header/SearchHeader.vue'; 
 import ContatoContent from '@/components/HomeView/ContatoContent.vue';
 import DestaquesContent from '@/components/HomeView/DestaquesContent.vue';
@@ -32,5 +31,4 @@ export default {
 </script>
 
 <style scoped>
-/* Seu estilo permanece o mesmo */
 </style>

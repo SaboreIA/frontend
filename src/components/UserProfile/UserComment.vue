@@ -1,7 +1,6 @@
 <template>
   <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 mb-4">
     
-    <!-- 🏪 Cabeçalho: Restaurante -->
     <div class="flex items-center justify-between mb-3">
       <div class="flex items-center space-x-3">
         <img
@@ -15,7 +14,6 @@
       </div>
     </div>
 
-    <!-- 👤 Usuário + data + nota -->
     <div class="flex justify-between items-start mb-3">
       <div class="flex items-start space-x-3">
         <img
@@ -31,7 +29,6 @@
             {{ formattedDate }}
           </p>
 
-          <!-- ⭐ Avaliação geral -->
           <div class="flex mt-1">
             <span
               v-for="n in 5"
@@ -45,7 +42,6 @@
         </div>
       </div>
 
-      <!-- ❤️ Curtidas + menu -->
       <div class="flex items-center space-x-4 text-gray-600">
         <button
           @click="toggleLike(comment.id)"
@@ -63,12 +59,10 @@
       </div>
     </div>
 
-    <!-- 💬 Texto do comentário -->
     <div class="text-gray-800 text-sm leading-relaxed mb-3">
       <p>{{ comment.content }}</p>
     </div>
 
-    <!-- 📊 Categorias -->
     <div
       v-if="comment.categories?.length"
       class="grid grid-cols-2 md:grid-cols-4 gap-y-3 mb-3"
@@ -92,7 +86,6 @@
       </div>
     </div>
 
-    <!-- 🍽️ Imagem -->
     <div v-if="comment.imageUrl" class="flex justify-center mt-3">
       <img
         :src="comment.imageUrl"
