@@ -1,14 +1,11 @@
 <template>
   <div v-if="restaurante.id" class="max-w-6xl mx-auto p-4 md:p-8 bg-white shadow-xl rounded-lg -mt-20">
     
-    <HeaderInfoView 
-      :name="restaurante.nome" 
-      :rating="restaurante.nota" 
-      :nReviews="`(${restaurante.nReviews} avaliações)`" 
-      :isSaved="restaurante.isSaved" 
-      class="mb-6"
-      @toggleSave="handleSaveToggle"
-    />
+    <HeaderInfoView
+      :restaurantId="restaurantId" 
+      :isSaved="isRestaurantSaved"
+      @toggleSave="toggleSaveStatus"
+      />
     
     <ImageGallery 
       :mainImage="restaurante.mainImage" 
@@ -27,7 +24,7 @@
           {{ restaurante.descricaoDetalhada }}
         </p>
         
-        <LocationCardView :restaurantId="route.params.id" class="mt-6" />
+        <LocationCardView :restaurantId="restaurantId" class="mt-6" />
         
         <div class="mt-12">
           <div class="flex justify-end items-end mb-4 border-b border-gray-200 pb-2">
@@ -65,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router'; 
 
 import HeaderInfoView from '../../components/restaurant_page/HeaderInfo.vue';
@@ -80,14 +77,19 @@ import RestaurantReview from '../../components/restaurant_page/RestaurantReview.
 
 
 const route = useRoute();
-const restaurante = ref({}); 
+const restaurantId = computed(() => route.params.id);
+const isRestaurantSaved = ref(false);
 
+const restaurante = ref({ id: null }); 
 const isReviewModalOpen = ref(false); 
+
+const toggleSaveStatus = () => {
+    isRestaurantSaved.value = !isRestaurantSaved.value;
+};
 
 const mockData = {
     '1': { 
         id: 1, 
-        nome: 'Sabor Oriental', 
         nota: '4,6', 
         nReviews: 120,
         isSaved: false,
@@ -115,7 +117,6 @@ const mockData = {
 
 const carregarRestaurante = (id) => {
     const restaurantId = String(id); 
-    restaurante.value = {}; 
     
     const data = mockData[restaurantId];
     
@@ -144,12 +145,5 @@ watch(
     }
   }
 );
-
-const handleSaveToggle = () => {
-    if (restaurante.value.id) {
-        restaurante.value.isSaved = !restaurante.value.isSaved;
-        console.log(`Restaurante ${restaurante.value.nome} salvo: ${restaurante.value.isSaved}`);
-    }
-};
 
 </script>

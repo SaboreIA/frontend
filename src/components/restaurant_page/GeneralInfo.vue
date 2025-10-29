@@ -9,18 +9,6 @@
 
     <div v-else-if="restaurant" class="space-y-8">
            
-      <header class="relative rounded-lg overflow-hidden shadow-lg">
-        <img
-          :src="restaurant.coverImageUrl"
-          :alt="`Capa de ${restaurant.name}`"
-          class="w-full h-80 object-cover"
-        />
-        <div class="absolute inset-0 bg-black bg-opacity-30 flex items-end p-6">
-          <h1 class="text-4xl font-extrabold text-white">
-            {{ restaurant.name }}
-          </h1>
-        </div>
-      </header> 
       
       <section>
         <h2 class="text-2xl font-semibold mb-3">Sobre o Restaurante</h2>
@@ -83,5 +71,4 @@ const restaurantContactInfo = computed(() => {
 </script>
 
 <style scoped>
-/* Adicione estilos específicos para esta página aqui se necessário */
 </style>
