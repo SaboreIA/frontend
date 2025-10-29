@@ -25,14 +25,14 @@
           </button>
         </div>
         <p class="text-sm text-indigo-600 font-medium mt-1">
-          Restaurante: {{ restaurantNameProp || 'Restaurante Desconhecido' }}
+          Restaurante: **{{
+            restaurantNameProp || "Restaurante Desconhecido"
+          }}**
         </p>
       </div>
 
       <form @submit.prevent="submitReview" class="p-6 space-y-6">
-        <div
-          class="flex items-center space-x-4 pb-4 border-b border-gray-100"
-        >
+        <div class="flex items-center space-x-4 pb-4 border-b border-gray-100">
           <img
             class="h-12 w-12 rounded-full object-cover"
             :src="formData.user_photo"
@@ -70,9 +70,7 @@
         </div>
 
         <div>
-          <label
-            for="review-text"
-            class="block text-gray-700 font-medium mb-2"
+          <label for="review-text" class="block text-gray-700 font-medium mb-2"
             >Comentário Final (Review)</label
           >
           <textarea
@@ -86,9 +84,7 @@
         </div>
 
         <div>
-          <label
-            for="image-upload"
-            class="block text-gray-700 font-medium mb-2"
+          <label for="image-upload" class="block text-gray-700 font-medium mb-2"
             >Subir Imagem (Opcional)</label
           >
           <div class="flex items-center space-x-4">
@@ -139,7 +135,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, defineProps, defineEmits } from "vue";
+import {ref, reactive, watch, defineProps, defineEmits} from "vue";
 
 const RatingGroup = {
   props: ["label", "name", "rating"],
@@ -167,41 +163,53 @@ const RatingGroup = {
   `,
 };
 
-
 const props = defineProps({
   modelValue: {
     type: Boolean,
-    default: false
+    default: false,
   },
   restaurantNameProp: {
     type: String,
-    default: 'Restaurante Desconhecido'
-  }
+    default: "Restaurante Desconhecido",
+  },
+  userName: {
+    type: String,
+    default: "Avaliador Exemplo",
+  },
+  userPhoto: {
+    type: String,
+    default: "https://i.pravatar.cc/150?img=47",
+  },
 });
 
-const emit = defineEmits(['update:modelValue', 'reviewSubmitted']); 
+const emit = defineEmits(["update:modelValue", "reviewSubmitted"]);
 
 const fileName = ref(null);
 
 const defaultFormData = {
-  restaurante: props.restaurantNameProp, 
-  user_name: "Avaliador Exemplo",
-  user_photo: "https://i.pravatar.cc/150?img=47",
+  restaurante: props.restaurantNameProp,
+  user_name: props.userName,
+  user_photo: props.userPhoto,
   review_text: "",
-  image_url: null, 
+  image_url: null,
   ratings: {
-    comida: null,    
-    ambiente: null,  
-    atendimento: null, 
-    precos: null,  
+    comida: null,
+    ambiente: null,
+    atendimento: null,
+    precos: null,
   },
 };
 
-const initialFormData = JSON.parse(JSON.stringify(defaultFormData)); 
-const formData = reactive({ ...initialFormData });
+const formData = reactive({
+  ...JSON.parse(JSON.stringify(defaultFormData)),
+  user_name: props.userName,
+  user_photo: props.userPhoto,
+});
+
+const initialFormData = JSON.parse(JSON.stringify(formData));
 
 function closeModal() {
-  emit('update:modelValue', false);
+  emit("update:modelValue", false);
 }
 
 function handleFileUpload(event) {
@@ -209,7 +217,7 @@ function handleFileUpload(event) {
   if (file) {
     fileName.value = file.name;
     formData.image_url =
-      "https://images.unsplash.com/photo-1517248135460-49c7d41f71a0?q=80&w=1740&auto=format&fit=crop"; // Exemplo de URL
+      "https://images.unsplash.com/photo-1517248135460-49c7d41f71a0?q=80&w=1740&auto=format&fit=crop";
   } else {
     fileName.value = null;
     formData.image_url = null;
@@ -217,33 +225,57 @@ function handleFileUpload(event) {
 }
 
 function submitReview() {
-  emit('update:modelValue', false); 
+  emit("update:modelValue", false);
 
   const submittedData = {
-    ...JSON.parse(JSON.stringify(formData)), 
+    ...JSON.parse(JSON.stringify(formData)),
     restaurante: props.restaurantNameProp,
     date: new Date().toISOString(),
   };
 
-  emit('reviewSubmitted', submittedData); 
-  
+  emit("reviewSubmitted", submittedData);
+
   console.log("Avaliação enviada (emitida para o pai):", submittedData);
 
-  resetForm(); 
+  resetForm();
 }
 
 function resetForm() {
-  Object.assign(formData, JSON.parse(JSON.stringify(initialFormData)));
-  formData.restaurante = props.restaurantNameProp; 
-  
+  Object.keys(initialFormData).forEach((key) => {
+    if (key !== "user_name" && key !== "user_photo" && key !== "restaurante") {
+      formData[key] = initialFormData[key];
+    }
+  });
+
+  formData.restaurante = props.restaurantNameProp;
+  formData.user_name = props.userName;
+  formData.user_photo = props.userPhoto;
+
   fileName.value = null;
   const fileInput = document.getElementById("image-upload");
   if (fileInput) fileInput.value = null;
 }
 
-watch(() => props.restaurantNameProp, (newVal) => {
-  formData.restaurante = newVal;
-});
+watch(
+  () => props.restaurantNameProp,
+  (newVal) => {
+    formData.restaurante = newVal;
+  }
+);
+
+watch(
+  () => props.userName,
+  (newVal) => {
+    formData.user_name = newVal;
+  }
+);
+
+watch(
+  () => props.userPhoto,
+  (newVal) => {
+    formData.user_photo = newVal;
+  }
+);
 </script>
 
 <style scoped>
@@ -261,7 +293,7 @@ watch(() => props.restaurantNameProp, (newVal) => {
   font-size: 0.875rem;
   font-weight: 700;
   transition: all 0.2s;
-  border: 2px solid #d1d5db; 
+  border: 2px solid #d1d5db;
   color: #4b5563;
   user-select: none;
 }
@@ -270,7 +302,6 @@ watch(() => props.restaurantNameProp, (newVal) => {
   flex-direction: row-reverse;
   justify-content: flex-start;
 }
-
 
 .rating-group input:checked + .rating-label,
 .rating-group input:checked ~ input + .rating-label,

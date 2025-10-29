@@ -4,7 +4,7 @@
     <div class="flex-shrink-0 text-center pr-8 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0">
       <p class="text-4xl font-extrabold text-gray-900">{{ averageRating }}</p>
       <p class="text-sm font-semibold mt-1 text-yellow-600">{{ excellentText }}</p> 
-      <p class="text-xs text-gray-500 mt-1">Baseado em 120 avaliações</p>
+      <p class="text-xs text-gray-500 mt-1">Baseado em {{ totalReviews }} avaliações</p>
     </div>
 
     <div class="flex-grow w-full">
@@ -17,7 +17,7 @@
           <div 
             :class="[
                 'h-2 rounded-full transition-all duration-500', 
-                'bg-yellow-500' 
+                'bg-yellow-500'
             ]"
             :style="{ width: rating.percentage }"
           ></div>
@@ -34,20 +34,30 @@ import { defineProps } from 'vue';
 
 defineProps({
   averageRating: {
-    type: String,
+    type: [String, Number],
     required: true,
   },
+  
   excellentText: {
     type: String,
     default: 'Muito Bom',
   },
+  
+  totalReviews: {
+    type: [String, Number],
+    default: 120,
+  },
+  
+  ratingsData: {
+    type: Array,
+    default: () => [
+        { label: 'Excelente', percentage: '70%' },
+        { label: 'Muito Bom', percentage: '15%' },
+        { label: 'Bom', percentage: '10%' },
+        { label: 'Média', percentage: '3%' },
+        { label: 'Ruim', percentage: '2%' },
+    ],
+    validator: (value) => value.every(rating => rating.label && rating.percentage),
+  },
 });
-
-const ratingsData = [
-  { label: 'Excelente', percentage: '70%' },
-  { label: 'Muito Bom', percentage: '15%' },
-  { label: 'Bom', percentage: '10%' },
-  { label: 'Média', percentage: '3%' },
-  { label: 'Ruim', percentage: '2%' },
-];
 </script>

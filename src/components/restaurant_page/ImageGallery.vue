@@ -11,7 +11,7 @@
         <img :src="thumb" :alt="`Miniatura ${index + 1}`"
           class="w-full h-full **object-cover** transition duration-300 hover:scale-[1.05]" />
       </div>
-    </div>
+      </div>
   </div>
 </template>
 
