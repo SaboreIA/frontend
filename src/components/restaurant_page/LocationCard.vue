@@ -11,6 +11,7 @@
     <template v-else-if="restaurant && restaurant.address">
       
       <div 
+        ref="mapContainerRef"
         :id="MAP_ID" 
         class="bg-gray-200 h-40 flex items-center justify-center rounded-lg shadow-inner"
       >
@@ -45,9 +46,7 @@
 
 import { ref, defineProps, computed, watch } from "vue";
 import api from "../../api/api"; 
-import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 
-const GOOGLE_MAPS_API_KEY = "COLOCAR A CHAVE DA API AQUI"; 
 const MAP_ID = "mapContainer";
 
 const props = defineProps({
@@ -97,18 +96,13 @@ const mapLink = computed(() => {
 });
 
 async function initMap() {
-    if (mapInitialized.value) return; 
+    if (mapInitialized.value || !window.google || !window.google.maps) return; 
 
     try {
-        setOptions({ 
-            apiKey: GOOGLE_MAPS_API_KEY, 
-            version: "weekly" 
-        });
-
-        const { Map } = await importLibrary("maps");
-        const { Geocoder } = await importLibrary("geocoding");
-        const { Marker } = await importLibrary("marker");
-
+        const { Map, Geocoder } = window.google.maps;
+        
+        const Marker = window.google.maps.Marker; 
+        
         const geocoder = new Geocoder();
 
         const fullAddress = `${restaurant.value.address.street} ${restaurant.value.address.number}, ${restaurant.value.address.city} - ${restaurant.value.address.state}`;
@@ -136,7 +130,7 @@ async function initMap() {
         });
 
     } catch (e) {
-        console.error("Falha ao carregar o Google Maps SDK:", e);
+        console.error("Falha ao carregar o Google Maps SDK ou Geocoder:", e);
         error.value = true;
     }
 }
