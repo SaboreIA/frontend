@@ -282,7 +282,6 @@ watch(() => props.restaurantNameProp, (newVal) => {
   transform: scale(1.1);
 }
 
-/* Regras de Transição (Melhoram a UX do modal) */
 .transition-opacity {
   transition: opacity 0.3s ease-in-out;
 }

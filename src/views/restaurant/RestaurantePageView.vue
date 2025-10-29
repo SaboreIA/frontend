@@ -1,14 +1,11 @@
 <template>
   <div v-if="restaurante.id" class="max-w-6xl mx-auto p-4 md:p-8 bg-white shadow-xl rounded-lg -mt-20">
     
-    <HeaderInfoView 
-      :name="restaurante.nome" 
-      :rating="restaurante.nota" 
-      :nReviews="`(${restaurante.nReviews} avaliações)`" 
-      :isSaved="restaurante.isSaved" 
-      class="mb-6"
-      @toggleSave="handleSaveToggle"
-    />
+    <HeaderInfoView
+      :restaurantId="restaurantId" 
+      :isSaved="isRestaurantSaved"
+      @toggleSave="toggleSaveStatus"
+      />
     
     <ImageGallery 
       :mainImage="restaurante.mainImage" 
@@ -16,18 +13,17 @@
       class="mt-4 mb-8" 
     />
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
       
       <div class="lg:col-span-2">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">VISÃO GERAL</h2>
         
-        <GeneralInfoView :status="restaurante.status" :contactInfo="restaurante.contactInfo" />
+        <GeneralInfoView :restaurantId="restaurantId" class="pl-2" />
         
         <p class="text-gray-600 my-6">
           {{ restaurante.descricaoDetalhada }}
         </p>
         
-        <LocationCardView :address="restaurante.address" :mapLink="restaurante.mapLink" class="mt-6" />
+        <LocationCardView :restaurantId="restaurantId" class="mt-6" />
         
         <div class="mt-12">
           <div class="flex justify-end items-end mb-4 border-b border-gray-200 pb-2">
@@ -65,7 +61,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router'; 
 
 import HeaderInfoView from '../../components/restaurant_page/HeaderInfo.vue';
@@ -80,17 +76,21 @@ import RestaurantReview from '../../components/restaurant_page/RestaurantReview.
 
 
 const route = useRoute();
-const restaurante = ref({}); 
+const restaurantId = computed(() => route.params.id);
+const isRestaurantSaved = ref(false);
 
+const restaurante = ref({ id: null }); 
 const isReviewModalOpen = ref(false); 
+
+const toggleSaveStatus = () => {
+    isRestaurantSaved.value = !isRestaurantSaved.value;
+};
 
 const mockData = {
     '1': { 
         id: 1, 
-        nome: 'Sabor Oriental', 
         nota: '4,6', 
         nReviews: 120,
-        descricaoDetalhada: 'Descubra a autêntica culinária japonesa no Sabor Oriental. Nossos pratos são preparados com o máximo respeito pela tradição, utilizando ingredientes frescos e técnicas milenares. De sushis e sashimis meticulosamente elaborados a pratos quentes reconfortantes, cada mordida é uma celebração dos sabores e da arte oriental. Venha desfrutar de um ambiente sereno e de um serviço impecável.',
         isSaved: false,
         mainImage: 'https://restauranteyu.com.br/wp-content/uploads/2024/05/AMBIENTE_YU5-1-scaled.jpg',
         thumbnails: [
@@ -100,7 +100,6 @@ const mockData = {
         ],
         status: { text: 'ABERTO', color: 'text-green-600' },
         contactInfo: { site: '#', menu: '#', number: '14 98894-9896', mail: 'sabororiental@contato.com' },
-        address: 'Rua das Flores, 123\nCentro, São Paulo - SP',
         mapLink: '#',
         hoursData: [ 
             { label: 'Segunda', hours: '11:00 - 22:00' },
@@ -117,7 +116,6 @@ const mockData = {
 
 const carregarRestaurante = (id) => {
     const restaurantId = String(id); 
-    restaurante.value = {}; 
     
     const data = mockData[restaurantId];
     
@@ -146,12 +144,5 @@ watch(
     }
   }
 );
-
-const handleSaveToggle = () => {
-    if (restaurante.value.id) {
-        restaurante.value.isSaved = !restaurante.value.isSaved;
-        console.log(`Restaurante ${restaurante.value.nome} salvo: ${restaurante.value.isSaved}`);
-    }
-};
 
 </script>
