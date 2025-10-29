@@ -16,9 +16,8 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       
       <div class="lg:col-span-2">
-        <h2 class="text-xl font-bold text-gray-800 mb-4">VISÃO GERAL</h2>
         
-        <GeneralInfoView :status="restaurante.status" :contactInfo="restaurante.contactInfo" />
+        <GeneralInfoView :restaurantId="restaurantId" />
         
         <p class="text-gray-600 my-6">
           {{ restaurante.descricaoDetalhada }}
