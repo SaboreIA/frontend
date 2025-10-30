@@ -116,7 +116,7 @@ const fetchRestaurant = async (id) => {
 
     try {
       
-        const response = await api.get(`/restaurants/${id}`); 
+        const response = await api.get(`/restaurants/11`); 
         restaurant.value = response.data;
     } catch (e) {
         console.error("Falha ao buscar restaurante:", e);

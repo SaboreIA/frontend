@@ -98,7 +98,7 @@
       chat.value.push({ user: false, text: resposta })
       chat.value.push({ user: false, text: "Posso ajudar com mais alguma coisa?" })
       mostrarOpcoes.value = true
-    }, 1500)
+    }, 800)
   }
   </script>
   
