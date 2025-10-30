@@ -7,105 +7,146 @@
       >
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
           
-          <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"></div>
+          <div class="fixed inset-0 transition-all duration-300 bg-gray-900/60 backdrop-blur-sm"></div>
   
           <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
   
           <div 
-            class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+            class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full modal-content"
             @click.stop
           >
-              <h3 class="text-lg font-semibold text-white">
-                Editar Perfil
-              </h3>
-              <button 
-                @click="closeModal" 
-                class="text-white hover:text-gray-200 transition duration-150"
-              >
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-              </button>
-          
-            <div class="bg-white px-6 py-6">
+            <div class="relative bg-gradient-to-r from-yellow-500 via-yellow-600 to-amber-600 px-8 py-6 overflow-hidden">
+              <div class="absolute inset-0 opacity-20">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-white rounded-full -mr-20 -mt-20"></div>
+                <div class="absolute bottom-0 left-0 w-32 h-32 bg-white rounded-full -ml-16 -mb-16"></div>
+              </div>
+              
+              <div class="relative flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <div class="bg-white/20 backdrop-blur-sm p-2 rounded-lg">
+                    <UserCircleIcon class="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-bold text-white">
+                      Editar Perfil
+                    </h3>
+                    <p class="text-sm text-white/80 mt-0.5">Atualize suas informações pessoais</p>
+                  </div>
+                </div>
+                <button 
+                  @click="closeModal" 
+                  class="bg-white/20 hover:bg-white/30 backdrop-blur-sm p-2 rounded-lg"
+                >
+                  <XMarkIcon class="w-5 h-5 text-white" />
+                </button>
+              </div>
+            </div>
+  
+            <div class="bg-gradient-to-br from-gray-50 to-white px-8 py-8">
               <form @submit.prevent="salvarDados">
                 
-                <div class="mb-6 flex flex-col items-center">
-                  <div class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden mb-3">
-                    <img v-if="formData.fotoPerfil" :src="formData.fotoPerfil" alt="Foto de perfil" class="w-full h-full object-cover">
-                    <svg v-else class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
+                <div class="mb-8 flex flex-col items-center">
+                  <div class="relative group">
+                    <div class="absolute inset-0 bg-gradient-to-r from-yellow-400 to-amber-500 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+                    <div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden border-4 border-white shadow-xl">
+                      <img v-if="userData.fotoPerfil" :src="userData.fotoPerfil" alt="Foto de perfil" class="w-full h-full object-cover">
+                      <UserCircleIcon v-else class="w-16 h-16 text-gray-400" />
+                    </div>
+                    <label class="absolute bottom-0 right-0 bg-gradient-to-r from-yellow-500 to-amber-600 text-white p-3 rounded-full cursor-pointer shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200 group">
+                      <CameraIcon class="w-5 h-5" />
+                      <input type="file" class="hidden" @change="handleFotoUpload" accept="image/*">
+                    </label>
                   </div>
-                  <label class="cursor-pointer text-sm text-yellow-600 hover:text-yellow-700 font-medium">
-                    Alterar foto
-                    <input type="file" class="hidden" @change="handleFotoUpload" accept="image/*">
-                  </label>
+                  <p class="text-sm text-gray-500 mt-3">Clique no ícone da câmera para alterar</p>
                 </div>
   
-                <div class="mb-4">
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Nome Completo
-                  </label>
-                  <input 
-                    v-model="formData.nome"
-                    type="text"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent"
-                    placeholder="Digite seu nome"
-                    required
-                  >
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                      <UserIcon class="w-4 h-4 mr-2 text-yellow-600" />
+                      Nome Completo
+                    </label>
+                    <input 
+                      @input="$emit('update:userData', { ...userData, nome: $event.target.value })"
+                      type="text"
+                      class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent bg-white shadow-sm hover:shadow-md transition-all duration-200"
+                      placeholder="Digite seu nome completo"
+                      required
+                    >
+                  </div>
+  
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                      <EnvelopeIcon class="w-4 h-4 mr-2 text-yellow-600" />
+                      E-mail
+                    </label>
+                    <input 
+                      @input="$emit('update:userData', { ...userData, email: $event.target.value })"
+                      type="email"
+                      class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent bg-white shadow-sm hover:shadow-md transition-all duration-200"
+                      placeholder="seu@email.com"
+                      required
+                    >
+                  </div>
+  
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                      <PhoneIcon class="w-4 h-4 mr-2 text-yellow-600" />
+                      Telefone
+                    </label>
+                    <input 
+                      @input="$emit('update:userData', { ...userData, telefone: $event.target.value })"
+                      type="tel"
+                      class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent bg-white shadow-sm hover:shadow-md transition-all duration-200"
+                      placeholder="(00) 00000-0000"
+                    >
+                  </div>
+  
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                      <MapPinIcon class="w-4 h-4 mr-2 text-yellow-600" />
+                      CEP
+                    </label>
+                    <input 
+                      @input="$emit('update:userData', { ...userData, cep: $event.target.value })"
+                      type="text"
+                      class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent bg-white shadow-sm hover:shadow-md transition-all duration-200"
+                      placeholder="00000-000"
+                    >
+                  </div>
+  
+                  <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                      <BuildingOfficeIcon class="w-4 h-4 mr-2 text-yellow-600" />
+                      Endereço
+                    </label>
+                    <input 
+                      @input="$emit('update:userData', { ...userData, endereco: $event.target.value })"
+                      type="text"
+                      class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent bg-white shadow-sm hover:shadow-md transition-all duration-200"
+                      placeholder="Rua, número, bairro, cidade"
+                    >
+                  </div>
+  
                 </div>
   
-                <div class="mb-4">
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    E-mail
-                  </label>
-                  <input 
-                    v-model="formData.email"
-                    type="email"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent"
-                    placeholder="seu@email.com"
-                    required
-                  >
-                </div>
-  
-                <div class="mb-4">
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Telefone
-                  </label>
-                  <input 
-                    v-model="formData.telefone"
-                    type="tel"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent"
-                    placeholder="(00) 00000-0000"
-                  >
-                </div>
-  
-                <div class="mb-4">
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Endereço
-                  </label>
-                  <input 
-                    v-model="formData.endereco"
-                    type="text"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-transparent"
-                    placeholder="Rua, número, bairro"
-                  >
-                </div>
-  
-                <div class="flex justify-end space-x-3 mt-6">
+                <div class="flex flex-col sm:flex-row justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
                   <button 
                     type="button"
                     @click="closeModal"
-                    class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-150"
+                    class="px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md"
                   >
                     Cancelar
                   </button>
                   <button 
                     type="submit"
-                    class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition duration-150"
+                    class="px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-white font-semibold rounded-xl hover:from-yellow-600 hover:to-amber-700 transition-all duration-200 shadow-md hover:shadow-xl transform hover:scale-105"
                   >
-                    Salvar Alterações
+                    <span class="flex items-center justify-center">
+                      <CheckIcon class="w-5 h-5 mr-2" />
+                      Salvar Alterações
+                    </span>
                   </button>
                 </div>
   
@@ -118,8 +159,31 @@
   </template>
   
   <script>
+  import { 
+    UserCircleIcon, 
+    XMarkIcon, 
+    CameraIcon, 
+    UserIcon, 
+    EnvelopeIcon, 
+    PhoneIcon, 
+    MapPinIcon, 
+    BuildingOfficeIcon, 
+    CheckIcon 
+  } from '@heroicons/vue/24/outline';
+  
   export default {
     name: 'UserModal',
+    components: {
+      UserCircleIcon,
+      XMarkIcon,
+      CameraIcon,
+      UserIcon,
+      EnvelopeIcon,
+      PhoneIcon,
+      MapPinIcon,
+      BuildingOfficeIcon,
+      CheckIcon
+    },
     props: {
       isOpen: {
         type: Boolean,
@@ -130,27 +194,7 @@
         default: () => ({})
       }
     },
-    data() {
-      return {
-        formData: {
-          nome: '',
-          email: '',
-          telefone: '',
-          endereco: '',
-          fotoPerfil: ''
-        }
-      }
-    },
     watch: {
-      userData: {
-        handler(newData) {
-          if (newData) {
-            this.formData = { ...this.formData, ...newData };
-          }
-        },
-        immediate: true,
-        deep: true
-      },
       isOpen(newVal) {
         if (newVal) {
           document.body.style.overflow = 'hidden';
@@ -168,13 +212,16 @@
         if (file) {
           const reader = new FileReader();
           reader.onload = (e) => {
-            this.formData.fotoPerfil = e.target.result;
+            this.$emit('update:userData', { 
+              ...this.userData, 
+              fotoPerfil: e.target.result 
+            });
           };
           reader.readAsDataURL(file);
         }
       },
       salvarDados() {
-        this.$emit('save', this.formData);
+        this.$emit('save', this.userData);
         this.closeModal();
       }
     },
@@ -185,13 +232,47 @@
   </script>
   
   <style scoped>
-  .modal-fade-enter-active,
-  .modal-fade-leave-active {
+  .modal-fade-enter-active {
     transition: opacity 0.3s ease;
+  }
+  
+  .modal-fade-leave-active {
+    transition: opacity 0.2s ease;
   }
   
   .modal-fade-enter-from,
   .modal-fade-leave-to {
     opacity: 0;
   }
+  
+  .modal-fade-enter-active .modal-content {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  .modal-fade-leave-active .modal-content {
+    animation: slideDown 0.2s ease-in;
+  }
+  
+  @keyframes slideUp {
+    from {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideDown {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+  }
   </style>
+  
