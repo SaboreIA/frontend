@@ -8,8 +8,8 @@
         :class="[
           'px-4 py-2 rounded-full text-sm font-medium transition duration-150 border-2',
           tipoSelecionado === 'Todos'
-            ? 'bg-yellow-600 border-yellow-700 text-white shadow-md' // Ativo
-            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50', // Inativo
+            ? 'bg-yellow-600 border-yellow-700 text-white shadow-md' 
+            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50', 
         ]"
       >
         Todos
@@ -22,8 +22,8 @@
         :class="[
           'px-4 py-2 rounded-full text-sm font-medium transition duration-150 border-2',
           tipoSelecionado === tipo
-            ? 'bg-yellow-600 text-white border-yellow-700 shadow-md' // Ativo
-            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50', // Inativo
+            ? 'bg-yellow-600 text-white border-yellow-700 shadow-md' 
+            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50', 
         ]"
       >
         {{ tipo }}
