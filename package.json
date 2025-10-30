@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^2.0.1",
+    "@heroicons/vue": "^2.2.0",
     "axios": "^1.12.2",
     "pinia": "^3.0.3",
     "vue": "^3.5.22",
