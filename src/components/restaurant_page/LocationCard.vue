@@ -98,7 +98,8 @@ const mapLink = computed(() => {
 const getCoord = async () => {
     if (!restaurant.value || !restaurant.value.address) return null;
 
-    
+    const apiKey = 'SUA_CHAVE_API';
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(endereco)}&key=${apiKey}`;
 }
 
 async function initMap() {
