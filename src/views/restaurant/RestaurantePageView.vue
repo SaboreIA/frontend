@@ -162,36 +162,6 @@ const calculatedRatings = computed(() => {
     };
 });
 
-const mockHoursData = [
-  { label: "Segunda", hours: "11:00 - 22:00" },
-  { label: "Terça", hours: "11:00 - 22:00" },
-  { label: "Quarta", hours: "Fechado" },
-  { label: "Quinta", hours: "11:00 - 23:00" },
-  { label: "Sexta", hours: "11:00 - 00:00" },
-  { label: "Sábado", hours: "12:00 - 00:00" },
-  { label: "Domingo", hours: "12:00 - 21:00" },
-];
-
-const galleryThumbnails = [
-  "https://blog.duogourmet.com.br/wp-content/uploads/2019/07/37-Duo-Gourmet-sushi.jpg",
-  "https://djapa.com.br/wp-content/uploads/2022/01/melhor-restaurante-japones-de-sao-paulo.jpg",
-  "https://www.construtoradubai.com.br/wp-content/uploads/2021/05/restaurante-japones-em-osasco-os-7-melhores.jpg",
-];
-
-const restaurantStatus = computed(() => {
-  const isActive = restaurante.value.isActive;
-  return {
-    text: isActive ? "ABERTO" : "FECHADO",
-    color: isActive ? "text-green-600" : "text-red-600",
-  };
-});
-
-const restaurantContactInfo = computed(() => ({
-  number: restaurante.value.phoneNumber || null,
-  site: restaurante.value.site ? `http://${restaurante.value.site}` : null,
-  menu: "https://seumenu.com.br/sabor-oriental",
-  mail: "sabororiental@contato.com",
-}));
 
 const carregarRestaurante = async (id) => {
   if (!id) return;
@@ -201,7 +171,7 @@ const carregarRestaurante = async (id) => {
   restaurante.value = {id: null, address: {}};
 
   try {
-    const url = `http://localhost:5000/api/Restaurants/${id}`;
+    const url = `http://localhost:5001/api/Restaurants/${id}`;
     const response = await axios.get(url);
 
     restaurante.value = response.data;

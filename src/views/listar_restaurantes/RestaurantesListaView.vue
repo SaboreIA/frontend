@@ -15,6 +15,9 @@
           v-for="restaurante in restaurantes" 
           :key="restaurante.id"
           :restaurante="restaurante"
+          :average-rating="getAverageRating(restaurante.id)"
+          :total-reviews="getTotalReviews(restaurante.id)"
+          @review-submitted="handleReviewSubmitted"
         />
       </div>
 
@@ -32,42 +35,72 @@ import RestauranteCard from '../../components/HomeView/DestaqueContent_Cards.vue
 
 const restaurantes = ref([]);
 const loading = ref(true);
+const reviews = ref({});
+
+const API_BASE = 'http://localhost:5001/api';
 
 const fetchRestaurants = async () => {
   loading.value = true;
   try {
-    const urlBase = 'http://localhost:5000/api/Restaurants'; 
+    const response = await axios.get(`${API_BASE}/Restaurants`, {
+      params: { pageNumber: 1, pageSize: 10 }
+    });
     
-    const response = await axios.get(urlBase, {
-      params: {
-        pageNumber: 1,
-        pageSize: 10 
-      }
-    }); 
-    
-    if (response.data && response.data.items) {
-      restaurantes.value = response.data.items; 
-    } 
-    else if (response.data && response.data.data) {
-        restaurantes.value = response.data.data;
-    }
-    else if (Array.isArray(response.data)) {
-        restaurantes.value = response.data;
+    if (response.data?.items) {
+      restaurantes.value = response.data.items;
+    } else if (Array.isArray(response.data)) {
+      restaurantes.value = response.data;
+    } else if (response.data?.data) {
+      restaurantes.value = response.data.data;
     } else {
-        console.error("Formato de resposta da API de paginação não reconhecido:", response.data);
-        restaurantes.value = [];
+      console.error('Formato de resposta da API de restaurantes não reconhecido:', response.data);
     }
 
-    console.log("Restaurantes carregados para teste:", restaurantes.value);
+    for (const r of restaurantes.value) {
+      await fetchReviewsForRestaurant(r.id);
+    }
 
   } catch (error) {
     console.error('Erro ao buscar a lista de restaurantes:', error);
-    restaurantes.value = []; 
+    restaurantes.value = [];
   } finally {
     loading.value = false;
   }
 };
 
-onMounted(fetchRestaurants);
+const fetchReviewsForRestaurant = async (restaurantId) => {
+  try {
+    const response = await axios.get(`${API_BASE}/Review/restaurant/${restaurantId}`);
+    const items = response.data?.items || [];
 
+    if (items.length === 0) {
+      reviews.value[restaurantId] = { averageRating: 0, totalReviews: 0 };
+      return;
+    }
+
+    const avg = items.reduce((sum, r) => sum + (r.avgRating || 0), 0) / items.length;
+
+    reviews.value[restaurantId] = {
+      averageRating: avg,
+      totalReviews: items.length
+    };
+
+  } catch (error) {
+    console.error(`Erro ao buscar avaliações do restaurante ${restaurantId}:`, error);
+    reviews.value[restaurantId] = { averageRating: 0, totalReviews: 0 };
+  }
+};
+
+const getAverageRating = (restaurantId) =>
+  reviews.value[restaurantId]?.averageRating || 0;
+
+const getTotalReviews = (restaurantId) =>
+  reviews.value[restaurantId]?.totalReviews || 0;
+
+const handleReviewSubmitted = async (restaurantId) => {
+  console.log(`Nova avaliação enviada para o restaurante ${restaurantId}. Recarregando dados...`);
+  await fetchReviewsForRestaurant(restaurantId);
+};
+
+onMounted(fetchRestaurants);
 </script>

@@ -85,7 +85,7 @@ const props = defineProps({
     type: [String, Date],
     required: true,
   },
-  // Dados do Comentário
+
   rating: {
     type: Number,
     required: true,

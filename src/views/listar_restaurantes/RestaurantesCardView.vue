@@ -58,14 +58,11 @@ const props = defineProps({
 
 const router = useRouter();
 
-/**
- * Função responsável por construir o link e redirecionar
- */
 const handleClick = () => {
   const restaurantId = props.restaurante.id;
 
   router.push({
-    name: 'restaurante-detalhe', // Nome da sua rota no router.js
+    name: 'restaurante-detalhe',
     params: { id: restaurantId } 
   });
 };
