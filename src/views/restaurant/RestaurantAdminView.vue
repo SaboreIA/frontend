@@ -27,6 +27,7 @@
             <span>Voltar para o restaurante</span>
           </router-link>
           <button
+          @click="savePDF"
             class="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-amber-600 text-white text-sm font-semibold shadow hover:bg-amber-700 transition"
           >
             <ArrowDownTrayIcon class="w-5 h-5" />
@@ -290,6 +291,7 @@
 <script setup>
 import { computed } from "vue";
 import { useRoute } from "vue-router";
+import { generateRestaurantReport } from "../../utils/jspdf.js";
 import { Chart, registerables } from "chart.js";
 import { Line, Bar, Doughnut } from "vue-chartjs";
 import {
@@ -310,6 +312,32 @@ const summaryIconMap = {
   comments: ChatBubbleLeftRightIcon,
   favorites: UsersIcon,
 };
+
+function savePDF() {
+  const report = generateRestaurantReport({
+    restaurantName: activeAnalytics.value.name,
+    analyticsHeader: analyticsHeader.value,
+    summaryCards: summaryCards.value,
+    commentsLineData: activeAnalytics.value.commentsLineData,
+    sources: activeAnalytics.value.sources,
+    sentiment: activeAnalytics.value.sentiment,
+    quickInsights: quickInsights.value,
+    topCustomers: topCustomers.value,
+  });
+
+  const rawTitle = analyticsHeader.value.title ?? "relatorio";
+  const normalizedTitle = rawTitle
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9\s_-]/g, "")
+    .trim()
+    .replace(/\s+/g, "_")
+    .toLowerCase();
+
+  const today = new Date().toISOString().slice(0, 10);
+  const fileName = `${normalizedTitle || "relatorio"}_${today}.pdf`;
+  report.save(fileName);
+}
 
 const getSummaryIcon = (iconKey) => summaryIconMap[iconKey] ?? ChartBarIcon;
 const getTrendIcon = (delta) =>
