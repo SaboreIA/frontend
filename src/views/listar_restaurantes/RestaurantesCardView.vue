@@ -58,12 +58,11 @@ const props = defineProps({
 
 const router = useRouter();
 
-
 const handleClick = () => {
   const restaurantId = props.restaurante.id;
 
   router.push({
-    name: 'restaurante-detalhe', 
+    name: 'restaurante-detalhe',
     params: { id: restaurantId } 
   });
 };

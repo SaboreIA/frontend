@@ -1,29 +1,44 @@
 <template>
   <div class="mt-12">
-    
     <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b border-gray-200 pb-2">
       Avaliações dos Clientes
     </h2>
     
-    <div v-if="comments.length > 0">
-      <CommentsCard 
+    <div v-if="loading" class="text-center py-10 text-gray-500">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600 mx-auto mb-3"></div>
+      Carregando avaliações...
+    </div>
+
+    <div v-else-if="error" class="text-center py-10 text-red-600 bg-red-50 rounded-lg">
+      Não foi possível carregar as avaliações.
+    </div>
+
+    <div v-else-if="allComments.length > 0">
+      <CommentCard 
         v-for="c in visibleComments" 
         :key="c.id" 
-        :comment="c" 
-        :restaurantIconUrl="restaurantIconUrl"
-        :restaurantName="restaurantName"
+        :commentId="c.id" 
+        :authorName="c.authorName"
+        :avatarUrl="c.avatarUrl"
+        :timestamp="c.timestamp"
+        :rating="c.avgRating"
+        :content="c.content"
+        :likes="c.likes"
+        :imageUrl="c.imageUrl"
+        :categories="c.categories"
+        @toggleLike="handleToggleLike"
       />
-      
+
       <div v-if="hasMoreComments" class="mt-8 text-center">
         <button 
           @click="loadMoreComments"
           class="px-6 py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-200 transition-colors"
         >
-          Carregar Mais Avaliações ({{ comments.length - visibleComments.length }} restantes)
+          Carregar Mais Avaliações ({{ allComments.length - visibleComments.length }} restantes)
         </button>
       </div>
-      
     </div>
+
     <div v-else class="text-gray-500 italic p-4 border rounded-lg">
       Nenhuma avaliação encontrada para este restaurante. Seja o primeiro a avaliar!
     </div>
@@ -31,106 +46,103 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import CommentsCard from './CommentsCard.vue'; 
-
-const COMMENTS_PER_LOAD = 3;
-const commentsToShow = ref(COMMENTS_PER_LOAD);
+import { ref, computed, defineProps, watch } from 'vue';
+import axios from 'axios';
+import CommentCard from './CommentsCard.vue';
 
 const props = defineProps({
-    restaurantName: {
-        type: String,
-        default: 'Restaurante Desconhecido'
-    },
-    restaurantIconUrl: {
-        type: String,
-        default: '' 
-    }
+  restaurantId: {
+    type: [String, Number],
+    required: true,
+  },
+  restaurantName: {
+    type: String,
+    default: 'Restaurante Desconhecido'
+  },
+  restaurantIconUrl: {
+    type: String,
+    default: '' 
+  }
 });
 
+const API_BASE_URL = 'http://localhost:5001/api'; 
+const COMMENTS_PER_LOAD = 3;
 
-const comments = ref([
-  {
-    id: 101,
-    authorName: 'Jason Bourn',
-    content: 'Achei o fartitos melhor',
-    timestamp: new Date('2025-10-02T10:00:00').getTime(),
-    avatarUrl: 'https://avatars.githubusercontent.com/u/110035910?v=4',
-    likes: 5,
-    rating: 4, 
-    imageUrl: 'https://www.estadao.com.br/resizer/v2/7QUA26CFRBGCVI6IEGF77EQAL4.jpg?quality=80&auth=78ed2b1edb567949608499d79fe2dd43aa8e6a0997b4350b3ffadbb6a5356df0&width=720&height=410&focal=2031,1508', 
+const allComments = ref([]);
+const loading = ref(true);
+const error = ref(false);
+const commentsToShow = ref(COMMENTS_PER_LOAD);
 
-    categories: [
-        { name: 'Sabor', rating: 2 }, 
-        { name: 'Atendimento', rating: 3 },
-        { name: 'Ambiente', rating: 3 },
-        { name: 'Preço', rating: 3 },
-    ],
-  },
-  {
-    id: 102,
-    authorName: 'Kurauchi the Hashira',
-    content: 'Os sushis são impecáveis! O lugar é tranquilo e perfeito para um jantar a dois. Recomendo o combinado especial.',
-    timestamp: new Date('2025-10-05T15:30:00').getTime(),
-    avatarUrl: 'https://ae01.alicdn.com/kf/S6907414bd92f47b4b8608c4b776e159aJ.jpg',
-    likes: 8,
-    rating: 5,
-    imageUrl: '', 
+const getMockPhoto = (userId) => {
+  const imgIndex = (userId || 1) % 50; 
+  return `https://i.pravatar.cc/150?img=${imgIndex}`;
+};
 
-    categories: [
-        { name: 'Sabor', rating: 5 }, 
-        { name: 'Atendimento', rating: 5 },
-        { name: 'Ambiente', rating: 4 },
-        { name: 'Preço', rating: 4 },
-    ],
-  },
+const fetchComments = async (id) => {
+  loading.value = true;
+  error.value = false;
+  allComments.value = [];
+  commentsToShow.value = COMMENTS_PER_LOAD;
 
-  {
-    id: 103,
-    authorName: 'Max Verstappen',
-    content: 'A experiência foi razoável. O ambiente é bom, mas o serviço foi um pouco lento.',
-    timestamp: new Date('2025-10-15T12:00:00').getTime(),
-    avatarUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/52/2024-08-25_Motorsport%2C_Formel_1%2C_Gro%C3%9Fer_Preis_der_Niederlande_2024_STP_3973_by_Stepro_%28medium_crop%29.jpg',
-    likes: 3,
-    rating: 3,
-    imageUrl: '',
+  if (!id) {
+    loading.value = false;
+    return;
+  }
 
-    categories: [
-        { name: 'Sabor', rating: 3 }, 
-        { name: 'Atendimento', rating: 2 },
-        { name: 'Ambiente', rating: 4 },
-        { name: 'Preço', rating: 3 },
-    ],
-  },
+  try {
+    const url = `${API_BASE_URL}/Review/restaurant/${id}`;
+    const response = await axios.get(url);
 
-  {
-    id: 104,
-    authorName: 'Solid Snake',
-    content: 'Comida excelente e pratos muito bem apresentados. Uma joia escondida na cidade!',
-    timestamp: new Date('2025-10-20T19:00:00').getTime(),
-    avatarUrl: 'https://preview.redd.it/kb7acy2tmha41.jpg?width=1080&crop=smart&auto=webp&s=f1eb58821bccae8082b4413959869cdec7afea24',
-    likes: 15,
-    rating: 5,
-    imageUrl: '',
+    const items = response.data?.items || [];
 
-    categories: [
-        { name: 'Sabor', rating: 5 }, 
-        { name: 'Atendimento', rating: 5 },
-        { name: 'Ambiente', rating: 5 },
-        { name: 'Preço', rating: 4 },
-    ],
-  },
-]);
+    allComments.value = items.map(comment => ({
+      id: comment.id,
+      authorName: comment.userName || 'Usuário Desconhecido',
+      content: comment.comment || 'Sem conteúdo de comentário.',
+      timestamp: new Date(comment.createdAt).getTime(),
+      avgRating: comment.avgRating || 3,
+
+      avatarUrl: getMockPhoto(comment.userId),
+      likes: Math.floor(Math.random() * 20),
+      imageUrl: null,
+
+      categories: [
+        { name: 'Sabor', rating: comment.rating1 || 0 },
+        { name: 'Atendimento', rating: comment.rating2 || 0 },
+        { name: 'Ambiente', rating: comment.rating3 || 0 },
+        { name: 'Preço', rating: comment.rating4 || 0 },
+      ]
+    }));
+
+  } catch (e) {
+    console.error(`Falha ao buscar avaliações para o restaurante ${id}:`, e);
+    error.value = true;
+  } finally {
+    loading.value = false;
+  }
+};
 
 const visibleComments = computed(() => {
-  return comments.value.slice(0, commentsToShow.value);
+  return allComments.value.slice(0, commentsToShow.value);
 });
 
 const hasMoreComments = computed(() => {
-  return commentsToShow.value < comments.value.length;
+  return commentsToShow.value < allComments.value.length;
 });
 
 const loadMoreComments = () => {
   commentsToShow.value += COMMENTS_PER_LOAD;
 };
+
+const handleToggleLike = (commentId) => {
+  console.log(`[CommentsSection] Like toggled for comment ID: ${commentId}`);
+  const comment = allComments.value.find(c => c.id === commentId);
+  if (comment) {
+    comment.likes += 1;
+  }
+};
+
+watch(() => props.restaurantId, (newId) => {
+  fetchComments(newId);
+}, { immediate: true });
 </script>

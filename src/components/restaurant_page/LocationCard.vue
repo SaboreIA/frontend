@@ -1,33 +1,25 @@
 <template>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
     
-    <div v-if="loading" class="md:col-span-2 text-center py-4 text-gray-500">
-      Carregando endereço...
-    </div>
-    <div v-else-if="error" class="md:col-span-2 text-center py-4 text-red-600">
-      Falha ao carregar endereço.
-    </div>
-
-    <template v-else-if="restaurant && restaurant.address">
+    <template v-if="address && address.street">
       
       <div 
-        ref="mapContainerRef"
         :id="MAP_ID" 
         class="bg-gray-200 h-40 flex items-center justify-center rounded-lg shadow-inner"
       >
-        <span v-if="!mapInitialized" class="text-lg font-bold text-gray-600">VER MAPA</span>
+        <span v-if="!mapInitialized" class="text-lg font-bold text-gray-600">Carregando Mapa...</span>
       </div>
       
       <div>
         <h3 class="text-lg font-semibold text-gray-800 mb-2">Localização</h3>
         
         <p class="text-gray-600 whitespace-pre-line">
-          {{ restaurant.address.street }}, {{ restaurant.address.number }}
-          <span v-if="restaurant.address.complement">({{ restaurant.address.complement }})</span>
+          {{ address.street }}, {{ address.number }}
+          <span v-if="address.complement">({{ address.complement }})</span>
         </p>
         <p class="text-gray-600 whitespace-pre-line">
-          {{ restaurant.address.city }} - {{ restaurant.address.state }},
-          {{ restaurant.address.zipCode }}
+          {{ address.city }} - {{ address.state }},
+          {{ address.zipCode }}
         </p>
         
         <a :href="mapLink" target="_blank" class="mt-2 inline-block text-yellow-600 hover:text-yellow-700 text-sm font-medium transition">
@@ -37,30 +29,29 @@
       
     </template>
     <div v-else class="md:col-span-2 text-center py-4 text-gray-500">
-        Endereço não disponível.
+      Endereço não disponível.
     </div>
   </div>
 </template>
 
 <script setup>
-
-import { ref, defineProps, computed, watch } from "vue";
-import api from "../../api/api"; 
+import { ref, defineProps, computed, watch, onMounted } from "vue";
 
 const MAP_ID = "mapContainer";
 
 const props = defineProps({
-    restaurantId: {
-        type: [String, Number],
-        required: true 
+    address: {
+        type: Object,
+        required: true,
+        default: () => ({ street: null, number: null, city: null, state: null, zipCode: null, complement: null })
+    },
+    restaurantName: {
+        type: String,
+        default: 'Local'
     }
 });
 
-const restaurant = ref(null);
-const loading = ref(true);
-const error = ref(false);
 const mapInitialized = ref(false);
-
 let map; 
 
 const fetchRestaurant = async (id) => {
@@ -84,11 +75,12 @@ const fetchRestaurant = async (id) => {
     }
 };
 
+let geocoder;
 
 const mapLink = computed(() => {
-    if (!restaurant.value || !restaurant.value.address) return '#';
+    if (!props.address || !props.address.street) return '#';
 
-    const addr = restaurant.value.address;
+    const addr = props.address;
     const addressString = `${addr.street} ${addr.number}, ${addr.city} - ${addr.state}`;
     
     const baseUrl = `https://www.google.com/maps/dir/?api=1&destination=`;
@@ -103,49 +95,48 @@ const getCoord = async () => {
 }
 
 async function initMap() {
-    if (mapInitialized.value || !window.google || !window.google.maps) return; 
+    if (mapInitialized.value || !window.google || !window.google.maps || !props.address.street) return; 
 
-    try {
-        const { Map, Geocoder } = window.google.maps;
-        
-        const Marker = window.google.maps.Marker; 
-        
-        const geocoder = new Geocoder();
-
-        const fullAddress = `${restaurant.value.address.street} ${restaurant.value.address.number}, ${restaurant.value.address.city} - ${restaurant.value.address.state}`;
-
-        geocoder.geocode({ address: fullAddress }, (results, status) => {
-            if (status === 'OK' && results && results[0]) {
-                const position = results[0].geometry.location;
-                
-                map = new Map(document.getElementById(MAP_ID), {
-                    center: position,
-                    zoom: 15,
-                    mapId: "DEMO_MAP_ID" 
-                });
-
-                new Marker({
-                    position: position,
-                    map: map, 
-                    title: restaurant.value.name
-                });
-                
-                mapInitialized.value = true;
-            } else {
-                console.error("Geocodificação falhou devido a: " + status);
-            }
-        });
-
-    } catch (e) {
-        console.error("Falha ao carregar o Google Maps SDK ou Geocoder:", e);
-        error.value = true;
+    const { Map, Geocoder, Marker } = window.google.maps;
+    
+    if (!geocoder) {
+        geocoder = new Geocoder();
     }
+
+    const fullAddress = `${props.address.street} ${props.address.number}, ${props.address.city} - ${props.address.state}`;
+
+    geocoder.geocode({ address: fullAddress }, (results, status) => {
+        if (status === 'OK' && results && results[0]) {
+            const position = results[0].geometry.location;
+            
+            map = new Map(document.getElementById(MAP_ID), {
+                center: position,
+                zoom: 15,
+                mapId: "DEMO_MAP_ID"
+            });
+
+            new Marker({
+                position: position,
+                map: map, 
+                title: props.restaurantName
+            });
+            
+            mapInitialized.value = true;
+        } else {
+            console.error("Geocodificação falhou. Status: " + status);
+        }
+    });
 }
 
-
-watch(() => props.restaurantId, (newId) => {
-    if (newId) {
-        fetchRestaurant(newId);
+watch(() => props.address.street, (newStreet) => {
+    if (newStreet) {
+        setTimeout(initMap, 100); 
     }
-}, { immediate: true }); 
+}, { immediate: true });
+
+onMounted(() => {
+    if (props.address.street) {
+        initMap();
+    }
+});
 </script>

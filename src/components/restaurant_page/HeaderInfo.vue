@@ -5,15 +5,15 @@
   <div v-else class="flex flex-wrap justify-between items-center gap-4 mb-4">
     <div>
       <h1 class="text-4xl font-extrabold text-gray-800">
-        {{ displayName }}
+        {{ name || displayName }}
       </h1>
     </div>
     <div class="flex items-center space-x-2 mt-1">
       <span class="text-lg font-bold text-yellow-600">{{
-        displayRating ?? "N/A"
+        displayRating || "N/A"
       }}</span>
       <span class="text-md text-gray-500"
-        >({{ displayReviews }} Avaliações)</span
+        >({{ displayReviews || 0 }} Avaliações)</span
       >
     </div>
     <div class="flex items-center gap-3">
@@ -26,6 +26,7 @@
       </router-link>
       <button
         @click="$emit('toggleSave')"
+        aria-label="Salvar restaurante"
         class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition duration-150 border-2 border-amber-600"
         :class="
           isSaved
@@ -51,14 +52,24 @@ import {
 import { BookmarkIcon as BookmarkSolidIcon } from "@heroicons/vue/24/solid";
 
 const props = defineProps({
-  restaurantId: {
-    type: [String, Number],
-    required: true,
-  },
-  isSaved: {
-    type: Boolean,
-    default: false,
-  },
+
+    name: {
+        type: String,
+        required: true,
+    },
+    rating: {
+        type: [Number, String],
+        default: '4.5',
+    },
+    nReviews: {
+        type: [Number, String],
+        default: '120',
+    },
+
+    isSaved: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const restaurant = ref(null);
