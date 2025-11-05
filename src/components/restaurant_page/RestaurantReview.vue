@@ -70,6 +70,20 @@
         </div>
 
         <div>
+          <label for="review-title" class="block text-gray-700 font-medium mb-2"
+            >Título da Avaliação</label
+          >
+          <input
+            type="text"
+            id="review-title"
+            v-model="formData.review_title"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+            placeholder="Ex: 'Comida excelente e serviço impecável!'"
+            required
+          />
+        </div>
+
+        <div>
           <label for="review-text" class="block text-gray-700 font-medium mb-2"
             >Comentário Final (Review)</label
           >
@@ -141,26 +155,26 @@ const RatingGroup = {
   props: ["label", "name", "rating"],
   emits: ["update:rating"],
   template: `
-    <div class="rating-group flex justify-between items-center">
-      <label class="text-gray-700 font-medium">{{ label }}</label>
-      
-      <div class="flex space-x-2 rating-input-container"> 
-        <div v-for="i in 5" :key="i" class="flex items-center">
-          <input 
-            type="radio" 
-            :id="name + '-' + (6 - i)" 
-            :name="name + '-rating'" 
-            :value="6 - i" 
-            :checked="rating === (6 - i)"
-            @change="$emit('update:rating', 6 - i)"
-            class="rating-input peer" 
-            required 
-          />
-          <label :for="name + '-' + (6 - i)" class="rating-label">{{ 6 - i }}</label>
-        </div>
-      </div>
-    </div>
-  `,
+    <div class="rating-group flex justify-between items-center">
+      <label class="text-gray-700 font-medium">{{ label }}</label>
+      
+      <div class="flex space-x-2 rating-input-container"> 
+        <div v-for="i in 5" :key="i" class="flex items-center">
+          <input 
+            type="radio" 
+            :id="name + '-' + (6 - i)" 
+            :name="name + '-rating'" 
+            :value="6 - i" 
+            :checked="rating === (6 - i)"
+            @change="$emit('update:rating', 6 - i)"
+            class="rating-input peer" 
+            required 
+          />
+          <label :for="name + '-' + (6 - i)" class="rating-label">{{ 6 - i }}</label>
+        </div>
+      </div>
+    </div>
+  `,
 };
 
 const props = defineProps({
@@ -168,10 +182,16 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  
   restaurantNameProp: {
     type: String,
     default: "Restaurante Desconhecido",
   },
+  restaurantIdProp: { 
+    type: Number, 
+    required: true
+  },
+
   userName: {
     type: String,
     default: "Avaliador Exemplo",
@@ -179,6 +199,10 @@ const props = defineProps({
   userPhoto: {
     type: String,
     default: "https://i.pravatar.cc/150?img=47",
+  },
+  userIdProp: { 
+    type: Number, 
+    required: true
   },
 });
 
@@ -190,13 +214,14 @@ const defaultFormData = {
   restaurante: props.restaurantNameProp,
   user_name: props.userName,
   user_photo: props.userPhoto,
-  review_text: "",
+  review_title: "", 
+  review_text: "", 
   image_url: null,
   ratings: {
-    comida: null,
-    ambiente: null,
-    atendimento: null,
-    precos: null,
+    comida: null, 
+    ambiente: null, 
+    atendimento: null, 
+    precos: null, 
   },
 };
 
@@ -217,39 +242,67 @@ function handleFileUpload(event) {
   if (file) {
     fileName.value = file.name;
     formData.image_url =
-      "https://images.unsplash.com/photo-1517248135460-49c7d41f71a0?q=80&w=1740&auto=format&fit=crop";
+      "https://images.unsplash.com/photo-1517248135460-49c7d41f71a0?q=80&w=1740&auto=format&fit=crop"; // URL mockada
   } else {
     fileName.value = null;
     formData.image_url = null;
   }
 }
 
-function submitReview() {
-  emit("update:modelValue", false);
+function calculateAvgRating(ratings) {
+  const validRatings = Object.values(ratings)
+    .filter(rating => typeof rating === 'number' && rating >= 1 && rating <= 5);
 
-  const submittedData = {
-    ...JSON.parse(JSON.stringify(formData)),
-    restaurante: props.restaurantNameProp,
-    date: new Date().toISOString(),
+  if (validRatings.length === 0) {
+    return null; 
+  }
+
+  const sum = validRatings.reduce((acc, current) => acc + current, 0);
+  const avg = Math.round(sum / validRatings.length);
+  return avg;
+}
+
+function submitReview() {
+  const avgRating = calculateAvgRating(formData.ratings);
+  
+  const mappedRatings = {
+    rating1: formData.ratings.comida,
+    rating2: formData.ratings.ambiente,
+    rating3: formData.ratings.atendimento,
+    rating4: formData.ratings.precos,
   };
 
+  const submittedData = {
+    title: formData.review_title, 
+    comment: formData.review_text, 
+    imageUrl: formData.image_url, 
+    
+    ...mappedRatings, 
+    avgRating: avgRating, 
+
+    userId: props.userIdProp,
+    restaurantId: props.restaurantIdProp,
+    userName: props.userName,
+    
+    createdAt: new Date().toISOString(), 
+  };
+  
+  emit("update:modelValue", false);
   emit("reviewSubmitted", submittedData);
 
-  console.log("Avaliação enviada (emitida para o pai):", submittedData);
+  console.log("Avaliação enviada (dados processados):", submittedData);
 
   resetForm();
 }
 
 function resetForm() {
-  Object.keys(initialFormData).forEach((key) => {
-    if (key !== "user_name" && key !== "user_photo" && key !== "restaurante") {
-      formData[key] = initialFormData[key];
-    }
-  });
-
-  formData.restaurante = props.restaurantNameProp;
-  formData.user_name = props.userName;
-  formData.user_photo = props.userPhoto;
+  formData.review_title = "";
+  formData.review_text = "";
+  formData.image_url = null;
+  formData.ratings.comida = null;
+  formData.ratings.ambiente = null;
+  formData.ratings.atendimento = null;
+  formData.ratings.precos = null;
 
   fileName.value = null;
   const fileInput = document.getElementById("image-upload");
@@ -262,14 +315,12 @@ watch(
     formData.restaurante = newVal;
   }
 );
-
 watch(
   () => props.userName,
   (newVal) => {
     formData.user_name = newVal;
   }
 );
-
 watch(
   () => props.userPhoto,
   (newVal) => {
