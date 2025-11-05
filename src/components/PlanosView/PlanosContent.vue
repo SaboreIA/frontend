@@ -139,5 +139,4 @@
 </script>
 
 <style scoped>
-/**Estilos específicos podem ser adicionados aqui se necessário */
 </style>

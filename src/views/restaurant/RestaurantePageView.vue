@@ -17,7 +17,7 @@
       class="mt-4 mb-8"
     />
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
       
       <div class="lg:col-span-2">
         

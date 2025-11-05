@@ -53,6 +53,28 @@ const props = defineProps({
 
 const mapInitialized = ref(false);
 let map; 
+
+const fetchRestaurant = async (id) => {
+    loading.value = true;
+    error.value = false;
+    restaurant.value = null; 
+    mapInitialized.value = false;
+
+    try {
+        const response = await api.get(`/restaurants/11`);
+        restaurant.value = response.data; 
+        
+        if (restaurant.value && restaurant.value.address) {
+            await initMap();
+        }
+    } catch (e) {
+        console.error("Falha ao buscar restaurante:", e);
+        error.value = true;
+    } finally {
+        loading.value = false;
+    }
+};
+
 let geocoder;
 
 const mapLink = computed(() => {
@@ -64,6 +86,13 @@ const mapLink = computed(() => {
     const baseUrl = `https://www.google.com/maps/dir/?api=1&destination=`;
     return `${baseUrl}${encodeURIComponent(addressString)}`;
 });
+
+const getCoord = async () => {
+    if (!restaurant.value || !restaurant.value.address) return null;
+
+    const apiKey = 'SUA_CHAVE_API';
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(endereco)}&key=${apiKey}`;
+}
 
 async function initMap() {
     if (mapInitialized.value || !window.google || !window.google.maps || !props.address.street) return; 

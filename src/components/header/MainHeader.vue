@@ -2,22 +2,23 @@
   <header class="fixed top-0 left-0 w-full bg-white shadow-md z-50">
     <div class="container mx-auto px-4 py-3 flex items-center justify-between">
 
+
       <div class="flex items-center">
         <router-link to="/">
           <img src="../icons/logo.png" alt="logo_SaborIA" class="w-12 h-12 object-contain">
         </router-link>
       </div>
 
+
       <nav class="hidden md:flex space-x-6">
         
         <router-link to="/" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Início</router-link>
         <router-link to="/restaurantes" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Restaurantes</router-link>
-        <router-link to="/sobre" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Sobre</router-link>
-                
-        <a href="#destaques" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Destaques</a>
+        <router-link to="/sobre" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Sobre</router-link>         
         <router-link to="/planos"class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Planos</router-link>
         <router-link to="/contato" class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150">Contato</router-link>
       </nav>
+
 
       <div class="flex items-center space-x-4">
         
@@ -34,9 +35,10 @@
           <span class="ml-2 hidden sm:inline">Login</span>
         </router-link>
         
-        <router-link v-else to="/login" class="p-2 rounded-full text-yellow-600 hover:bg-gray-100 transition duration-150">
+        <button v-else @click="abrirModalEdicao" class="p-2 rounded-full text-yellow-600 hover:bg-gray-100 transition duration-150">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        </router-link>
+        </button>
+
 
         <button 
           @click="simulateToggle" 
@@ -80,20 +82,40 @@
         
       </div>
     </div>
+
+    <UserModal 
+      :isOpen="mostrarModal" 
+      :userData="dadosUsuario"
+      @close="fecharModal"
+      @save="salvarDadosUsuario"
+    />
   </header>
   
   <div class="pt-16"></div>
 </template>
 
+
 <script>
+import UserModal from '../userModal/UserModal.vue';
+
 export default {
-// ... seu script permanece o mesmo ...
   name: 'MainHeader',
+  components: {
+    UserModal
+  },
   data() {
     return {
       usuarioLogado: true,
       nomeUsuario: 'Visitante',
-      isDarkModeSimulated: false, 
+      isDarkModeSimulated: false,
+      mostrarModal: false,
+      dadosUsuario: {
+        nome: 'Visitante',
+        email: 'visitante@exemplo.com',
+        telefone: '(11) 98765-4321',
+        endereco: 'Rua Exemplo, 123',
+        fotoPerfil: ''
+      }
     }
   },
   methods: {
@@ -101,18 +123,27 @@ export default {
       this.isDarkModeSimulated = !this.isDarkModeSimulated;
       console.log('Animação de Dark Mode ativada:', this.isDarkModeSimulated);
     },
-    
+    abrirModalEdicao() {
+      this.mostrarModal = true;
+    },
+    fecharModal() {
+      this.mostrarModal = false;
+    },
+    salvarDadosUsuario(novosDados) {
+      this.dadosUsuario = { ...this.dadosUsuario, ...novosDados };
+      console.log('Dados atualizados:', this.dadosUsuario);
+      alert('Dados salvos com sucesso!');
+    }
   }
 }
 </script>
 
+
 <style scoped>
 .router-link-active, .nav-link:focus, .nav-link:active {
   font-weight: bold;
-  /* Aplica o destaque também aos links de âncora */
-  color: #CA8A04; /* Tailwind: text-amber-700 */
+  color: #CA8A04; 
 }
-/* Estilo básico para os links de âncora */
 .nav-link {
     cursor: pointer;
     text-decoration: none;
