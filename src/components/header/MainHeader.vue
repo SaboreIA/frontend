@@ -1,35 +1,14 @@
 <template>
   <header class="fixed top-0 left-0 w-full bg-white shadow-md z-50">
-    <div
-      class="container mx-auto px-4 py-3 flex items-center justify-between"
-      :class="{ 'flex-wrap gap-4': isSearchVariant }"
-    >
+    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center">
         <router-link to="/">
           <img src="../icons/logo.png" alt="logo_SaborIA" class="w-12 h-12 object-contain">
         </router-link>
       </div>
 
-      <div v-if="isSearchVariant" class="hidden md:flex flex-1 mx-4 max-w-lg">
-        <div class="relative w-full">
-          <input
-            type="text"
-            v-model="searchTerm"
-            @keyup.enter="performSearch"
-            placeholder="Pesquisar restaurantes, pratos ou culinária..."
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-yellow-600 transition duration-150"
-          />
-          <button
-            @click="performSearch"
-            class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-yellow-600"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-          </button>
-        </div>
-      </div>
-
       <nav
-        v-if="showDesktopNav && !isSearchVariant"
+        v-if="showDesktopNav"
         class="hidden md:flex space-x-6"
       >
         <router-link
@@ -44,36 +23,30 @@
       </nav>
 
       <div class="flex items-center space-x-3">
-        <template v-if="isSearchVariant">
-          <button
-            @click="toggleMobileSearch"
-            class="md:hidden p-2 rounded-full text-gray-700 hover:bg-gray-100 transition duration-150"
-          >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-          </button>
-
-          <button
-            @click="toggleMobileNav"
-            class="md:hidden p-2 rounded-full text-gray-700 hover:bg-gray-100 transition duration-150"
-          >
-            <svg
-              v-if="!isNavOpen"
-              class="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            ><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-            <svg
-              v-else
-              class="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            ><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-          </button>
-        </template>
+        <button
+          v-if="showMenuToggle"
+          @click="toggleMobileNav"
+          class="md:hidden p-2 rounded-full text-gray-700 hover:bg-gray-100 transition duration-150"
+          :aria-expanded="isNavOpen.toString()"
+          aria-controls="mobile-nav"
+        >
+          <svg
+            v-if="!isNavOpen"
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          ><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+          <svg
+            v-else
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          ><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
 
         <span v-if="showUserGreeting" class="text-sm text-gray-700 hidden lg:inline">
           Olá, {{ nomeUsuario }}
@@ -151,44 +124,16 @@
     </div>
 
     <div
-      v-if="isSearchVariant"
-      :class="{
-        'max-h-0 opacity-0': !isMobileSearchOpen && !isNavOpen && isScreenSmall,
-        'max-h-screen opacity-100': isMobileSearchOpen || isNavOpen || !isScreenSmall
-      }"
-      class="bg-white border-t border-gray-200 transition-all duration-300 ease-in-out overflow-hidden md:flex md:justify-center md:items-center py-2"
+      v-if="showMobileNav"
+      id="mobile-nav"
+      class="md:hidden bg-white border-t border-gray-200"
     >
-      <div v-if="isMobileSearchOpen" class="px-4 w-full md:hidden">
-        <div class="relative w-full">
-          <input
-            type="text"
-            v-model="searchTerm"
-            @keyup.enter="performSearch"
-            placeholder="Pesquisar..."
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:border-yellow-600"
-          />
-          <button
-            @click="performSearch"
-            class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-yellow-600"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-          </button>
-        </div>
-      </div>
-
-      <nav
-        :class="{
-          'block px-4 pt-2 pb-4': isNavOpen,
-          'hidden md:flex md:space-x-6': !isNavOpen && !isMobileSearchOpen && isScreenSmall,
-          'flex': !isScreenSmall
-        }"
-        class="flex-wrap justify-center space-x-0 md:space-x-6 w-full max-w-5xl"
-      >
+      <nav class="flex flex-col px-4 py-4 space-y-2">
         <router-link
           v-for="item in navItems"
           :key="`mobile-${item.label}`"
           :to="item.to"
-          class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150 block md:inline-block py-2 md:py-0"
+          class="nav-link text-gray-700 hover:text-yellow-600 transition duration-150"
           @click="handleMobileNavClick(item, $event)"
         >
           {{ item.label }}
@@ -208,7 +153,6 @@
 
 
 <script>
-import axios from 'axios';
 import UserModal from '../userModal/UserModal.vue';
 
 export default {
@@ -235,11 +179,7 @@ export default {
         endereco: 'Rua Exemplo, 123',
         fotoPerfil: ''
       },
-      searchTerm: '',
-      isMobileSearchOpen: false,
       isNavOpen: false,
-      isScreenSmall: false,
-      hasResizeListener: false,
       navItems: [
         { label: 'Início', to: '/' },
         { label: 'Restaurantes', to: '/restaurantes' },
@@ -250,9 +190,6 @@ export default {
     };
   },
   computed: {
-    isSearchVariant() {
-      return this.variant === 'search';
-    },
     isMinimalVariant() {
       return this.variant === 'minimal';
     },
@@ -267,48 +204,23 @@ export default {
     },
     showUserActions() {
       return !this.isMinimalVariant && !this.isDashboardVariant;
+    },
+    showMenuToggle() {
+      return this.showDesktopNav;
+    },
+    showMobileNav() {
+      return this.showMenuToggle && this.isNavOpen;
     }
   },
   watch: {
-    variant: {
-      immediate: true,
-      handler(newVariant) {
-        if (newVariant === 'search') {
-          this.enableSearchMode();
-        } else {
-          this.disableSearchMode();
-        }
-      }
-    }
-  },
-  mounted() {
-    if (this.isSearchVariant) {
-      this.enableSearchMode();
-    }
-  },
-  beforeUnmount() {
-    this.disableSearchMode();
-  },
-  methods: {
-    enableSearchMode() {
-      if (this.hasResizeListener) {
-        return;
-      }
-      this.updateScreenSize();
-      window.addEventListener('resize', this.updateScreenSize);
-      this.hasResizeListener = true;
-    },
-    disableSearchMode() {
-      if (this.hasResizeListener) {
-        window.removeEventListener('resize', this.updateScreenSize);
-        this.hasResizeListener = false;
-      }
-      this.isMobileSearchOpen = false;
+    variant() {
       this.isNavOpen = false;
     },
-    updateScreenSize() {
-      this.isScreenSmall = window.innerWidth < 768;
-    },
+    '$route.path'() {
+      this.isNavOpen = false;
+    }
+  },
+  methods: {
     simulateToggle() {
       this.isDarkModeSimulated = !this.isDarkModeSimulated;
       console.log('Animação de Dark Mode ativada:', this.isDarkModeSimulated);
@@ -324,44 +236,11 @@ export default {
       console.log('Dados atualizados:', this.dadosUsuario);
       alert('Dados salvos com sucesso!');
     },
-    toggleMobileSearch() {
-      this.isMobileSearchOpen = !this.isMobileSearchOpen;
-      if (this.isMobileSearchOpen) {
-        this.isNavOpen = false;
-      }
-    },
     toggleMobileNav() {
-      this.isNavOpen = !this.isNavOpen;
-      if (this.isNavOpen) {
-        this.isMobileSearchOpen = false;
-      }
-    },
-    performSearch() {
-      if (!this.searchTerm.trim()) {
-        console.log('O campo de pesquisa está vazio.');
+      if (!this.showMenuToggle) {
         return;
       }
-
-      console.log('Termo de pesquisa:', this.searchTerm);
-
-      axios
-        .get('/api/search', {
-          params: {
-            q: this.searchTerm
-          }
-        })
-        .then((response) => {
-          console.log('Resultados da pesquisa:', response.data);
-        })
-        .catch((error) => {
-          console.error('Erro na pesquisa:', error);
-        })
-        .finally(() => {
-          if (this.isScreenSmall) {
-            this.isMobileSearchOpen = false;
-            this.isNavOpen = false;
-          }
-        });
+      this.isNavOpen = !this.isNavOpen;
     },
     handleNavClick(item, event) {
       if (item.scrollTarget && this.$route.path === '/') {
@@ -372,7 +251,6 @@ export default {
     handleMobileNavClick(item, event) {
       this.handleNavClick(item, event);
       this.isNavOpen = false;
-      this.isMobileSearchOpen = false;
     },
     scrollToSection(sectionId) {
       if (this.$route.path !== '/') {

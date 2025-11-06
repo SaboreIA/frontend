@@ -36,18 +36,10 @@ export default {
         return 'minimal';
       }
 
-      if (meta.searchHeader) {
-        return 'search';
-      }
-
       return 'default';
     },
 
     paddingClass() {
-      if (this.headerVariant === 'search') {
-        return 'pt-32 md:pt-36';
-      }
-
       if (this.headerVariant === 'dashboard' || this.headerVariant === 'minimal') {
         return 'pt-20 md:pt-24';
       }

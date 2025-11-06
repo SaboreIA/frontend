@@ -19,9 +19,6 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
-      meta: {
-        searchHeader: false,
-      },
     },
     {
       path: "/sobre",
@@ -33,29 +30,18 @@ const router = createRouter({
       path: "/restaurantes",
       name: "restaurantes-lista",
       component: RestaurantesListaView,
-
-      meta: {
-        searchHeader: true,
-      },
     },
 
     {
       path: "/restaurantes/:id",
       name: "restaurante-detalhe",
       component: RestaurantePageView,
-
-      meta: {
-        searchHeader: true,
-      },
     },
 
     {
       path: "/restaurantes/:id/admin",
       name: "restaurante-admin",
       component: RestaurantAdminView,
-      meta: {
-        searchHeader: false,
-      },
     },
 
     {
