@@ -63,17 +63,11 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: LoginView,
-      meta: {
-        requiresMinimalHeader: true,
-      },
     },
     {
       path: "/cadastro",
       name: "cadastro",
       component: CadastroView,
-      meta: {
-        requiresMinimalHeader: true,
-      },
     },
 
     {

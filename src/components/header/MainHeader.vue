@@ -52,34 +52,20 @@
           Olá, {{ nomeUsuario }}
         </span>
 
-        <template v-if="showUserActions">
-          <router-link
-            v-if="!usuarioLogado"
-            to="/login"
-            class="flex items-center p-2 rounded-full bg-yellow-600 text-white hover:bg-yellow-700 transition duration-150"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3v-1m18-6v-1a3 3 0 00-3-3h-4"></path></svg>
-            <span class="ml-2 hidden sm:inline">Login</span>
-          </router-link>
-
-          <button
-            v-else
-            @click="abrirModalEdicao"
-            class="p-2 rounded-full text-yellow-600 hover:bg-gray-100 transition duration-150"
-            title="Editar perfil"
-          >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          </button>
-        </template>
-
         <router-link
-          v-else-if="isDashboardVariant"
           to="/login"
-          class="p-2 rounded-full text-amber-600 hover:bg-gray-100 transition duration-150"
-          title="Meu Perfil"
+          class="inline-flex items-center px-4 py-2 rounded-full bg-yellow-600 font-semibold text-sm md:text-base shadow-sm hover:bg-yellow-700 transition-colors duration-150 text-white"
+        >
+          Login
+        </router-link>
+
+        <button
+          @click="abrirModalEdicao"
+          class="p-2 rounded-full text-yellow-600 hover:bg-gray-100 transition duration-150"
+          title="Editar perfil"
         >
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        </router-link>
+      </button>
 
         <button
           @click="simulateToggle"
@@ -137,6 +123,15 @@
           @click="handleMobileNavClick(item, $event)"
         >
           {{ item.label }}
+        </router-link>
+
+        <router-link
+          v-if="shouldShowLoginButton"
+          to="/login"
+          class="mt-4 inline-flex items-center justify-center px-4 py-2 rounded-full bg-yellow-600 text-white font-semibold text-base shadow-sm hover:bg-yellow-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-yellow-600 transition-colors duration-150"
+          @click="isNavOpen = false"
+        >
+          Login
         </router-link>
       </nav>
     </div>
@@ -210,6 +205,10 @@ export default {
     },
     showMobileNav() {
       return this.showMenuToggle && this.isNavOpen;
+    },
+    shouldShowLoginButton() {
+      return true;
+      return !this.usuarioLogado && !this.isMinimalVariant && !this.isDashboardVariant;
     }
   },
   watch: {
@@ -271,10 +270,6 @@ export default {
 
 
 <style scoped>
-.router-link-active, .nav-link:focus, .nav-link:active {
-  font-weight: bold;
-  color: #CA8A04;
-}
 .nav-link {
   cursor: pointer;
   text-decoration: none;

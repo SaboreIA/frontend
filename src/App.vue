@@ -51,17 +51,13 @@ export default {
 </script>
 
 <style>
-/* Estilos globais */
+
 #app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Garante que o contêiner principal ocupa toda a altura da tela */
+  min-height: 100vh; 
 }
 
-/* Adicionei a classe flex-grow no router-view no template 
-  para garantir que o conteúdo da página empurre o footer para baixo 
-  quando o conteúdo da página for pequeno.
-*/
 .flex-grow {
   flex-grow: 1;
 }
