@@ -45,10 +45,14 @@ export default {
 
     paddingClass() {
       if (this.headerVariant === 'search') {
-        return 'pt-24 md:pt-28';
+        return 'pt-32 md:pt-36';
       }
 
-      return 'pt-16';
+      if (this.headerVariant === 'dashboard' || this.headerVariant === 'minimal') {
+        return 'pt-20 md:pt-24';
+      }
+
+      return 'pt-24 md:pt-28';
     }
   }
 }
