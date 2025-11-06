@@ -1,10 +1,7 @@
 <template>
   <div id="app" class="min-h-screen bg-white">
     
-    <component 
-      :is="currentHeaderComponent" 
-      v-if="currentHeaderComponent" 
-    />
+    <MainHeader :variant="headerVariant" />
     <div :class="[paddingClass]"></div>
 
     <router-view class="flex-grow mb-20" />
@@ -15,9 +12,6 @@
 
 <script>
 import MainHeader from '@/components/header/MainHeader.vue';
-import SearchHeader from '@/components/header/SearchHeader.vue';
-import HeaderLogin from '@/components/header/HeaderLogin.vue';
-import HeaderPainelControle from '@/components/header/HeaderPainelControle.vue';
 import ChatBot from '@/components/chatbot/ChatBot.vue'; 
 
 
@@ -27,40 +21,34 @@ export default {
   name: 'App',
   components: {
     MainHeader,
-    SearchHeader,
-    HeaderLogin,
-    HeaderPainelControle,
     FooterComponent,
     ChatBot 
   },
   computed: {
-    currentHeaderComponent() {
-      const meta = this.$route.meta;
+    headerVariant() {
+      const meta = this.$route.meta || {};
 
       if (meta.requiresDashboardHeader) {
-        return 'HeaderPainelControle';
+        return 'dashboard';
       }
 
       if (meta.requiresMinimalHeader) {
-        return 'HeaderLogin';
+        return 'minimal';
       }
 
       if (meta.searchHeader) {
-        return 'SearchHeader';
+        return 'search';
       }
 
-      return 'MainHeader';
+      return 'default';
     },
 
     paddingClass() {
-      const meta = this.$route.meta;
-      const currentHeader = this.currentHeaderComponent;
-
-      if (currentHeader === 'SearchHeader') {
-        return 'pt-32'; 
+      if (this.headerVariant === 'search') {
+        return 'pt-24 md:pt-28';
       }
 
-      return 'pt-16'; 
+      return 'pt-16';
     }
   }
 }
