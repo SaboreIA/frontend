@@ -1,106 +1,95 @@
 <template>
-  <div class="max-w-[1450px] mx-auto p-4 sm:p-6 lg:p-8 bg-white -mt-28">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Restaurantes</h1>
+  <div class="max-w-[1450px] mx-auto p-6">
+    <CategoryFilter
+      :categories="categories"
+      :selected="selectedCategory"
+      @filter="applyFilter"
+    />
 
-    <div v-if="loading" class="text-center p-10 text-blue-500">
-      <p class="text-xl">Carregando lista de restaurantes da API...</p>
+    <div v-if="loading" class="text-center p-10 text-amber-600">
+      Carregando restaurantes...
     </div>
 
-    <div v-else>
-      <div
-        v-if="restaurantes.length > 0"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-      >
-        <RestauranteCard
-          v-for="restaurante in restaurantes" 
-          :key="restaurante.id"
-          :restaurante="restaurante"
-          :average-rating="getAverageRating(restaurante.id)"
-          :total-reviews="getTotalReviews(restaurante.id)"
-          @review-submitted="handleReviewSubmitted"
-        />
-      </div>
+    <div
+      v-else
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8"
+    >
+      <RestauranteCard
+        v-for="r in filteredRestaurants"
+        :key="r.id"
+        :restaurante="r"
+        :average-rating="reviews[r.id]?.averageRating"
+        :categories="categories"
+      />
+    </div>
 
-      <div v-else class="text-center py-10 text-gray-500 text-lg">
-        Nenhum restaurante carregado da API.
-      </div>
+    <div
+      v-if="!loading && filteredRestaurants.length === 0"
+      class="text-center py-10 text-gray-500 text-lg"
+    >
+      Nenhum restaurante encontrado nesta categoria.
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
-import RestauranteCard from '../../components/HomeView/DestaqueContent_Cards.vue'; 
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
+import CategoryFilter from '@/components/filter/CategoryFilter.vue'
+import RestauranteCard from '@/components/HomeView/DestaqueContent_Cards.vue'
 
-const restaurantes = ref([]);
-const loading = ref(true);
-const reviews = ref({});
+const restaurantes = ref([])
+const reviews = ref({})
+const loading = ref(true)
+const selectedCategory = ref(null)
 
-const API_BASE = 'http://localhost:5001/api';
+const API_BASE = 'http://localhost:5001/api'
+
+// Categorias definidas manualmente
+const categories = ref([
+  { id: 1, name: 'Japonesa', icon: 'FireIcon' },
+  { id: 2, name: 'Italiana', icon: 'StarIcon' },
+  { id: 3, name: 'Hamburgueria', icon: 'TagIcon' },
+  { id: 4, name: 'Pizzaria', icon: 'BookmarkIcon' },
+  { id: 5, name: 'Cafeteria', icon: 'CalendarDaysIcon' },
+])
 
 const fetchRestaurants = async () => {
-  loading.value = true;
+  loading.value = true
   try {
-    const response = await axios.get(`${API_BASE}/Restaurants`, {
-      params: { pageNumber: 1, pageSize: 10 }
-    });
-    
-    if (response.data?.items) {
-      restaurantes.value = response.data.items;
-    } else if (Array.isArray(response.data)) {
-      restaurantes.value = response.data;
-    } else if (response.data?.data) {
-      restaurantes.value = response.data.data;
-    } else {
-      console.error('Formato de resposta da API de restaurantes não reconhecido:', response.data);
-    }
-
-    for (const r of restaurantes.value) {
-      await fetchReviewsForRestaurant(r.id);
-    }
-
+    const { data } = await axios.get(`${API_BASE}/Restaurants`, {
+      params: { pageNumber: 1, pageSize: 10 },
+    })
+    restaurantes.value = data.items || data.data || data || []
+    for (const r of restaurantes.value) await fetchReviewsForRestaurant(r.id)
   } catch (error) {
-    console.error('Erro ao buscar a lista de restaurantes:', error);
-    restaurantes.value = [];
+    console.error('Erro ao carregar restaurantes:', error)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const fetchReviewsForRestaurant = async (restaurantId) => {
   try {
-    const response = await axios.get(`${API_BASE}/Review/restaurant/${restaurantId}`);
-    const items = response.data?.items || [];
-
-    if (items.length === 0) {
-      reviews.value[restaurantId] = { averageRating: 0, totalReviews: 0 };
-      return;
-    }
-
-    const avg = items.reduce((sum, r) => sum + (r.avgRating || 0), 0) / items.length;
-
-    reviews.value[restaurantId] = {
-      averageRating: avg,
-      totalReviews: items.length
-    };
-
-  } catch (error) {
-    console.error(`Erro ao buscar avaliações do restaurante ${restaurantId}:`, error);
-    reviews.value[restaurantId] = { averageRating: 0, totalReviews: 0 };
+    const { data } = await axios.get(`${API_BASE}/Review/restaurant/${restaurantId}`)
+    const items = data.items || []
+    const avg = items.length > 0 ? items.reduce((s, r) => s + (r.avgRating || 0), 0) / items.length : 0
+    reviews.value[restaurantId] = { averageRating: avg, totalReviews: items.length }
+  } catch {
+    reviews.value[restaurantId] = { averageRating: 0, totalReviews: 0 }
   }
-};
+}
 
-const getAverageRating = (restaurantId) =>
-  reviews.value[restaurantId]?.averageRating || 0;
+function applyFilter(id) {
+  selectedCategory.value = selectedCategory.value === id ? null : id
+}
 
-const getTotalReviews = (restaurantId) =>
-  reviews.value[restaurantId]?.totalReviews || 0;
+const filteredRestaurants = computed(() => {
+  if (!selectedCategory.value) return restaurantes.value
+  return restaurantes.value.filter(r =>
+    Array.isArray(r.categoryIds) && r.categoryIds.includes(selectedCategory.value)
+  )
+})
 
-const handleReviewSubmitted = async (restaurantId) => {
-  console.log(`Nova avaliação enviada para o restaurante ${restaurantId}. Recarregando dados...`);
-  await fetchReviewsForRestaurant(restaurantId);
-};
-
-onMounted(fetchRestaurants);
+onMounted(fetchRestaurants)
 </script>
