@@ -68,24 +68,26 @@
       </button>
 
         <button
-          @click="simulateToggle"
+          @click="toggleTheme"
+          :aria-label="isDarkModeEnabled ? 'Ativar modo claro' : 'Ativar modo escuro'"
           :class="[
             'relative inline-flex flex-shrink-0 h-7 w-14 border-2 rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none',
-            isDarkModeSimulated ? 'bg-gray-700 border-gray-700' : 'bg-gray-200 border-gray-200'
+            isDarkModeEnabled ? 'bg-gray-700 border-gray-700' : 'bg-gray-200 border-gray-200'
           ]"
-          :aria-checked="isDarkModeSimulated.toString()"
+          :aria-checked="isDarkModeEnabled.toString()"
+          role="switch"
         >
           <span class="sr-only">Toggle dark mode</span>
           <span
             :class="[
               'pointer-events-none relative inline-block h-6 w-6 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200',
-              isDarkModeSimulated ? 'translate-x-7' : 'translate-x-0'
+              isDarkModeEnabled ? 'translate-x-7' : 'translate-x-0'
             ]"
           >
             <span
               :class="[
                 'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity ease-in-out duration-200',
-                isDarkModeSimulated ? 'opacity-0 ease-out duration-100' : 'opacity-100 ease-in duration-200'
+                isDarkModeEnabled ? 'opacity-0 ease-out duration-100' : 'opacity-100 ease-in duration-200'
               ]"
               aria-hidden="true"
             >
@@ -96,7 +98,7 @@
             <span
               :class="[
                 'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity ease-in-out duration-200',
-                isDarkModeSimulated ? 'opacity-100 ease-in duration-200' : 'opacity-0 ease-out duration-100'
+                isDarkModeEnabled ? 'opacity-100 ease-in duration-200' : 'opacity-0 ease-out duration-100'
               ]"
               aria-hidden="true"
             >
@@ -165,7 +167,9 @@ export default {
     return {
       usuarioLogado: true,
       nomeUsuario: 'Visitante',
-      isDarkModeSimulated: false,
+      isDarkModeEnabled: false,
+      isUserThemeOverride: false,
+      themeMediaQuery: null,
       mostrarModal: false,
       dadosUsuario: {
         nome: 'Visitante',
@@ -219,10 +223,73 @@ export default {
       this.isNavOpen = false;
     }
   },
+  mounted() {
+    this.initializeTheme();
+  },
+  beforeUnmount() {
+    if (this.themeMediaQuery?.removeEventListener) {
+      this.themeMediaQuery.removeEventListener('change', this.handleSystemThemeChange);
+    } else if (this.themeMediaQuery?.removeListener) {
+      this.themeMediaQuery.removeListener(this.handleSystemThemeChange);
+    }
+  },
   methods: {
-    simulateToggle() {
-      this.isDarkModeSimulated = !this.isDarkModeSimulated;
-      console.log('Animação de Dark Mode ativada:', this.isDarkModeSimulated);
+    toggleTheme() {
+      this.applyTheme(!this.isDarkModeEnabled);
+    },
+    initializeTheme() {
+      if (typeof window === 'undefined' || typeof document === 'undefined') {
+        return;
+      }
+
+      let storedTheme = null;
+      try {
+        storedTheme = localStorage.getItem('theme');
+      } catch (error) {
+        storedTheme = null;
+      }
+
+      if (storedTheme === 'dark' || storedTheme === 'light') {
+        this.isUserThemeOverride = true;
+        this.applyTheme(storedTheme === 'dark', false);
+      } else {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        this.applyTheme(prefersDark, false);
+      }
+
+      this.themeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      if (this.themeMediaQuery?.addEventListener) {
+        this.themeMediaQuery.addEventListener('change', this.handleSystemThemeChange);
+      } else if (this.themeMediaQuery?.addListener) {
+        this.themeMediaQuery.addListener(this.handleSystemThemeChange);
+      }
+    },
+    handleSystemThemeChange(event) {
+      if (this.isUserThemeOverride) {
+        return;
+      }
+      this.applyTheme(event.matches, false);
+    },
+    applyTheme(enableDarkMode, persist = true) {
+      if (typeof document === 'undefined') {
+        this.isDarkModeEnabled = enableDarkMode;
+        return;
+      }
+
+      this.isDarkModeEnabled = enableDarkMode;
+      const root = document.documentElement;
+      root.classList.toggle('dark', enableDarkMode);
+      root.setAttribute('data-theme', enableDarkMode ? 'dark' : 'light');
+      root.style.colorScheme = enableDarkMode ? 'dark' : 'light';
+
+      if (persist) {
+        this.isUserThemeOverride = true;
+        try {
+          localStorage.setItem('theme', enableDarkMode ? 'dark' : 'light');
+        } catch (error) {
+          // Ignore storage errors (e.g., private mode)
+        }
+      }
     },
     abrirModalEdicao() {
       this.mostrarModal = true;
