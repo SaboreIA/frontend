@@ -170,6 +170,7 @@ export default {
       isDarkModeEnabled: false,
       isUserThemeOverride: false,
       themeMediaQuery: null,
+  themeTransitionTimeout: null,
       mostrarModal: false,
       dadosUsuario: {
         nome: 'Visitante',
@@ -235,7 +236,7 @@ export default {
   },
   methods: {
     toggleTheme() {
-      this.applyTheme(!this.isDarkModeEnabled);
+      this.applyTheme(!this.isDarkModeEnabled, true, true);
     },
     initializeTheme() {
       if (typeof window === 'undefined' || typeof document === 'undefined') {
@@ -251,10 +252,10 @@ export default {
 
       if (storedTheme === 'dark' || storedTheme === 'light') {
         this.isUserThemeOverride = true;
-        this.applyTheme(storedTheme === 'dark', false);
+        this.applyTheme(storedTheme === 'dark', false, false);
       } else {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        this.applyTheme(prefersDark, false);
+        this.applyTheme(prefersDark, false, false);
       }
 
       this.themeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -268,9 +269,9 @@ export default {
       if (this.isUserThemeOverride) {
         return;
       }
-      this.applyTheme(event.matches, false);
+      this.applyTheme(event.matches, false, true);
     },
-    applyTheme(enableDarkMode, persist = true) {
+    applyTheme(enableDarkMode, persist = true, withTransition = false) {
       if (typeof document === 'undefined') {
         this.isDarkModeEnabled = enableDarkMode;
         return;
@@ -278,6 +279,19 @@ export default {
 
       this.isDarkModeEnabled = enableDarkMode;
       const root = document.documentElement;
+
+      if (withTransition) {
+        if (this.themeTransitionTimeout) {
+          clearTimeout(this.themeTransitionTimeout);
+          this.themeTransitionTimeout = null;
+        }
+        root.classList.add('theme-transition');
+        this.themeTransitionTimeout = window.setTimeout(() => {
+          root.classList.remove('theme-transition');
+          this.themeTransitionTimeout = null;
+        }, 400);
+      }
+
       root.classList.toggle('dark', enableDarkMode);
       root.setAttribute('data-theme', enableDarkMode ? 'dark' : 'light');
       root.style.colorScheme = enableDarkMode ? 'dark' : 'light';
@@ -288,6 +302,10 @@ export default {
           localStorage.setItem('theme', enableDarkMode ? 'dark' : 'light');
         } catch (error) {
           // Ignore storage errors (e.g., private mode)
+    if (this.themeTransitionTimeout) {
+      clearTimeout(this.themeTransitionTimeout);
+      this.themeTransitionTimeout = null;
+    }
         }
       }
     },
