@@ -9,7 +9,7 @@
       <div v-for="(thumb, index) in allThumbnails" :key="index"
         @click="currentMainImage = thumb" 
         :class="['rounded-lg overflow-hidden shadow-md cursor-pointer transition duration-150 hover:opacity-90 relative', 
-                 { 'ring-2 ring-indigo-500 ring-offset-2': currentMainImage === thumb }
+                 { 'ring-2 ring-yellow-600 ring-offset-2': currentMainImage === thumb }
         ]">
         <img :src="thumb" :alt="`Miniatura ${index + 1}`"
           class="w-full h-full object-cover transition duration-300 hover:scale-[1.05]" />

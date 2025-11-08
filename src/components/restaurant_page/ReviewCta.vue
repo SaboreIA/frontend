@@ -20,7 +20,7 @@
 
     <span 
       class="text-sm font-medium text-gray-600 hover:text-yellow-600 cursor-pointer transition"
-      @click="$emit('viewReviews')"
+      @click="$emit('scrollToComments')"
     >
       Veja os comentários
     </span>
@@ -48,7 +48,7 @@ const props = defineProps({
   totalReviews: { type: Number, default: 0 }
 });
 
-const emit = defineEmits(['requestReview', 'viewReviews']);
+const emit = defineEmits(['requestReview', 'scrollToComments']);
 
 const hasReviews = computed(() => props.totalReviews > 0);
 </script>

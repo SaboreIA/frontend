@@ -57,67 +57,41 @@ const searchTerm = ref('');
 const API_BASE = 'http://localhost:5001/api';
 
 const fetchRestaurants = async () => {
-  loading.value = true;
+  loading.value = true
   try {
-    const response = await axios.get(`${API_BASE}/Restaurants`, {
-      params: { pageNumber: 1, pageSize: 10 }
-    });
-    
-    if (response.data?.items) {
-      restaurantes.value = response.data.items;
-    } else if (Array.isArray(response.data)) {
-      restaurantes.value = response.data;
-    } else if (response.data?.data) {
-      restaurantes.value = response.data.data;
-    } else {
-      console.error('Formato de resposta da API de restaurantes não reconhecido:', response.data);
-    }
-
-    for (const r of restaurantes.value) {
-      await fetchReviewsForRestaurant(r.id);
-    }
-
+    const { data } = await axios.get(`${API_BASE}/Restaurants`, {
+      params: { pageNumber: 1, pageSize: 10 },
+    })
+    restaurantes.value = data.items || data.data || data || []
+    for (const r of restaurantes.value) await fetchReviewsForRestaurant(r.id)
   } catch (error) {
-    console.error('Erro ao buscar a lista de restaurantes:', error);
-    restaurantes.value = [];
+    console.error('Erro ao carregar restaurantes:', error)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const fetchReviewsForRestaurant = async (restaurantId) => {
   try {
-    const response = await axios.get(`${API_BASE}/Review/restaurant/${restaurantId}`);
-    const items = response.data?.items || [];
-
-    if (items.length === 0) {
-      reviews.value[restaurantId] = { averageRating: 0, totalReviews: 0 };
-      return;
-    }
-
-    const avg = items.reduce((sum, r) => sum + (r.avgRating || 0), 0) / items.length;
-
-    reviews.value[restaurantId] = {
-      averageRating: avg,
-      totalReviews: items.length
-    };
-
-  } catch (error) {
-    console.error(`Erro ao buscar avaliações do restaurante ${restaurantId}:`, error);
-    reviews.value[restaurantId] = { averageRating: 0, totalReviews: 0 };
+    const { data } = await axios.get(`${API_BASE}/Review/restaurant/${restaurantId}`)
+    const items = data.items || []
+    const avg = items.length > 0 ? items.reduce((s, r) => s + (r.avgRating || 0), 0) / items.length : 0
+    reviews.value[restaurantId] = { averageRating: avg, totalReviews: items.length }
+  } catch {
+    reviews.value[restaurantId] = { averageRating: 0, totalReviews: 0 }
   }
-};
+}
 
-const getAverageRating = (restaurantId) =>
-  reviews.value[restaurantId]?.averageRating || 0;
+function applyFilter(id) {
+  selectedCategory.value = selectedCategory.value === id ? null : id
+}
 
-const getTotalReviews = (restaurantId) =>
-  reviews.value[restaurantId]?.totalReviews || 0;
-
-const handleReviewSubmitted = async (restaurantId) => {
-  console.log(`Nova avaliação enviada para o restaurante ${restaurantId}. Recarregando dados...`);
-  await fetchReviewsForRestaurant(restaurantId);
-};
+const filteredRestaurants = computed(() => {
+  if (!selectedCategory.value) return restaurantes.value
+  return restaurantes.value.filter(r =>
+    Array.isArray(r.categoryIds) && r.categoryIds.includes(selectedCategory.value)
+  )
+})
 
 const filteredRestaurantes = computed(() => {
   const term = searchTerm.value.trim().toLowerCase();

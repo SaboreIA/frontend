@@ -4,17 +4,9 @@
   </div>
   <div v-else class="flex flex-wrap justify-between items-center gap-4 mb-4">
     <div>
-      <h1 class="text-4xl font-extrabold text-gray-800">
+      <h1 class="text-5xl font-extrabold text-transform: uppercase text-gray-800">
         {{ name || displayName }}
       </h1>
-    </div>
-    <div class="flex items-center space-x-2 mt-1">
-      <span class="text-lg font-bold text-yellow-600">{{
-        displayRating || "N/A"
-      }}</span>
-      <span class="text-md text-gray-500"
-        >({{ displayReviews || 0 }} Avaliações)</span
-      >
     </div>
     <div class="flex items-center gap-3">
       <router-link
@@ -96,15 +88,6 @@ const displayRating = computed(() => {
     restaurant.value?.averageRating ??
     null;
   return extractRating(rating);
-});
-
-const displayReviews = computed(() => {
-  return (
-    restaurant.value?.nReviews ??
-    restaurant.value?.reviews ??
-    restaurant.value?.totalReviews ??
-    0
-  );
 });
 
 const fetchRestaurant = async (id) => {
