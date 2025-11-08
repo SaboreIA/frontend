@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="restaurante.id"
-    class="max-w-6xl mx-auto p-4 md:p-8 bg-white shadow-xl rounded-lg -mt-20"
+    class="max-w-6xl mx-auto p-4 md:p-8 bg-white shadow-xl rounded-lg"
   >
     <HeaderInfoView
       :name="restaurante.name"

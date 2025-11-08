@@ -1,10 +1,7 @@
 <template>
   <div id="app" class="min-h-screen bg-white">
     
-    <component 
-      :is="currentHeaderComponent" 
-      v-if="currentHeaderComponent" 
-    />
+    <MainHeader :variant="headerVariant" />
     <div :class="[paddingClass]"></div>
 
     <router-view class="flex-grow mb-20" />
@@ -15,9 +12,6 @@
 
 <script>
 import MainHeader from '@/components/header/MainHeader.vue';
-import SearchHeader from '@/components/header/SearchHeader.vue';
-import HeaderLogin from '@/components/header/HeaderLogin.vue';
-import HeaderPainelControle from '@/components/header/HeaderPainelControle.vue';
 import ChatBot from '@/components/chatbot/ChatBot.vue'; 
 
 
@@ -27,57 +21,43 @@ export default {
   name: 'App',
   components: {
     MainHeader,
-    SearchHeader,
-    HeaderLogin,
-    HeaderPainelControle,
     FooterComponent,
     ChatBot 
   },
   computed: {
-    currentHeaderComponent() {
-      const meta = this.$route.meta;
+    headerVariant() {
+      const meta = this.$route.meta || {};
 
       if (meta.requiresDashboardHeader) {
-        return 'HeaderPainelControle';
+        return 'dashboard';
       }
 
       if (meta.requiresMinimalHeader) {
-        return 'HeaderLogin';
+        return 'minimal';
       }
 
-      if (meta.searchHeader) {
-        return 'SearchHeader';
-      }
-
-      return 'MainHeader';
+      return 'default';
     },
 
     paddingClass() {
-      const meta = this.$route.meta;
-      const currentHeader = this.currentHeaderComponent;
-
-      if (currentHeader === 'SearchHeader') {
-        return 'pt-32'; 
+      if (this.headerVariant === 'dashboard' || this.headerVariant === 'minimal') {
+        return 'pt-20 md:pt-24';
       }
 
-      return 'pt-16'; 
+      return 'pt-24 md:pt-28';
     }
   }
 }
 </script>
 
 <style>
-/* Estilos globais */
+
 #app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Garante que o contêiner principal ocupa toda a altura da tela */
+  min-height: 100vh; 
 }
 
-/* Adicionei a classe flex-grow no router-view no template 
-  para garantir que o conteúdo da página empurre o footer para baixo 
-  quando o conteúdo da página for pequeno.
-*/
 .flex-grow {
   flex-grow: 1;
 }

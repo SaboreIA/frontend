@@ -1,58 +1,60 @@
 <template>
-  <div class="max-w-[1450px] mx-auto p-6">
-    <CategoryFilter
-      :categories="categories"
-      :selected="selectedCategory"
-      @filter="applyFilter"
-    />
-
-    <div v-if="loading" class="text-center p-10 text-amber-600">
-      Carregando restaurantes...
-    </div>
-
-    <div
-      v-else
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8"
-    >
-      <RestauranteCard
-        v-for="r in filteredRestaurants"
-        :key="r.id"
-        :restaurante="r"
-        :average-rating="reviews[r.id]?.averageRating"
-        :categories="categories"
+  <div>
+    <div class="w-full flex justify-center px-4 sm:px-6 lg:px-8 pt-6">
+      <RestaurantSearchBar
+        v-model="searchTerm"
+        @search="handleSearchTerm"
+        @clear="handleSearchClear"
+        @results="handleSearchResults"
       />
     </div>
 
-    <div
-      v-if="!loading && filteredRestaurants.length === 0"
-      class="text-center py-10 text-gray-500 text-lg"
-    >
-      Nenhum restaurante encontrado nesta categoria.
+    <div class="max-w-[1450px] mx-auto p-4 sm:p-6 lg:p-8 bg-white mt-6">
+      <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Restaurantes</h1>
+
+      <div v-if="loading" class="text-center p-10 text-blue-500">
+        <p class="text-xl">Carregando lista de restaurantes da API...</p>
+      </div>
+
+      <div v-else>
+        <div
+          v-if="filteredRestaurantes.length > 0"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        >
+          <RestauranteCard
+            v-for="restaurante in filteredRestaurantes"
+            :key="restaurante.id"
+            :restaurante="restaurante"
+            :average-rating="getAverageRating(restaurante.id)"
+            :total-reviews="getTotalReviews(restaurante.id)"
+            @review-submitted="handleReviewSubmitted"
+          />
+        </div>
+
+        <div v-else-if="restaurantes.length > 0" class="text-center py-10 text-gray-500 text-lg">
+          Nenhum restaurante corresponde à sua busca.
+        </div>
+
+        <div v-else class="text-center py-10 text-gray-500 text-lg">
+          Nenhum restaurante carregado da API.
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
-import CategoryFilter from '@/components/filter/CategoryFilter.vue'
-import RestauranteCard from '@/components/HomeView/DestaqueContent_Cards.vue'
+import { ref, onMounted, computed } from 'vue';
+import axios from 'axios';
+import RestauranteCard from '../../components/HomeView/DestaqueContent_Cards.vue'; 
+import RestaurantSearchBar from '@/components/restaurants/RestaurantSearchBar.vue';
 
-const restaurantes = ref([])
-const reviews = ref({})
-const loading = ref(true)
-const selectedCategory = ref(null)
+const restaurantes = ref([]);
+const loading = ref(true);
+const reviews = ref({});
+const searchTerm = ref('');
 
-const API_BASE = 'http://localhost:5001/api'
-
-// Categorias definidas manualmente
-const categories = ref([
-  { id: 1, name: 'Japonesa', icon: 'FireIcon' },
-  { id: 2, name: 'Italiana', icon: 'StarIcon' },
-  { id: 3, name: 'Hamburgueria', icon: 'TagIcon' },
-  { id: 4, name: 'Pizzaria', icon: 'BookmarkIcon' },
-  { id: 5, name: 'Cafeteria', icon: 'CalendarDaysIcon' },
-])
+const API_BASE = 'http://localhost:5001/api';
 
 const fetchRestaurants = async () => {
   loading.value = true
@@ -91,5 +93,37 @@ const filteredRestaurants = computed(() => {
   )
 })
 
-onMounted(fetchRestaurants)
+const filteredRestaurantes = computed(() => {
+  const term = searchTerm.value.trim().toLowerCase();
+
+  if (!term) {
+    return restaurantes.value;
+  }
+
+  return restaurantes.value.filter((restaurante) => {
+    const name = (restaurante.name || restaurante.nome || '').toLowerCase();
+    const cuisine = (restaurante.cuisine || restaurante.category || restaurante.tipo || '').toLowerCase();
+    const description = (restaurante.description || '').toLowerCase();
+
+    return (
+      name.includes(term) ||
+      cuisine.includes(term) ||
+      description.includes(term)
+    );
+  });
+});
+
+const handleSearchTerm = (term) => {
+  searchTerm.value = term;
+};
+
+const handleSearchClear = () => {
+  searchTerm.value = '';
+};
+
+const handleSearchResults = (results) => {
+  console.log('Resultados da pesquisa (lista):', results);
+};
+
+onMounted(fetchRestaurants);
 </script>

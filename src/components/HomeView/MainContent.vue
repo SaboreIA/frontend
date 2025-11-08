@@ -130,7 +130,7 @@ onUnmounted(() => {
                         <input
                             type="text"
                             placeholder="Quero comer sushi hoje, o que me recomenda?"
-                            class="w-full py-3 px-4 text-gray-700 focus:outline-none placeholder-gray-500"
+                            class="w-full py-3 px-4 bg-transparent text-gray-700 focus:outline-none placeholder-gray-500"
                         />
                         <button
                             class="flex items-center justify-center bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-full transition duration-300"
