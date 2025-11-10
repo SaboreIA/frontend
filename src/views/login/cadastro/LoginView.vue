@@ -15,6 +15,10 @@
           </h2>
         </div>
       </div>
+      
+      <div v-if="errorMessage" class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm font-medium">
+         {{ errorMessage }}
+      </div>
 
       <form @submit.prevent="handleLogin" class="space-y-6">
         
@@ -65,9 +69,13 @@
         <div>
           <button
             type="submit"
-            class="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-lg text-lg font-bold text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition duration-150 transform hover:scale-[1.02]"
+            :disabled="isSubmitting"
+            :class="[
+                'w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-lg text-lg font-bold text-white transition duration-150 transform hover:scale-[1.02]',
+                isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500'
+            ]"
           >
-            ENTRAR
+            {{ isSubmitting ? 'ENTRANDO...' : 'ENTRAR' }}
           </button>
         </div>
       </form>
@@ -87,44 +95,49 @@
 
 <script>
 
+import { loginUser } from '@/api/services/authService';
+import { useAuthStore } from '@/api/stores/authStore';
+
 export default {
   name: 'LoginView',
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
+      isSubmitting: false, 
+      errorMessage: null,  
     };
   },
   methods: {
     async handleLogin() { 
+      this.errorMessage = null;
+
       if (!this.email || !this.password) {
-        alert('Por favor, preencha todos os campos.');
+        this.errorMessage = 'Por favor, preencha todos os campos.';
         return;
       }
       
-      const MOCK_EMAIL = 'teste@saboria.com';
-      const MOCK_PASSWORD = 'senhaforte';
+      this.isSubmitting = true;
 
-      if (this.email === MOCK_EMAIL && this.password === MOCK_PASSWORD) {
-        
-        const simulatedUserData = {
-            id: 99,
-            name: "Usuário Mock", 
-            email: this.email
-        };
+      try {
+        this.isSubmitting = true;
+        const userData = await loginUser(this.email, this.password);
 
-        saveUserToLocalStorage(simulatedUserData); 
-        
-        alert(`Login bem-sucedido! Bem-vindo(a), ${simulatedUserData.name}! (Simulado)`);
-        this.$router.push('/dashboard'); 
+        const authStore = useAuthStore();
+        authStore.loginSuccess(userData); 
 
-      } else {
-          alert(`Erro de Login: Credenciais inválidas (Simulado). Use "${MOCK_EMAIL}" e "${MOCK_PASSWORD}".`);
+        this.successMessage = 'Login bem-sucedido! Redirecionando...';
+        setTimeout(() => {
+         this.$router.push('/');
+        }, 1000);
+
+      } catch (error) {
+        console.error("Erro capturado no componente:", error);
+        this.errorMessage = error.message || 'Erro de conexão ou servidor. Tente novamente.';
+      } finally {
+        this.isSubmitting = false;
       }
     }
   }
 };
 </script>
-
-<style scoped>
-</style>
