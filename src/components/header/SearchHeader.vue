@@ -34,18 +34,38 @@
             <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
         
-        <router-link 
-          v-if="!usuarioLogado" 
-          to="/login"
-          class="flex items-center p-2 rounded-full bg-yellow-600 text-white hover:bg-yellow-700 transition duration-150"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3v-1m18-6v-1a3 3 0 00-3-3h-4"></path></svg>
-          <span class="ml-2 hidden sm:inline">Login</span>
-        </router-link>
-        
-        <router-link v-else to="/login" class="p-2 rounded-full text-yellow-600 hover:bg-gray-100 transition duration-150">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        </router-link>
+        <div class="flex items-center space-x-4">
+          <span v-if="authStore.isLoggedIn" class="text-sm text-gray-700 hidden lg:inline">
+              Olá, {{ authStore.isLoggedIn ? authStore.firstName : 'Visitante' }}
+          </span>
+
+          <router-link 
+            v-if="!authStore.isLoggedIn" 
+            to="/login"
+            class="flex items-center p-2 rounded-full bg-yellow-600 text-white hover:bg-yellow-700 transition duration-150"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3v-1m18-6v-1a3 3 0 00-3-3h-4"></path></svg>
+            <span class="ml-2 hidden sm:inline">Login</span>
+          </router-link>
+          
+          <router-link 
+            v-else 
+            to="/perfil" 
+            title="Ver Perfil"
+            class="p-2 rounded-full text-yellow-600 hover:bg-gray-100 transition duration-150"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </router-link>
+
+          <button
+            v-if="authStore.isLoggedIn"
+            @click="handleLogout"
+            title="Sair"
+            class="p-2 rounded-full text-red-600 hover:bg-red-100 transition duration-150"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3v-4a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+          </button>  
+        </div>
 
         <button 
           @click="simulateToggle" 
@@ -136,12 +156,11 @@
 </template>
 
 <script>
+import { useAuthStore } from '@/api/stores/authStore';
 export default {
-  name: 'MainHeader',
+  name: 'SearchHeader',
   data() {
     return {
-      usuarioLogado: true,
-      nomeUsuario: 'Visitante',
       isDarkModeSimulated: false,
       searchTerm: '', 
       isMobileSearchOpen: false, 
@@ -152,11 +171,20 @@ export default {
   mounted() {
     this.updateScreenSize();
     window.addEventListener('resize', this.updateScreenSize);
+    this.authStore.initialize();
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.updateScreenSize);
   },
   methods: {
+    handleLogout() {
+      
+      this.authStore.logout();
+      
+      if (this.$route.path !== '/') {
+          this.$router.push('/');
+      }
+    },
     updateScreenSize() {
       this.isScreenSmall = window.innerWidth < 768; 
     },

@@ -48,24 +48,41 @@
           ><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
 
-        <span v-if="showUserGreeting" class="text-sm text-gray-700 hidden lg:inline">
-          Olá, {{ nomeUsuario }}
-        </span>
+        <span v-if="authStore.isLoggedIn" class="text-sm text-gray-700 hidden lg:inline">
+            Olá, {{ authStore.isLoggedIn ? authStore.firstName : 'Visitante' }}
+          </span>
+          <span v-else class="text-sm text-gray-700 hidden lg:inline">
+            Olá, Visitante
+          </span>
 
-        <router-link
-          to="/login"
-          class="inline-flex items-center px-4 py-2 rounded-full bg-yellow-600 font-semibold text-sm md:text-base shadow-sm hover:bg-yellow-700 transition-colors duration-150 text-white"
-        >
-          Login
-        </router-link>
 
-        <button
-          @click="abrirModalEdicao"
-          class="p-2 rounded-full text-yellow-600 hover:bg-gray-100 transition duration-150"
-          title="Editar perfil"
-        >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-      </button>
+          <div class="flex items-center space-x-3">
+            <router-link
+              v-if="!authStore.isLoggedIn"
+              to="/login"
+              class="inline-flex items-center px-4 py-2 rounded-full bg-yellow-600 font-semibold text-sm md:text-base shadow-sm hover:bg-yellow-700 transition-colors duration-150 text-white"
+            >
+              Login
+            </router-link>
+
+            <button
+              v-else
+              @click="handleLogout"
+              class="inline-flex items-center px-4 py-2 rounded-full bg-yellow-600 font-semibold text-sm md:text-base shadow-sm hover:bg-red-700 transition-colors duration-150 text-white"
+            >
+              Logout
+            </button>
+            
+            <button
+              v-if="authStore.isLoggedIn"
+              @click="abrirModalEdicao"
+              class="p-2 rounded-full text-yellow-600 hover:bg-gray-100 transition duration-150"
+              title="Editar perfil"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </button>
+
+            </div>
 
         <button
           @click="toggleTheme"
@@ -151,11 +168,16 @@
 
 <script>
 import UserModal from '../userModal/UserModal.vue';
+import { useAuthStore } from '@/api/stores/authStore';
 
 export default {
   name: 'MainHeader',
   components: {
     UserModal
+  },
+  setup() {
+    const authStore = useAuthStore();
+    return { authStore }; 
   },
   props: {
     variant: {
@@ -165,8 +187,6 @@ export default {
   },
   data() {
     return {
-      usuarioLogado: true,
-      nomeUsuario: 'Visitante',
       isDarkModeEnabled: false,
       isUserThemeOverride: false,
       themeMediaQuery: null,
@@ -200,7 +220,7 @@ export default {
       return !this.isMinimalVariant && !this.isDashboardVariant;
     },
     showUserGreeting() {
-      return this.usuarioLogado && this.showUserActions;
+      return this.authStore.isLoggedIn && this.showUserActions;
     },
     showUserActions() {
       return !this.isMinimalVariant && !this.isDashboardVariant;
@@ -211,10 +231,6 @@ export default {
     showMobileNav() {
       return this.showMenuToggle && this.isNavOpen;
     },
-    shouldShowLoginButton() {
-      return true;
-      return !this.usuarioLogado && !this.isMinimalVariant && !this.isDashboardVariant;
-    }
   },
   watch: {
     variant() {
@@ -226,6 +242,7 @@ export default {
   },
   mounted() {
     this.initializeTheme();
+    this.authStore.initialize();
   },
   beforeUnmount() {
     if (this.themeMediaQuery?.removeEventListener) {
@@ -235,6 +252,14 @@ export default {
     }
   },
   methods: {
+    async handleLogout() {
+  
+      this.authStore.logout();
+      
+      if (this.$route.path !== '/') {
+          this.$router.push('/');
+      }
+    },
     toggleTheme() {
       this.applyTheme(!this.isDarkModeEnabled, true, true);
     },
@@ -301,7 +326,6 @@ export default {
         try {
           localStorage.setItem('theme', enableDarkMode ? 'dark' : 'light');
         } catch (error) {
-          // Ignore storage errors (e.g., private mode)
     if (this.themeTransitionTimeout) {
       clearTimeout(this.themeTransitionTimeout);
       this.themeTransitionTimeout = null;

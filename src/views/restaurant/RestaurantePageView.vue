@@ -38,7 +38,7 @@
 
           <RestaurantReview
             v-model:modelValue="isReviewModalOpen"
-            :restaurantNameProp="restaurante.name"
+            :restaurantName="restaurante.name" 
           />
 
           <RatingSummary
