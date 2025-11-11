@@ -1,44 +1,78 @@
 import { defineStore } from 'pinia';
+import { fetchUserProfile, updateProfile as apiUpdateProfile } from '@/api/services/profileService';
 
 export const useAuthStore = defineStore('auth', {
-  state: () => ({
-    isAuthenticated: false,
-    userName: 'Visitante',
-    userEmail: null,
-  }),
-  getters: {
-    isLoggedIn: (state) => state.isAuthenticated,
-    firstName: (state) => {
-    if (!state.userName || state.userName === 'Visitante') return 'Visitante';
+    state: () => ({
+        token: localStorage.getItem('token') || null,
+        user: JSON.parse(localStorage.getItem('user')) || null, 
+    }),
     
-    const parts = state.userName.trim().split(' ');
+    getters: {
+        isLoggedIn: (state) => !!state.token && !!state.user?.id, 
+        
+        userId: (state) => state.user?.id, 
+        
+        userName: (state) => state.user?.name || 'Visitante',
+        
+        firstName: (state) => {
+            const name = state.user?.name;
+            if (!name) return 'Visitante';
+            const parts = name.trim().split(' ');
+            return parts[0]; 
+        }
+    },
     
-    return parts[0]; 
-  }
-  },
-  actions: {
-    loginSuccess(userData) {
-    this.isAuthenticated = true;
-    
-    this.userName = userData.name || 'Usuário'; 
-    this.userEmail = userData.email || null;
+    actions: {
+        loginSuccess(data) {
+            this.token = data.token;
+            this.user = data.user; 
+            
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user)); 
+        },
 
-    localStorage.setItem('isAuthenticated', 'true');
-    localStorage.setItem('userName', this.userName); 
+        updateProfile(updatedUser) {
+            this.user = updatedUser;
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+        },
+
+        logout() {
+            this.token = null;
+            this.user = null;
+            
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+        },
+
+        async fetchProfile() {
+            const id = this.userId;
+            if (!id) return;
+
+            try {
+                const profileData = await fetchUserProfile(id);
+                this.user = profileData;
+                localStorage.setItem('user', JSON.stringify(profileData));
+            } catch (error) {
+                console.error("Falha ao buscar perfil:", error);
+            }
+        },
+
+        async updateProfile(updatedData) {
+            const id = this.userId;
+            if (!id) {
+                throw new Error("Usuário não identificado. Não é possível salvar o perfil.");
+            }
+            
+            try {
+                const updatedUser = await apiUpdateProfile(id, updatedData);
+                
+                this.user = updatedUser;
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                
+                return updatedUser;
+            } catch (error) {
+                throw error;
+            }
+        }
     },
-    logout() {
-      this.isAuthenticated = false;
-      this.userName = 'Visitante';
-      this.userEmail = null;
-      
-      localStorage.removeItem('isAuthenticated');
-      localStorage.removeItem('userName');
-    },
-    initialize() {
-      if (localStorage.getItem('isAuthenticated') === 'true') {
-          this.isAuthenticated = true;
-          this.userName = localStorage.getItem('userName') || 'Usuário';
-      }
-    }
-  }
 });

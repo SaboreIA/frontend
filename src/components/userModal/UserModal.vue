@@ -55,7 +55,16 @@
             </div>
 
             <div class="bg-gradient-to-br from-gray-50 to-white px-8 py-8">
-              <form @submit.prevent="salvarDados">
+              <div v-if="error" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg flex items-center">
+                  <ExclamationCircleIcon class="w-5 h-5 mr-2" />
+                  {{ error }}
+              </div>
+              <div v-if="isLoading" class="mb-4 p-4 text-center text-gray-600">
+                  <ArrowPathIcon class="w-6 h-6 animate-spin mx-auto mb-2" />
+                  Carregando dados...
+              </div>
+
+              <form v-else @submit.prevent="saveChanges">
                 <div class="mb-8 flex flex-col items-center">
                   <div class="relative group">
                     <div
@@ -98,16 +107,12 @@
                       Nome Completo
                     </label>
                     <input
-                      @input="
-                        $emit('update:userData', {
-                          ...userData,
-                          nome: $event.target.value,
-                        })
-                      "
+                      v-model="formData.name"
                       type="text"
                       class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent bg-white shadow-sm hover:shadow-md transition-all duration-200"
                       placeholder="Digite seu nome completo"
                       required
+                      :disabled="isLoading"
                     />
                   </div>
 
@@ -119,16 +124,12 @@
                       E-mail
                     </label>
                     <input
-                      @input="
-                        $emit('update:userData', {
-                          ...userData,
-                          email: $event.target.value,
-                        })
-                      "
+                      v-model="formData.email"
                       type="email"
                       class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent bg-white shadow-sm hover:shadow-md transition-all duration-200"
                       placeholder="seu@email.com"
                       required
+                      :disabled="isLoading"
                     />
                   </div>
 
@@ -140,15 +141,11 @@
                       Telefone
                     </label>
                     <input
-                      @input="
-                        $emit('update:userData', {
-                          ...userData,
-                          telefone: $event.target.value,
-                        })
-                      "
+                      v-model="formData.phone"
                       type="tel"
                       class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent bg-white shadow-sm hover:shadow-md transition-all duration-200"
                       placeholder="(00) 00000-0000"
+                      :disabled="isLoading"
                     />
                   </div>
 
@@ -160,15 +157,11 @@
                       CEP
                     </label>
                     <input
-                      @input="
-                        $emit('update:userData', {
-                          ...userData,
-                          cep: $event.target.value,
-                        })
-                      "
+                      v-model="formData.zipCode"
                       type="text"
                       class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent bg-white shadow-sm hover:shadow-md transition-all duration-200"
                       placeholder="00000-000"
+                      :disabled="isLoading"
                     />
                   </div>
 
@@ -179,21 +172,17 @@
                       <BuildingOfficeIcon
                         class="w-4 h-4 mr-2 text-yellow-600"
                       />
-                      Endereço
+                      Endereço Completo
                     </label>
                     <input
-                      @input="
-                        $emit('update:userData', {
-                          ...userData,
-                          endereco: $event.target.value,
-                        })
-                      "
+                      v-model="formData.street"
                       type="text"
                       class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent bg-white shadow-sm hover:shadow-md transition-all duration-200"
                       placeholder="Rua, número, bairro, cidade"
+                      :disabled="isLoading"
                     />
                   </div>
-                </div>
+                  </div>
 
                 <div
                   class="flex flex-col sm:flex-row justify-end gap-3 mt-8 pt-6 border-t border-gray-200"
@@ -202,16 +191,19 @@
                     type="button"
                     @click="closeModal"
                     class="px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md"
+                    :disabled="isLoading"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
-                    class="px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-white font-semibold rounded-xl hover:from-yellow-600 hover:to-amber-700 transition-all duration-200 shadow-md hover:shadow-xl transform hover:scale-105"
+                    class="px-6 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-white font-semibold rounded-xl hover:from-yellow-600 hover:to-amber-700 transition-all duration-200 shadow-md hover:shadow-xl transform hover:scale-105 disabled:opacity-70"
+                    :disabled="isLoading"
                   >
                     <span class="flex items-center justify-center">
-                      <CheckIcon class="w-5 h-5 mr-2" />
-                      Salvar Alterações
+                      <CheckIcon v-if="!isLoading" class="w-5 h-5 mr-2" />
+                      <ArrowPathIcon v-else class="w-5 h-5 mr-2 animate-spin" />
+                      {{ isLoading ? 'Salvando...' : 'Salvar Alterações' }}
                     </span>
                   </button>
                 </div>
@@ -364,7 +356,13 @@ import {
   MapPinIcon,
   BuildingOfficeIcon,
   CheckIcon,
+  ArrowPathIcon, 
+  ExclamationCircleIcon, 
 } from "@heroicons/vue/24/outline";
+
+import { fetchUserProfile } from '@/api/services/profileService';
+import { useAuthStore } from '@/api/stores/authStore';
+
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
 
@@ -380,24 +378,45 @@ export default {
     MapPinIcon,
     BuildingOfficeIcon,
     CheckIcon,
+    ArrowPathIcon,
+    ExclamationCircleIcon,
   },
   props: {
     isOpen: {
       type: Boolean,
       default: false,
     },
-    userData: {
-      type: Object,
-      default: () => ({}),
-    },
   },
+  setup() {
+        const authStore = useAuthStore();
+        return { 
+            authStore, 
+            userId: authStore.user?.id 
+        }; 
+    },
   data() {
     return {
+      formData: {
+        name: '',
+        email: '',
+        phone: '',
+        imageURL: '',
+        zipCode: '',
+        street: '',
+        number: '',
+        complement: '',
+        city: '',
+        state: '',
+        country: 'Brasil',
+      },
+      isLoading: false,
+      error: null, 
+
       isCropping: false,
       imageToCrop: null,
       cropper: null,
       previewImage: null,
-      previewFoto: this.userData?.fotoPerfil || null,
+      previewFoto: null,
       isProcessingCrop: false,
     };
   },
@@ -405,11 +424,13 @@ export default {
     isOpen(newVal) {
       if (newVal) {
         document.body.style.overflow = "hidden";
+        this.loadUserData();
       } else {
         document.body.style.overflow = "";
+        this.error = null; 
       }
     },
-    "userData.fotoPerfil": {
+    "formData.imageURL": {
       handler(newVal) {
         if (!this.isCropping) {
           this.previewFoto = newVal || null;
@@ -419,133 +440,173 @@ export default {
     },
   },
   methods: {
+
+    async loadUserData() {
+        if (!this.authStore.isLoggedIn || !this.userId) {
+                this.error = "Usuário não logado ou ID do usuário não encontrado.";
+                this.isLoading = false;
+                return;
+        }
+        
+        this.isLoading = true;
+        this.error = null;
+        try {
+            const userData = await fetchUserProfile(this.userId);
+            
+            this.formData.name = userData.name || '';
+            this.formData.email = userData.email || '';
+            this.formData.phone = userData.phone || '';
+            this.formData.imageURL = userData.imageURL || ''; 
+            this.previewFoto = this.formData.imageURL; 
+            
+            if (userData.address) {
+                this.formData.zipCode = userData.address.zipCode || '';
+                this.formData.street = userData.address.street || '';
+                this.formData.number = userData.address.number || '';
+                this.formData.complement = userData.address.complement || '';
+                this.formData.city = userData.address.city || '';
+                this.formData.state = userData.address.state || '';
+                this.formData.country = userData.address.country || 'Brasil';
+            } else {
+                this.formData.zipCode = ''; this.formData.street = ''; this.formData.number = '';
+                this.formData.complement = ''; this.formData.city = ''; this.formData.state = '';
+            }
+
+        } catch (error) {
+            this.error = error.message || "Erro ao carregar dados do perfil.";
+        } finally {
+            this.isLoading = false;
+        }
+    },
+
+    async saveChanges() {
+    this.isLoading = true;
+    this.error = null;
+    
+    try {
+        await this.authStore.updateProfile(this.formData); 
+        
+        alert('Perfil atualizado com sucesso!');
+        this.closeModal(); 
+
+    } catch (err) {
+        this.error = err.message || "Erro ao salvar as alterações. Verifique os dados e tente novamente.";
+    } finally {
+        this.isLoading = false;
+    }
+},
+
     closeModal() {
       this.cancelCrop(false);
       this.$emit("close");
     },
+
     handleFotoUpload(event) {
-      const [file] = event.target.files || [];
-      if (!file) {
-        return;
-      }
-
-      if (this.cropper) {
-        this.cleanupCropper();
-      }
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.imageToCrop = e.target?.result || null;
-        if (!this.imageToCrop) {
-          return;
+        const [file] = event.target.files || [];
+        if (!file) {
+            return;
         }
-        this.isCropping = true;
-        this.previewImage = null;
-        this.$nextTick(() => {
-          this.initializeCropper();
-        });
-      };
-      reader.readAsDataURL(file);
+
+        if (this.cropper) {
+            this.cleanupCropper();
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            this.imageToCrop = e.target?.result || null;
+            if (!this.imageToCrop) {
+                return;
+            }
+            this.isCropping = true;
+            this.previewImage = null;
+            this.$nextTick(() => {
+                this.initializeCropper();
+            });
+        };
+        reader.readAsDataURL(file);
     },
     initializeCropper() {
-      const imageElement = this.$refs.cropperImage;
-      if (!imageElement) {
-        return;
-      }
+        const imageElement = this.$refs.cropperImage;
+        if (!imageElement) {
+            return;
+        }
 
-      this.cropper = new Cropper(imageElement, {
-        aspectRatio: 1,
-        viewMode: 2,
-        autoCropArea: 1,
-        dragMode: "move",
-        background: false,
-        guides: false,
-        highlight: false,
-        movable: true,
-        zoomable: true,
-        scalable: false,
-        responsive: true,
-        minContainerHeight: 320,
-        crop: () => this.updatePreview(),
-        ready: () => this.updatePreview(),
-      });
+        this.cropper = new Cropper(imageElement, {
+            aspectRatio: 1,
+            viewMode: 2,
+            autoCropArea: 1,
+            dragMode: "move",
+            background: false,
+            guides: false,
+            highlight: false,
+            movable: true,
+            zoomable: true,
+            scalable: false,
+            responsive: true,
+            minContainerHeight: 320,
+            crop: () => this.updatePreview(),
+            ready: () => this.updatePreview(),
+        });
     },
     updatePreview() {
-      if (!this.cropper) {
-        return;
-      }
-      const canvas = this.cropper.getCroppedCanvas({
-        width: 400,
-        height: 400,
-        fillColor: "#fff",
-      });
-      if (!canvas) {
-        return;
-      }
-      this.previewImage = canvas.toDataURL("image/png");
+        if (!this.cropper) { return; }
+        const canvas = this.cropper.getCroppedCanvas({
+            width: 400, height: 400, fillColor: "#fff",
+        });
+        if (!canvas) { return; }
+        this.previewImage = canvas.toDataURL("image/png");
     },
     cancelCrop(resetPreview = true) {
-      if (this.cropper) {
-        this.cropper.destroy();
-        this.cropper = null;
-      }
-      this.isCropping = false;
-      this.imageToCrop = null;
-      this.previewImage = resetPreview ? null : this.previewImage;
-      this.isProcessingCrop = false;
+        if (this.cropper) {
+            this.cropper.destroy();
+            this.cropper = null;
+        }
+        this.isCropping = false;
+        this.imageToCrop = null;
+        this.previewImage = resetPreview ? null : this.previewImage;
+        this.isProcessingCrop = false;
 
-      const fileInput = this.$el?.querySelector('input[type="file"]');
-      if (fileInput) {
-        fileInput.value = "";
-      }
+        const fileInput = this.$el?.querySelector('input[type="file"]');
+        if (fileInput) {
+            fileInput.value = "";
+        }
     },
     cleanupCropper() {
-      this.cancelCrop(false);
+        this.cancelCrop(false);
     },
     confirmCrop() {
-      if (!this.cropper) {
-        return;
-      }
-      this.isProcessingCrop = true;
-      const canvas = this.cropper.getCroppedCanvas({
-        width: 600,
-        height: 600,
-        minWidth: 256,
-        minHeight: 256,
-        fillColor: "#fff",
-      });
-      if (!canvas) {
-        this.isProcessingCrop = false;
-        return;
-      }
-
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) {
+        if (!this.cropper) { return; }
+        this.isProcessingCrop = true;
+        const canvas = this.cropper.getCroppedCanvas({
+            width: 600, height: 600, minWidth: 256, minHeight: 256, fillColor: "#fff",
+        });
+        if (!canvas) {
             this.isProcessingCrop = false;
             return;
-          }
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const result = reader.result;
-            if (typeof result === "string") {
-              this.previewFoto = result;
-              this.$emit("update:userData", {
-                ...this.userData,
-                fotoPerfil: result,
-              });
-            }
-            this.cancelCrop(false);
-          };
-          reader.readAsDataURL(blob);
-        },
-        "image/jpeg",
-        0.92
-      );
-    },
-    salvarDados() {
-      this.$emit("save", this.userData);
-      this.closeModal();
+        }
+
+        canvas.toBlob(
+            (blob) => {
+                if (!blob) {
+                    this.isProcessingCrop = false;
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const result = reader.result;
+                    if (typeof result === "string") {
+                        this.previewFoto = result;
+                        
+                        this.formData.imageURL = result; 
+                        
+                    }
+                    this.cancelCrop(false);
+                };
+                reader.readAsDataURL(blob);
+            },
+            "image/jpeg",
+            0.92
+        );
     },
   },
   beforeUnmount() {

@@ -94,50 +94,56 @@
 </template>
 
 <script>
-
+import { useRouter } from 'vue-router';
 import { loginUser } from '@/api/services/authService';
 import { useAuthStore } from '@/api/stores/authStore';
 
 export default {
-  name: 'LoginView',
-  data() {
-    return {
-      email: '',
-      password: '',
-      isSubmitting: false, 
-      errorMessage: null,  
-    };
-  },
-  methods: {
-    async handleLogin() { 
-      this.errorMessage = null;
+    name: 'LoginView',
 
-      if (!this.email || !this.password) {
-        this.errorMessage = 'Por favor, preencha todos os campos.';
-        return;
-      }
-      
-      this.isSubmitting = true;
+    
+    data() {
+        return {
+            email: '',
+            password: '',
+            isSubmitting: false, 
+            errorMessage: null,  
+        };
+    },
+    
+    created() {
 
-      try {
-        this.isSubmitting = true;
-        const userData = await loginUser(this.email, this.password);
+    },
+    
+    methods: {
+        async handleLogin() { 
+            this.errorMessage = null;
 
-        const authStore = useAuthStore();
-        authStore.loginSuccess(userData); 
+            if (!this.email || !this.password) {
+                this.errorMessage = 'Por favor, preencha todos os campos.';
+                return;
+            }
+            
+            this.isSubmitting = true;
 
-        this.successMessage = 'Login bem-sucedido! Redirecionando...';
-        setTimeout(() => {
-         this.$router.push('/');
-        }, 1000);
+            try {
+                const responseData = await loginUser(this.email, this.password);
 
-      } catch (error) {
-        console.error("Erro capturado no componente:", error);
-        this.errorMessage = error.message || 'Erro de conexão ou servidor. Tente novamente.';
-      } finally {
-        this.isSubmitting = false;
-      }
+                const authStore = useAuthStore();
+                
+                authStore.loginSuccess(responseData); 
+
+                this.successMessage = 'Login bem-sucedido! Redirecionando...';
+                
+                this.$router.push('/');
+
+            } catch (error) {
+                console.error("Erro capturado no componente:", error);
+                this.errorMessage = error.message || 'Erro de conexão ou servidor. Tente novamente.';
+            } finally {
+                this.isSubmitting = false;
+            }
+        }
     }
-  }
 };
 </script>
