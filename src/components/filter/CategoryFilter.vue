@@ -6,7 +6,7 @@
         'px-4 py-2 rounded-3xl border transition font-semibold shadow-sm text-center', 
         selected === null
           ? 'bg-amber-600 text-white border-amber-600'
-          : 'bg-white text-gray-700 border-yellow-600 hover:bg-amber-600 hover:text-white' // Ajuste de hover para ser igual ao selecionado
+          : 'bg-white text-gray-700 border-yellow-600 hover:bg-amber-600 hover:text-white'
       ]"
     >
       Todos
@@ -29,15 +29,10 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
-
 defineProps({
-  categories: { 
-    type: Array,
-    required: true
-  },
-  selected: [Number, null] 
-})
+  categories: Array,
+  selected: [Number, null]
+});
 
-defineEmits(['filter'])
+defineEmits(['filter']);
 </script>

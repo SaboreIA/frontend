@@ -11,15 +11,18 @@
       @toggleSave="toggleSaveStatus"
     />
 
-    <ImageGallery
-      :mainImage="restaurante.coverImageUrl"
-      :thumbnails="galleryThumbnails"
-      class="mt-4 mb-8"
-    />
+    <div class="w-full h-96 mt-4 relative z-0">
+      <ImageGallery
+        :mainImage="restaurante.coverImageUrl"
+        :thumbnails="galleryThumbnails"
+        class="w-full h-full" 
+      />
+    </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-      <div class="lg:col-span-2">
-        <GeneralInfoView :restaurante="restaurante" class="mt-6" />
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-16 relative">
+      
+      <div class="lg:col-span-2 mt-24">
+        <GeneralInfoView :restaurante="restaurante" />
 
         <LocationCardView
           :address="restaurante.address"
@@ -51,12 +54,12 @@
         </div>
       </div>
 
-      <div class="lg:col-span-1 top-8 self-start">
-        <OpenTimeCardView
-          :hoursData="processedHoursData"
-          :status="restaurantStatus"
-          class="bg-gray-100 p-6 rounded-xl shadow-inner"
-        />
+      <div class="lg:col-span-1 mt-16">
+          <OpenTimeCardView
+            :hoursData="processedHoursData"
+            :status="restaurantStatus"
+            class="bg-gray-100 p-6 rounded-xl shadow-inner"
+          />
       </div>
     </div>
 
@@ -92,11 +95,16 @@ const restaurante = ref({})
 const loading = ref(true)
 const error = ref(false)
 const reviews = ref([])
-
 const isRestaurantSaved = ref(false)
 const isReviewModalOpen = ref(false)
 
 const toggleSaveStatus = () => (isRestaurantSaved.value = !isRestaurantSaved.value)
+
+const scrollToComments = () => {
+  document
+    .getElementById('commentsSection')
+    ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
 
 const carregarRestaurante = async (id) => {
   loading.value = true
@@ -164,6 +172,14 @@ const excellentText = computed(() => {
   return "Médio"
 })
 
+const galleryThumbnails = computed(() => {
+  const imgs = []
+  if (restaurante.value.imageUrl1) imgs.push(restaurante.value.imageUrl1)
+  if (restaurante.value.imageUrl2) imgs.push(restaurante.value.imageUrl2)
+  if (restaurante.value.imageUrl3) imgs.push(restaurante.value.imageUrl3)
+  return imgs
+})
+
 const JS_DAY_MAP = {
   0: "Domingo",
   1: "Segunda",
@@ -221,20 +237,6 @@ const processedHoursData = computed(() => {
     }
   })
 })
-
-const galleryThumbnails = computed(() => {
-  const imgs = []
-  if (restaurante.value.imageUrl1) imgs.push(restaurante.value.imageUrl1)
-  if (restaurante.value.imageUrl2) imgs.push(restaurante.value.imageUrl2)
-  if (restaurante.value.imageUrl3) imgs.push(restaurante.value.imageUrl3)
-  return imgs
-})
-
-const scrollToComments = () => {
-  document
-    .getElementById('commentsSection')
-    ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-}
 
 onMounted(async () => {
   const id = route.params.id

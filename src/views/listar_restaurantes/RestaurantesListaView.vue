@@ -1,47 +1,38 @@
 <template>
-       
   <div>
-                   
     <div class="max-w-[1450px] mx-auto p-4 sm:p-6 lg:p-8 bg-white mt-6">
-                       
-      <h1 class="text-3xl font-bold text-gray-800 mb-6 -mt-32 text-center uppercase">Restaurantes</h1>
-           
+      <h1 class="text-3xl font-bold text-gray-800 mb-6 -mt-32 text-center uppercase">
+        Restaurantes
+      </h1>
+
       <div class="w-full flex justify-center px-4 sm:px-6 lg:px-8 pt-6">
-                             
         <RestaurantSearchBar
           v-model="searchTerm"
           @search="handleSearchTerm"
           @clear="handleSearchClear"
           @results="handleSearchResults"
         />
-                         
       </div>
 
-           
       <div class="w-full flex justify-center mt-6 px-4 sm:px-6 lg:px-8">
-                             
         <RestaurantCategoryFilter
           :categories="categories"
           :selected="selectedCategory"
           @filter="applyFilter"
         />
-                         
       </div>
-                             
+
       <div v-if="loading" class="text-center p-10 text-blue-500">
-                               
         <p class="text-xl">Carregando lista de restaurantes da API...</p>
-                           
       </div>
-                             
+
       <div v-else>
-                               
         <div
           v-if="filteredRestaurantes.length > 0"
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6"
         >
-                                       
           <RestauranteCard
+            class="mt-8"
             v-for="restaurante in filteredRestaurantes"
             :key="restaurante.id"
             :restaurante="restaurante"
@@ -49,52 +40,46 @@
             :total-reviews="getTotalReviews(restaurante.id)"
             @review-submitted="handleReviewSubmitted"
           />
-                                   
         </div>
-               
+
         <div v-if="loadingMore" class="text-center py-4 text-gray-500">
-                    Carregando mais restaurantes...        
+          Carregando mais restaurantes...
         </div>
-               
-        <div v-if="!loading && hasMorePages" class="flex justify-center mt-6">      
+
+        <div v-if="!loading && hasMorePages" class="flex justify-center mt-6">
           <button
             @click="loadMore"
             :disabled="loadingMore"
             class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 disabled:opacity-50"
-            >Carregar Mais Restaurantes          
-          </button>      
+          >
+            Carregar Mais Restaurantes
+          </button>
         </div>
-                 
+
         <div
-          v-else-if="
-            restaurantes.length > 0 &&
-            !hasMorePages &&
-            !searchTerm &&
-            !selectedCategory
-          "
-          class="text-center py-10 text-gray-500 text-lg">        
-        </div>
-  
+          v-else-if="restaurantes.length > 0 && !hasMorePages && !searchTerm && !selectedCategory"
+          class="text-center py-10 text-gray-500 text-lg"
+        ></div>
+
         <div
           v-else-if="restaurantes.length > 0"
           class="text-center py-10 text-gray-500 text-lg"
-          >Nenhum restaurante corresponde à sua busca ou
-          filtro.                                
+        >
+          Nenhum restaurante corresponde à sua busca ou filtro.
         </div>
-                               
+
         <div v-else class="text-center py-10 text-gray-500 text-lg">
-          Nenhum restaurante carregado da API.          
-        </div>                  
-      </div>            
+          Nenhum restaurante carregado da API.
+        </div>
+      </div>
     </div>
-           
   </div>
 </template>
 
 <script setup>
-import {ref, onMounted, computed} from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from "axios";
-import RestauranteCard from "../../components/HomeView/DestaqueContent_Cards.vue"; 
+import RestauranteCard from "../../components/HomeView/DestaqueContent_Cards.vue";
 import RestaurantSearchBar from "@/components/restaurants/RestaurantSearchBar.vue";
 import RestaurantCategoryFilter from "@/components/filter/CategoryFilter.vue";
 
@@ -103,8 +88,8 @@ const loading = ref(true);
 const loadingMore = ref(false);
 const reviews = ref({});
 const searchTerm = ref("");
-const categories = ref([]); 
-const selectedCategory = ref(null); 
+const categories = ref([]);
+const selectedCategory = ref(null);
 const currentPage = ref(1);
 const hasMorePages = ref(true);
 
@@ -116,100 +101,65 @@ const getAverageRating = (restaurantId) => {
     ? reviews.value[restaurantId].averageRating
     : 0;
 };
+
 const getTotalReviews = (restaurantId) => {
   return reviews.value[restaurantId]
     ? reviews.value[restaurantId].totalReviews
     : 0;
 };
 
-// 🔴 DEBUG: LOGS DE CATEGORIAS
 const fetchCategories = async () => {
   try {
-    const {data} = await axios.get(`${API_BASE}/tag`);
+    const { data } = await axios.get(`${API_BASE}/tag`);
     const fetchedTags = Array.isArray(data)
       ? data
       : data.items || data.data || [];
+
     categories.value = fetchedTags.map((tag) => ({
       id: tag.id,
       name: tag.name,
     }));
-
-    console.log("--- DEBUG: CATEGORIAS CARREGADAS (API TAGS) ---");
-    console.log("Estrutura ID/Tipo:", 
-        categories.value.map(c => ({ id: c.id, type: typeof c.id, name: c.name }))
-    );
-    console.log("-----------------------------------------------");
   } catch (error) {
     console.error("Erro ao carregar categorias:", error);
   }
 };
 
-// 🔴 DEBUG: LOGS DE TAGS DOS RESTAURANTES
 const fetchRestaurants = async (page = 1, append = false) => {
-  if (page === 1) {
-    loading.value = true;
-  } else {
-    loadingMore.value = true;
-  }
+  if (page === 1) loading.value = true;
+  else loadingMore.value = true;
 
   try {
-    const url = `${API_BASE}/Restaurants?pageNumber=${page}&pageSize=${PAGE_SIZE}`;
-    const {data} = await axios.get(url);
-    let newRestaurants;
+    const { data } = await axios.get(
+      `${API_BASE}/Restaurants?pageNumber=${page}&pageSize=${PAGE_SIZE}`
+    );
 
-    if (Array.isArray(data.items)) {
-      newRestaurants = data.items;
-    } else if (Array.isArray(data.data)) {
-      newRestaurants = data.data;
-    } else if (Array.isArray(data)) {
-      newRestaurants = data;
-    } else if (typeof data === "object" && data !== null && data.id) {
-      newRestaurants = [data];
-    } else {
-      newRestaurants = [];
-    }
+    let newRestaurants =
+      data.items || data.data || (Array.isArray(data) ? data : []);
 
     if (newRestaurants.length > 0) {
-      if (append) {
-        restaurantes.value = [...restaurantes.value, ...newRestaurants];
-      } else {
-        restaurantes.value = newRestaurants;
-      }
+      restaurantes.value = append
+        ? [...restaurantes.value, ...newRestaurants]
+        : newRestaurants;
+
       hasMorePages.value = newRestaurants.length === PAGE_SIZE;
-
       currentPage.value = page;
-
-      // DEBUG LOG: Verificar o novo campo 'tags' (Corrigido o acesso ao nome)
-      console.log("--- DEBUG: TAGS DOS RESTAURANTES (API RESTAURANTS) ---");
-      newRestaurants.forEach(r => {
-          const tags = r.tags || [];
-          const firstTag = tags.length > 0 ? tags[0] : null;
-          console.log(
-              `Restaurante: ${r.name}`, 
-              `Tags carregadas: ${tags.length}`, 
-              `Primeira Tag: ${firstTag ? firstTag.name : 'N/A'}`,
-              `ID da Tag: ${firstTag ? firstTag.id : 'N/A'}`
-          );
-      });
-      console.log("---------------------------------------------------------");
 
       await Promise.all(
         newRestaurants.map((r) => fetchReviewsForRestaurant(r.id))
       );
+
+      await Promise.all(newRestaurants.map(r => loadRestaurantTags(r)));
+
     } else {
       hasMorePages.value = false;
-      if (!append) {
-        restaurantes.value = [];
-      }
+      if (!append) restaurantes.value = [];
     }
   } catch (error) {
     console.error(
       `ERRO CRÍTICO: Falha ao carregar restaurantes da página ${page}.`,
       error
     );
-    if (!append) {
-      restaurantes.value = [];
-    }
+    if (!append) restaurantes.value = [];
     hasMorePages.value = false;
   } finally {
     loading.value = false;
@@ -219,7 +169,7 @@ const fetchRestaurants = async (page = 1, append = false) => {
 
 const fetchReviewsForRestaurant = async (restaurantId) => {
   try {
-    const {data} = await axios.get(
+    const { data } = await axios.get(
       `${API_BASE}/Review/restaurant/${restaurantId}`
     );
     const items = data.items || [];
@@ -227,12 +177,13 @@ const fetchReviewsForRestaurant = async (restaurantId) => {
       items.length > 0
         ? items.reduce((s, r) => s + (r.avgRating || 0), 0) / items.length
         : 0;
+
     reviews.value[restaurantId] = {
       averageRating: avg,
       totalReviews: items.length,
     };
   } catch {
-    reviews.value[restaurantId] = {averageRating: 0, totalReviews: 0};
+    reviews.value[restaurantId] = { averageRating: 0, totalReviews: 0 };
   }
 };
 
@@ -240,7 +191,6 @@ const loadMore = () => {
   fetchRestaurants(currentPage.value + 1, true);
 };
 
-// ⚡ Funções expostas ao template (Handlers)
 function applyFilter(id) {
   selectedCategory.value = selectedCategory.value === id ? null : id;
 }
@@ -253,53 +203,69 @@ const handleSearchClear = () => {
   searchTerm.value = "";
 };
 
-const handleSearchResults = (results) => {
-  console.log("Resultados da pesquisa (lista):", results);
-};
-
 const handleReviewSubmitted = async (restaurantId) => {
   await fetchReviewsForRestaurant(restaurantId);
 };
 
-// ⚡ LÓGICA DE FILTRO CORRIGIDA
 const restaurantsFilteredByCategory = computed(() => {
-  if (selectedCategory.value === null) {
+  const selected = Number(selectedCategory.value);
+
+  if (!selectedCategory.value) {
     return restaurantes.value;
   }
-  
-  return restaurantes.value.filter(
-    (r) => {
-      // Usa o novo campo 'tags' que é um array de objetos
-      const tags = r.tags || []; 
 
-      // Verifica se existe algum objeto tag cujo ID coincide com o selectedCategory.value
-      // Assumimos que o ID da categoria é Number (como o fetchCategories sugere)
-      return Array.isArray(tags) && tags.some(tag => tag.id === selectedCategory.value);
+  return restaurantes.value.filter((r) => {
+    if (Array.isArray(r.tagIds) && r.tagIds.includes(selected)) {
+      return true;
     }
-  );
+
+    const tags = r.tags || [];
+
+    if (!Array.isArray(tags)) return false;
+
+    return tags.some(tag => {
+      if (tag.id && Number(tag.id) === selected) return true;
+
+      if (tag.tag && Number(tag.tag.id) === selected) return true;
+
+      if (tag.Category && Number(tag.Category.id) === selected) return true;
+
+      if (tag.categoryId && Number(tag.categoryId) === selected) return true;
+
+      return false;
+    });
+  });
 });
 
 const filteredRestaurantes = computed(() => {
   const term = searchTerm.value.trim().toLowerCase();
-  const listToSearch = restaurantsFilteredByCategory.value;
+  const list = restaurantsFilteredByCategory.value;
 
-  if (!term) {
-    return listToSearch;
-  }
+  if (!term) return list;
 
-  return listToSearch.filter((restaurante) => {
-    const name = (restaurante.name || restaurante.nome || "").toLowerCase();
+  return list.filter((restaurante) => {
+    const name = (restaurante.name || "").toLowerCase();
     const description = (restaurante.description || "").toLowerCase();
-
-    return (
-      name.includes(term) ||
-      description.includes(term)
-    );
+    return name.includes(term) || description.includes(term);
   });
 });
 
+const loadRestaurantTags = async (restaurant) => {
+  try {
+    const { data } = await axios.get(`${API_BASE}/Restaurants/${restaurant.id}`);
+
+    restaurant.tagIds = data.tagIds || [];
+    restaurant.tags = data.tags || [];
+    
+  } catch (error) {
+    console.warn("Não foi possível carregar tags para o restaurante", restaurant.id);
+    restaurant.tagIds = [];
+    restaurant.tags = [];
+  }
+};
+
 onMounted(async () => {
   await fetchCategories();
-  fetchRestaurants(1, false);
+  fetchRestaurants(1);
 });
 </script>

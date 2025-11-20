@@ -1,17 +1,16 @@
 <template>
   <div
-    class="bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden transition duration-300 hover:shadow-xl hover:-translate-y-1"
+    class="bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden transition duration-300 hover:shadow-xl hover:-translate-y-1 group"
   >
-    <div class="relative">
+    <div class="relative h-48 overflow-hidden">
       <img
         :src="restaurante.coverImageUrl"
         :alt="`Imagem de ${restaurante.name}`"
-        class="w-full h-48 object-fit"
+        class="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
       />
-
       <div
         :class="[
-          'absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold shadow-md',
+          'absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold shadow-md z-10',
           statusDisplay.class,
         ]"
       >
@@ -45,6 +44,7 @@
       >
         {{ displayCategory }}
       </span>
+
       <span
         v-else
         class="inline-block bg-gray-100 text-gray-500 text-xs px-3 py-1 rounded-full font-medium mb-3"
@@ -67,13 +67,17 @@
 </template>
 
 <script setup>
-import { computed, defineProps } from "vue";
+import { computed, defineProps, watch } from "vue";
 import { useRouter } from "vue-router";
 
 const props = defineProps({
   restaurante: {
     type: Object,
     required: true,
+  },
+  categories: {
+    type: Array,
+    default: () => [],
   },
   averageRating: {
     type: [Number, String],
@@ -86,13 +90,29 @@ const props = defineProps({
 });
 
 const router = useRouter();
+const showDebug = true;
+
+function normalizeTag(t) {
+  if (t == null) return null;
+  if (typeof t === "string" && t.trim() !== "") return t.trim();
+  if (typeof t === "object") {
+    if (typeof t.name === "string" && t.name.trim() !== "") return t.name.trim();
+    if (typeof t.title === "string" && t.title.trim() !== "") return t.title.trim();
+    if (t.tag && typeof t.tag.name === "string" && t.tag.name.trim() !== "") return t.tag.name.trim();
+    if (t.category && typeof t.category.name === "string" && t.category.name.trim() !== "") return t.category.name.trim();
+    if (t.Category && typeof t.Category.name === "string" && t.Category.name.trim() !== "") return t.Category.name.trim();
+    for (const val of Object.values(t)) {
+      if (val && typeof val === "object" && typeof val.name === "string" && val.name.trim() !== "") return val.name.trim();
+      if (typeof val === "string" && val.trim() !== "") return val.trim();
+    }
+  }
+  return null;
+}
 
 const statusDisplay = computed(() => {
   const now = new Date();
   const [h, m] = props.restaurante.openTime?.split(":").map(Number) || [0, 0];
-  const [ch, cm] = props.restaurante.closeTime?.split(":").map(Number) || [
-    0, 0,
-  ];
+  const [ch, cm] = props.restaurante.closeTime?.split(":").map(Number) || [0, 0];
 
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
   const openMinutes = h * 60 + m;
@@ -116,23 +136,43 @@ const displayRating = computed(() => {
   return "N/A";
 });
 
-// ⚡ LÓGICA FINAL: Lê o nome diretamente do array de OBJETOS 'tags'
 const displayCategory = computed(() => {
-  const tags = props.restaurante.tags;
+  const r = props.restaurante || {};
 
-  // 1. Verifica se o campo tags existe e tem pelo menos um item
-  if (Array.isArray(tags) && tags.length > 0) {
-    // Retorna o nome da primeira tag encontrada
-    const categoryName = tags[0].name;
+  const tagIds = Array.isArray(r.tagIds) ? r.tagIds : (Array.isArray(r.tags) ? r.tags.map(t => (typeof t === 'object' ? t.id ?? null : t)) : []);
 
-    // Log para verificação
-    console.log(`[Card Info] ${props.restaurante.name}: Categoria exibida = ${categoryName}`);
-
-    return categoryName;
+  if (Array.isArray(tagIds) && tagIds.length > 0 && Array.isArray(props.categories) && props.categories.length > 0) {
+    for (const id of tagIds) {
+      const match = props.categories.find(c => Number(c.id) === Number(id));
+      if (match && match.name) return match.name;
+    }
   }
-  
-  // Log caso não haja tags
-  console.log(`[Card Info] ${props.restaurante.name}: Sem tags para exibir.`);
+
+  const tags = r.tags;
+  if (Array.isArray(tags) && tags.length > 0) {
+    for (const t of tags) {
+      const n = normalizeTag(t);
+      if (n) return n;
+    }
+  }
+
+  const alternatives = [
+    r.tag,
+    r.category,
+    r.Category,
+    Array.isArray(r.categories) ? r.categories[0] : null,
+    Array.isArray(r.Categories) ? r.Categories[0] : null,
+    r.primaryTag,
+  ];
+
+  for (const alt of alternatives) {
+    const n = normalizeTag(alt);
+    if (n) return n;
+  }
+
+  if (typeof r.tags === "string" && r.tags.trim() !== "") {
+    return r.tags.split(",")[0].trim();
+  }
 
   return "";
 });
@@ -143,4 +183,15 @@ const handleClick = () => {
     params: { id: props.restaurante.id },
   });
 };
+
+watch(
+  () => [props.restaurante, props.categories],
+  () => {
+    console.debug("[RestCard] restaurante.tags ->", props.restaurante?.tags);
+    console.debug("[RestCard] restaurante.tagIds ->", props.restaurante?.tagIds);
+    console.debug("[RestCard] categories (pai) ->", props.categories);
+    console.debug("[RestCard] displayCategory ->", displayCategory.value);
+  },
+  { immediate: true, deep: false }
+);
 </script>
