@@ -67,8 +67,8 @@
 </template>
 
 <script setup>
-import {computed, defineProps} from "vue";
-import {useRouter} from "vue-router";
+import { computed, defineProps } from "vue";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   restaurante: {
@@ -104,8 +104,8 @@ const statusDisplay = computed(() => {
       : currentMinutes >= openMinutes || currentMinutes <= closeMinutes;
 
   return isOpen
-    ? {text: "ABERTO", class: "bg-green-600 text-white"}
-    : {text: "FECHADO", class: "bg-red-600 text-white"};
+    ? { text: "ABERTO", class: "bg-green-600 text-white" }
+    : { text: "FECHADO", class: "bg-red-600 text-white" };
 });
 
 const displayRating = computed(() => {
@@ -116,18 +116,31 @@ const displayRating = computed(() => {
   return "N/A";
 });
 
+// ⚡ LÓGICA FINAL: Lê o nome diretamente do array de OBJETOS 'tags'
 const displayCategory = computed(() => {
-  const categories = props.restaurante.categories;
-  if (Array.isArray(categories) && categories.length > 0) {
-    return categories[0].name;
+  const tags = props.restaurante.tags;
+
+  // 1. Verifica se o campo tags existe e tem pelo menos um item
+  if (Array.isArray(tags) && tags.length > 0) {
+    // Retorna o nome da primeira tag encontrada
+    const categoryName = tags[0].name;
+
+    // Log para verificação
+    console.log(`[Card Info] ${props.restaurante.name}: Categoria exibida = ${categoryName}`);
+
+    return categoryName;
   }
+  
+  // Log caso não haja tags
+  console.log(`[Card Info] ${props.restaurante.name}: Sem tags para exibir.`);
+
   return "";
 });
 
 const handleClick = () => {
   router.push({
     name: "restaurante-detalhe",
-    params: {id: props.restaurante.id},
+    params: { id: props.restaurante.id },
   });
 };
 </script>
