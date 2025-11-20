@@ -29,7 +29,7 @@
       @click="$emit('requestReview')" 
       :class="[
         'px-4 py-2 rounded-lg text-sm font-bold shadow-md transition duration-150 border-2 border-transparent',
-        primaryColor === 'bg-yellow-600'
+        primaryColor.includes('yellow') || primaryColor.includes('amber')
           ? 'bg-yellow-600 text-white hover:bg-yellow-700'
           : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
       ]"
@@ -43,9 +43,21 @@
 import { defineProps, defineEmits, computed } from 'vue';
 
 const props = defineProps({
-  primaryColor: { type: String, default: 'bg-amber-600' },
-  averageRating: { type: Number, default: 0 },
-  totalReviews: { type: Number, default: 0 }
+  primaryColor: { 
+    type: String, 
+    default: 'bg-amber-600',
+    validator: (value) => value.startsWith('bg-')
+  },
+  averageRating: { 
+    type: Number, 
+    default: 0,
+    required: true
+  },
+  totalReviews: { 
+    type: Number, 
+    default: 0,
+    required: true 
+  }
 });
 
 const emit = defineEmits(['requestReview', 'scrollToComments']);

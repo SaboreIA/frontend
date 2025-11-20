@@ -255,6 +255,6 @@ label input[type="radio"] {
 label:has(input[type="radio"]:checked) {
     background-color: theme('colors.white');
     border-color: theme('colors.blue.500');
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); /* Sombra sutil */
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); /
 }
 </style>

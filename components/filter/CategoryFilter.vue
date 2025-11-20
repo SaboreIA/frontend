@@ -1,36 +1,38 @@
 <template>
-  <div class="text-center flex flex-wrap gap-3 justify-center">
+  <div class="flex flex-wrap gap-3 justify-center">
+    <button
+      @click="$emit('filter', null)"
+      :class="[
+        'px-4 py-2 rounded-3xl border transition font-semibold shadow-sm text-center', 
+        selected === null
+          ? 'bg-amber-600 text-white border-amber-600'
+          : 'bg-white text-gray-700 border-yellow-600 hover:bg-amber-600 hover:text-white'
+      ]"
+    >
+      Todos
+    </button>
+    
     <button
       v-for="cat in categories"
       :key="cat.id"
       @click="$emit('filter', cat.id)"
       :class="[
-        'text-center gap-2 px-4 py-2 rounded-3xl border transition font-semibold shadow-sm',
+        'px-4 py-2 rounded-3xl border transition font-semibold shadow-sm text-center',
         selected === cat.id
-          ? 'bg-yellow-600 text-white border-yellow-600'
-          : 'bg-white text-gray-700 border-yellow-600 hover:bg-yellow-600',
+          ? 'bg-amber-600 text-white border-amber-600'
+          : 'bg-white text-gray-700 border-yellow-600 hover:bg-amber-600 hover:text-white'
       ]"
     >
-      <component
-        :is="cat.icon"
-        class="w-5 h-5"
-        :class="selected === cat.id ? 'text-white' : 'text-amber-600'"
-      />
       {{ cat.name }}
     </button>
   </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue";
-
 defineProps({
-  categories: {
-    type: Array,
-    required: true,
-  },
-  selected: Number,
+  categories: Array,
+  selected: [Number, null]
 });
 
-defineEmits(["filter"]);
+defineEmits(['filter']);
 </script>
