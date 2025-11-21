@@ -48,12 +48,14 @@
           ><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
 
-        <span class="text-sm text-gray-700 hidden lg:inline">
-          Olá, {{ authStore.isLoggedIn ? authStore.firstName : 'Visitante' }}
-        </span>
-
-
         <div class="flex items-center space-x-3">
+          <router-link
+            to="/restaurantes/cadastrar"
+            class="hidden md:inline-flex items-center px-4 py-2 rounded-full bg-slate-600 font-semibold text-sm md:text-base shadow-sm hover:bg-slate-700 transition-colors duration-150 text-white"
+          >
+            Cadastrar Restaurante 
+          </router-link>
+
           <router-link
             v-if="!authStore.isLoggedIn"
             to="/login"
@@ -148,6 +150,14 @@
           @click="isNavOpen = false"
         >
           Login
+        </router-link>
+
+        <router-link
+          to="/restaurantes/cadastrar"
+          class="md:hidden inline-flex items-center justify-center px-4 py-2 rounded-full bg-purple-600 text-white font-semibold text-base shadow-sm hover:bg-purple-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-600 transition-colors duration-150"
+          @click="isNavOpen = false"
+        >
+          Cadastrar Restaurante
         </router-link>
       </nav>
     </div>

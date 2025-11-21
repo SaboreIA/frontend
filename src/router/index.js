@@ -10,6 +10,7 @@ import CadastroView from "../views/login/cadastro/CadastroView.vue";
 import PainelControleView from "../views/control_panel/PainelControleView.vue";
 import RestaurantePageView from "../views/restaurant/RestaurantePageView.vue";
 import RestaurantAdminView from "../views/restaurant/RestaurantAdminView.vue";
+import RestaurantCreateView from "../views/restaurant/RestaurantCreateView.vue";
 import UserProfilePage from "../components/UserProfile/UserProfilePage.vue";
 
 const router = createRouter({
@@ -42,6 +43,12 @@ const router = createRouter({
       path: "/restaurantes/:id/admin",
       name: "restaurante-admin",
       component: RestaurantAdminView,
+    },
+
+    {
+      path: "/restaurantes/cadastrar",
+      name: "restaurante-cadastrar",
+      component: RestaurantCreateView,
     },
 
     {
