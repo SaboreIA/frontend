@@ -13,6 +13,8 @@
 - A rota utiliza `RestaurantCreateView.vue`, dividida em seções menores em `src/components/restaurant_form/`.
 - O formulário primeiro cria o restaurante via `POST /restaurants` (texto/endereço/horários/tags) e **depois** envia as imagens via `POST /Restaurants/:id/upload-all-images` usando `FormData` (`coverImage`, `image1`, `image2`, `image3`).
 - A lista de tags é carregada de `GET /Tag` e o usuário pode escolher até 10 tags, exibidas como botões.
+- Todas as entradas de imagem passam por um modal de recorte (`src/components/restaurant_form/ImageCropInput.vue`) que reutiliza o mesmo UX do perfil de usuário (Cropper.js) antes de subir para o Cloudinary.
+- O campo de CEP conta com o botão “Buscar CEP”, que usa `src/utils/address.js#fetchAddressByCep` (ViaCEP) para popular rua, bairro, complemento, cidade e estado automaticamente.
 - Body enviado para `POST /restaurants` (sem imagens, pois elas seguem no upload dedicado):
 
 ```json

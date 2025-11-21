@@ -90,6 +90,7 @@ const initialState = () => ({
     street: '',
     number: '',
     complement: '',
+    neighborhood: '',
     city: '',
     state: '',
     country: 'Brasil',

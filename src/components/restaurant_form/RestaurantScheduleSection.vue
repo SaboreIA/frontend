@@ -2,7 +2,7 @@
   <section class="section-card">
     <header class="section-header">
       <h2>Funcionamento & Tags</h2>
-      <p>Selecione dias, horários e até 10 tags retornadas pela API.</p>
+      <p>Selecione dias, horários e até 10 tags.</p>
     </header>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

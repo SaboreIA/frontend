@@ -2,42 +2,47 @@
   <section class="section-card">
     <header class="section-header">
       <h2>Imagens</h2>
-      <p>Envie os arquivos que serão enviados ao Cloudinary após o cadastro.</p>
+      <p>Insira as imagens.</p>
     </header>
 
-    <label class="field">
-      <span>Imagem de capa *</span>
-      <input
-        type="file"
-        accept="image/*"
-        @change="handleFileChange('coverImage', $event)"
+    <ImageCropInput
+      label="Imagem de capa"
+      description="Use uma foto ampla e convidativa"
+      :required="true"
+      :model-value="modelValue.coverImage"
+      :aspect-ratio="16 / 9"
+      @update:model-value="(file) => updateImage('coverImage', file)"
+    />
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <ImageCropInput
+        label="Imagem 1"
+        description="Ex: Área interna ou fachada"
+        :model-value="modelValue.image1"
+        :aspect-ratio="4 / 3"
+        @update:model-value="(file) => updateImage('image1', file)"
       />
-      <small class="helper" v-if="modelValue.coverImage">{{ modelValue.coverImage.name }}</small>
-    </label>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <label class="field">
-        <span>Imagem 1</span>
-        <input type="file" accept="image/*" @change="handleFileChange('image1', $event)" />
-        <small class="helper" v-if="modelValue.image1">{{ modelValue.image1.name }}</small>
-      </label>
-
-      <label class="field">
-        <span>Imagem 2</span>
-        <input type="file" accept="image/*" @change="handleFileChange('image2', $event)" />
-        <small class="helper" v-if="modelValue.image2">{{ modelValue.image2.name }}</small>
-      </label>
-
-      <label class="field">
-        <span>Imagem 3</span>
-        <input type="file" accept="image/*" @change="handleFileChange('image3', $event)" />
-        <small class="helper" v-if="modelValue.image3">{{ modelValue.image3.name }}</small>
-      </label>
+      <ImageCropInput
+        label="Imagem 2"
+        description="Ex: Detalhe do cardápio"
+        :model-value="modelValue.image2"
+        :aspect-ratio="4 / 3"
+        @update:model-value="(file) => updateImage('image2', file)"
+      />
+      <ImageCropInput
+        label="Imagem 3"
+        description="Ex: Ambiente ou equipe"
+        :model-value="modelValue.image3"
+        :aspect-ratio="4 / 3"
+        @update:model-value="(file) => updateImage('image3', file)"
+      />
     </div>
   </section>
 </template>
 
 <script setup>
+import ImageCropInput from './ImageCropInput.vue';
+
 const props = defineProps({
   modelValue: {
     type: Object,
@@ -47,10 +52,8 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const handleFileChange = (field, event) => {
-  const file = event.target.files?.[0] || null;
+const updateImage = (field, file) => {
   emit('update:modelValue', { ...props.modelValue, [field]: file });
-  event.target.value = '';
 };
 </script>
 
@@ -76,32 +79,4 @@ const handleFileChange = (field, event) => {
   color: #6b7280;
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #374151;
-}
-
-.field input {
-  border: 1px solid #d1d5db;
-  border-radius: 0.75rem;
-  padding: 0.65rem 1rem;
-  font-size: 1rem;
-  color: #111827;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.field input:focus {
-  outline: none;
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
-}
-
-.helper {
-  font-size: 0.8rem;
-  color: #6b7280;
-}
 </style>
