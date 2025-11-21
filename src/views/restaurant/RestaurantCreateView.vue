@@ -13,7 +13,13 @@
         <RestaurantDetailsSection v-model="form.details" />
         <RestaurantAddressSection v-model="form.address" />
         <RestaurantMediaSection v-model="form.media" />
-        <RestaurantScheduleSection v-model="form.schedule" />
+        <RestaurantScheduleSection
+          v-model="form.schedule"
+          :available-tags="availableTags"
+          :tags-loading="tagsLoading"
+          :tags-error="tagsError"
+          :max-tags="TAG_LIMIT"
+        />
 
         <section class="bg-white rounded-2xl border border-dashed border-amber-200 p-6 space-y-4">
           <p class="text-sm text-gray-500">
@@ -56,15 +62,21 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import RestaurantDetailsSection from '@/components/restaurant_form/RestaurantDetailsSection.vue';
 import RestaurantAddressSection from '@/components/restaurant_form/RestaurantAddressSection.vue';
 import RestaurantMediaSection from '@/components/restaurant_form/RestaurantMediaSection.vue';
 import RestaurantScheduleSection from '@/components/restaurant_form/RestaurantScheduleSection.vue';
-import { createRestaurant } from '@/api/restaurants';
+import { createRestaurant, uploadRestaurantImages } from '@/api/restaurants';
+import { fetchTags } from '@/api/tags';
 
 const router = useRouter();
+const TAG_LIMIT = 10;
+
+const availableTags = ref([]);
+const tagsLoading = ref(false);
+const tagsError = ref('');
 
 const initialState = () => ({
   details: {
@@ -84,10 +96,10 @@ const initialState = () => ({
     zipCode: '',
   },
   media: {
-    coverImageUrl: '',
-    imageUrl1: '',
-    imageUrl2: '',
-    imageUrl3: '',
+    coverImage: null,
+    image1: null,
+    image2: null,
+    image3: null,
   },
   schedule: {
     openDay: 1,
@@ -112,10 +124,6 @@ const buildPayload = () => ({
   description: form.details.description,
   site: form.details.site,
   menu: form.details.menu,
-  coverImageUrl: form.media.coverImageUrl,
-  imageUrl1: form.media.imageUrl1,
-  imageUrl2: form.media.imageUrl2,
-  imageUrl3: form.media.imageUrl3,
   openDay: form.schedule.openDay,
   closeDay: form.schedule.closeDay,
   openTime: form.schedule.openTime,
@@ -128,15 +136,36 @@ const validate = () => {
   if (!form.details.name.trim()) return 'Informe o nome do restaurante.';
   if (!form.details.phoneNumber.trim()) return 'Informe o telefone de contato.';
   if (!form.details.description.trim()) return 'Adicione uma descrição.';
-  if (!form.media.coverImageUrl.trim()) return 'Adicione pelo menos a imagem de capa.';
+  if (!form.media.coverImage) return 'Selecione a imagem de capa para enviar ao Cloudinary.';
   if (!form.address.street.trim() || !form.address.number.trim() || !form.address.city.trim()) {
     return 'Complete o endereço com rua, número e cidade.';
   }
   if (!form.schedule.openTime || !form.schedule.closeTime) {
     return 'Defina horários de abertura e fechamento.';
   }
+  if (form.schedule.tagIds.length > TAG_LIMIT) {
+    return `Selecione no máximo ${TAG_LIMIT} tags.`;
+  }
   return '';
 };
+
+const hasImagesToUpload = () =>
+  Boolean(form.media.coverImage || form.media.image1 || form.media.image2 || form.media.image3);
+
+const loadTags = async () => {
+  tagsLoading.value = true;
+  tagsError.value = '';
+  try {
+    const { data } = await fetchTags();
+    availableTags.value = Array.isArray(data) ? data : [];
+  } catch (error) {
+    tagsError.value = error?.response?.data?.message || 'Não foi possível carregar as tags disponíveis.';
+  } finally {
+    tagsLoading.value = false;
+  }
+};
+
+onMounted(loadTags);
 
 const handleSubmit = async () => {
   const errorMessage = validate();
@@ -151,8 +180,17 @@ const handleSubmit = async () => {
   loading.value = true;
 
   try {
-    await createRestaurant(buildPayload());
-    feedback.success = 'Restaurante cadastrado com sucesso!';
+    const { data } = await createRestaurant(buildPayload());
+    const restaurantId = data?.id ?? data?.restaurantId ?? data?.data?.id;
+
+    if (hasImagesToUpload()) {
+      if (!restaurantId) {
+        throw new Error('Restaurante criado, mas não recebemos o ID para enviar as imagens.');
+      }
+      await uploadRestaurantImages(restaurantId, form.media);
+    }
+
+    feedback.success = 'Restaurante cadastrado e imagens enviadas com sucesso!';
     resetForm();
   } catch (error) {
     const message = error?.response?.data?.message || 'Não foi possível salvar agora.';

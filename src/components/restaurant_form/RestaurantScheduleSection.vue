@@ -2,7 +2,7 @@
   <section class="section-card">
     <header class="section-header">
       <h2>Funcionamento & Tags</h2>
-      <p>Selecione dias, horários e tags.</p>
+      <p>Selecione dias, horários e até 10 tags retornadas pela API.</p>
     </header>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -31,25 +31,59 @@
       </label>
     </div>
 
-    <label class="field">
-      <span>Tag IDs (separe por vírgula)</span>
-      <input
-        type="text"
-        :value="tagInput"
-        @input="onTagInput($event.target.value)"
-        placeholder="4153, 4308"
-      />
-    </label>
+    <div class="space-y-2">
+      <div class="flex items-center justify-between text-sm font-semibold text-gray-700">
+        <span>Tags do restaurante</span>
+        <span class="text-xs font-normal text-gray-500">{{ selectedCount }}/{{ maxTags }} selecionadas</span>
+      </div>
+
+  <div v-if="tagsLoading" class="text-sm text-gray-500">Carregando tags...</div>
+  <div v-else-if="tagsError" class="text-sm text-red-600">{{ tagsError }}</div>
+  <div v-else-if="!availableTags.length" class="text-sm text-gray-500">Nenhuma tag disponível no momento.</div>
+  <div v-else class="flex flex-wrap gap-3">
+        <label
+          v-for="tag in availableTags"
+          :key="tag.id"
+          class="tag-chip"
+          :class="{ 'tag-chip--active': isSelected(tag.id), 'tag-chip--disabled': disableNewSelection && !isSelected(tag.id) }"
+        >
+          <input
+            type="checkbox"
+            class="sr-only"
+            :checked="isSelected(tag.id)"
+            @change="toggleTag(tag.id)"
+          />
+          <span>{{ tag.name }}</span>
+        </label>
+      </div>
+      <p v-if="disableNewSelection" class="text-xs text-amber-600">Limite máximo de {{ maxTags }} tags atingido.</p>
+    </div>
   </section>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { computed } from 'vue';
 
 const props = defineProps({
   modelValue: {
     type: Object,
     required: true,
+  },
+  availableTags: {
+    type: Array,
+    default: () => [],
+  },
+  maxTags: {
+    type: Number,
+    default: 10,
+  },
+  tagsLoading: {
+    type: Boolean,
+    default: false,
+  },
+  tagsError: {
+    type: String,
+    default: '',
   },
 });
 
@@ -65,31 +99,59 @@ const days = {
   6: 'Sábado',
 };
 
-const tagInput = ref(props.modelValue.tagIds?.join(', ') || '');
-
-watch(
-  () => props.modelValue.tagIds,
-  (newValue) => {
-    if (!Array.isArray(newValue)) return;
-    tagInput.value = newValue.join(', ');
-  }
-);
-
 const updateField = (field, value) => {
   emit('update:modelValue', { ...props.modelValue, [field]: value });
 };
 
-const onTagInput = (value) => {
-  tagInput.value = value;
-  const numeric = value
-    .split(',')
-    .map((item) => Number(item.trim()))
-    .filter((num) => !Number.isNaN(num));
-  emit('update:modelValue', { ...props.modelValue, tagIds: numeric });
+const isSelected = (tagId) => props.modelValue.tagIds?.includes(tagId);
+
+const selectedCount = computed(() => props.modelValue.tagIds?.length || 0);
+
+const disableNewSelection = computed(() => selectedCount.value >= props.maxTags);
+
+const toggleTag = (tagId) => {
+  const current = new Set(props.modelValue.tagIds || []);
+
+  if (current.has(tagId)) {
+    current.delete(tagId);
+  } else {
+    if (current.size >= props.maxTags) {
+      return;
+    }
+    current.add(tagId);
+  }
+
+  emit('update:modelValue', { ...props.modelValue, tagIds: Array.from(current) });
 };
 </script>
 
 <style scoped>
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tag-chip--active {
+  background-color: #065f46;
+  color: #fff;
+  border-color: #065f46;
+  box-shadow: 0 8px 20px -6px rgba(6, 95, 70, 0.5);
+}
+
+.tag-chip--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .section-card {
   background-color: #fff;
   border: 1px solid #e5e7eb;

@@ -2,46 +2,36 @@
   <section class="section-card">
     <header class="section-header">
       <h2>Imagens</h2>
-      <p>Informe URLs completas das fotos utilizadas na vitrine.</p>
+      <p>Envie os arquivos que serão enviados ao Cloudinary após o cadastro.</p>
     </header>
 
     <label class="field">
       <span>Imagem de capa *</span>
       <input
-        type="text"
-        :value="modelValue.coverImageUrl"
-        @input="updateField('coverImageUrl', $event.target.value)"
-        placeholder="https://exemplo.com/don-mantelli/capa.jpg"
+        type="file"
+        accept="image/*"
+        @change="handleFileChange('coverImage', $event)"
       />
+      <small class="helper" v-if="modelValue.coverImage">{{ modelValue.coverImage.name }}</small>
     </label>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <label class="field">
         <span>Imagem 1</span>
-        <input
-          type="text"
-          :value="modelValue.imageUrl1"
-          @input="updateField('imageUrl1', $event.target.value)"
-          placeholder="https://exemplo.com/img1.jpg"
-        />
+        <input type="file" accept="image/*" @change="handleFileChange('image1', $event)" />
+        <small class="helper" v-if="modelValue.image1">{{ modelValue.image1.name }}</small>
       </label>
 
       <label class="field">
         <span>Imagem 2</span>
-        <input
-          type="text"
-          :value="modelValue.imageUrl2"
-          @input="updateField('imageUrl2', $event.target.value)"
-        />
+        <input type="file" accept="image/*" @change="handleFileChange('image2', $event)" />
+        <small class="helper" v-if="modelValue.image2">{{ modelValue.image2.name }}</small>
       </label>
 
       <label class="field">
         <span>Imagem 3</span>
-        <input
-          type="text"
-          :value="modelValue.imageUrl3"
-          @input="updateField('imageUrl3', $event.target.value)"
-        />
+        <input type="file" accept="image/*" @change="handleFileChange('image3', $event)" />
+        <small class="helper" v-if="modelValue.image3">{{ modelValue.image3.name }}</small>
       </label>
     </div>
   </section>
@@ -57,8 +47,10 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const updateField = (field, value) => {
-  emit('update:modelValue', { ...props.modelValue, [field]: value });
+const handleFileChange = (field, event) => {
+  const file = event.target.files?.[0] || null;
+  emit('update:modelValue', { ...props.modelValue, [field]: file });
+  event.target.value = '';
 };
 </script>
 
@@ -106,5 +98,10 @@ const updateField = (field, value) => {
   outline: none;
   border-color: #f59e0b;
   box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
+}
+
+.helper {
+  font-size: 0.8rem;
+  color: #6b7280;
 }
 </style>

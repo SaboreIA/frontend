@@ -11,7 +11,9 @@
 
 - Botão fixo no header (desktop e mobile) aponta para `/restaurantes/cadastrar`.
 - A rota utiliza `RestaurantCreateView.vue`, dividida em seções menores em `src/components/restaurant_form/`.
-- O formulário envia exatamente o body abaixo para `POST /restaurants` (via `src/api/restaurants.js`):
+- O formulário primeiro cria o restaurante via `POST /restaurants` (texto/endereço/horários/tags) e **depois** envia as imagens via `POST /Restaurants/:id/upload-all-images` usando `FormData` (`coverImage`, `image1`, `image2`, `image3`).
+- A lista de tags é carregada de `GET /Tag` e o usuário pode escolher até 10 tags, exibidas como botões.
+- Body enviado para `POST /restaurants` (sem imagens, pois elas seguem no upload dedicado):
 
 ```json
 {
@@ -29,10 +31,6 @@
 	"description": "...",
 	"site": "https://www.donmantelli.com.br",
 	"menu": "https://www.instagram.com/donmantelli/",
-	"coverImageUrl": "https://exemplo.com/capa.jpg",
-	"imageUrl1": "https://exemplo.com/img1.jpg",
-	"imageUrl2": "https://exemplo.com/img2.jpg",
-	"imageUrl3": "https://exemplo.com/img3.jpg",
 	"openDay": 1,
 	"closeDay": 0,
 	"openTime": "11:00",
@@ -40,6 +38,8 @@
 	"tagIds": [4153, 4308]
 }
 ```
+
+- Após receber o `id` do restaurante criado, o front envia as imagens selecionadas para `/Restaurants/:id/upload-all-images` utilizando `src/api/restaurants.js#uploadRestaurantImages`.
 
 Para testar localmente:
 
