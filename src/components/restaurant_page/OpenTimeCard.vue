@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 rounded-xl bg-gray-100 shadow-lg border border-gray-200 mt-16">
+  <div class="p-6 rounded-xl bg-gray-100 shadow-lg border border-gray-200">
     
     <section class="mb-5 border-b border-gray-300 pb-3">
       <div class="flex items-center space-x-2 pl-2">

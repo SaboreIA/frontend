@@ -11,17 +11,17 @@
       @toggleSave="toggleSaveStatus"
     />
 
-    <div class="w-full h-96 mt-4 relative z-0">
+    <div class="w-full mt-4 relative z-0">
       <ImageGallery
         :mainImage="restaurante.coverImageUrl"
         :thumbnails="galleryThumbnails"
-        class="w-full h-full" 
+        class="w-full"
       />
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-16 relative">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 relative">
       
-      <div class="lg:col-span-2 mt-24">
+      <div class="lg:col-span-2 mt-12">
         <GeneralInfoView :restaurante="restaurante" />
 
         <LocationCardView

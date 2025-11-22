@@ -4,7 +4,7 @@
   </div>
   <div v-else class="flex flex-wrap justify-between items-center gap-4 mb-4">
     <div>
-      <h1 class="text-5xl font-extrabold text-transform: uppercase text-gray-800">
+      <h1 class="text-3xl md:text-4xl font-extrabold text-transform: uppercase text-gray-800">
         {{ name || displayName }}
       </h1>
     </div>
