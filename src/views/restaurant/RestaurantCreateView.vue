@@ -64,6 +64,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/api/stores/authStore';
 import RestaurantDetailsSection from '@/components/restaurant_form/RestaurantDetailsSection.vue';
 import RestaurantAddressSection from '@/components/restaurant_form/RestaurantAddressSection.vue';
 import RestaurantMediaSection from '@/components/restaurant_form/RestaurantMediaSection.vue';
@@ -72,6 +73,7 @@ import { createRestaurant, uploadRestaurantImages } from '@/api/restaurants';
 import { fetchTags } from '@/api/tags';
 
 const router = useRouter();
+const authStore = useAuthStore();
 const TAG_LIMIT = 10;
 
 const availableTags = ref([]);
@@ -169,6 +171,13 @@ const loadTags = async () => {
 onMounted(loadTags);
 
 const handleSubmit = async () => {
+  if (!authStore.isLoggedIn) {
+    feedback.error = 'Você precisa estar autenticado para cadastrar um restaurante.';
+    feedback.success = '';
+    router.push({ name: 'login', query: { redirect: router.currentRoute.value.fullPath } });
+    return;
+  }
+
   const errorMessage = validate();
   if (errorMessage) {
     feedback.error = errorMessage;
@@ -194,8 +203,15 @@ const handleSubmit = async () => {
     feedback.success = 'Restaurante cadastrado e imagens enviadas com sucesso!';
     resetForm();
   } catch (error) {
-    const message = error?.response?.data?.message || 'Não foi possível salvar agora.';
-    feedback.error = message;
+    const status = error?.response?.status;
+    if (status === 401) {
+      feedback.error = 'Sua sessão expirou. Faça login novamente para continuar.';
+      authStore.logout();
+      router.push({ name: 'login', query: { redirect: router.currentRoute.value.fullPath } });
+    } else {
+      const message = error?.response?.data?.message || 'Não foi possível salvar agora.';
+      feedback.error = message;
+    }
   } finally {
     loading.value = false;
   }
