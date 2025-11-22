@@ -52,6 +52,13 @@ const router = createRouter({
     },
 
     {
+      path: "/usuario",
+      name: "usuario",
+      component: UserProfilePage,
+      meta: { requiresAuth: true },
+    },
+
+    {
       path: "/destaque",
       name: "destaque",
       component: DestaqueView,

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { fetchUserProfile, updateProfile as apiUpdateProfile } from '@/api/services/profileService';
+import { fetchUserProfile, updateProfile as apiUpdateProfile, deleteProfile as apiDeleteProfile } from '@/api/services/profileService';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -22,18 +22,13 @@ export const useAuthStore = defineStore('auth', {
         }
     },
     
-    actions: {
+		actions: {
         loginSuccess(data) {
             this.token = data.token;
             this.user = data.user; 
             
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user)); 
-        },
-
-        updateProfile(updatedUser) {
-            this.user = updatedUser;
-            localStorage.setItem('user', JSON.stringify(updatedUser));
         },
 
         logout() {
@@ -57,7 +52,7 @@ export const useAuthStore = defineStore('auth', {
             }
         },
 
-        async updateProfile(updatedData) {
+		async updateProfile(updatedData) {
             const id = this.userId;
             if (!id) {
                 throw new Error("Usuário não identificado. Não é possível salvar o perfil.");
@@ -73,6 +68,20 @@ export const useAuthStore = defineStore('auth', {
             } catch (error) {
                 throw error;
             }
-        }
+		},
+
+		async deleteAccount() {
+			const id = this.userId;
+			if (!id) {
+				throw new Error("Usuário não identificado. Não é possível excluir o perfil.");
+			}
+
+			try {
+				await apiDeleteProfile(id);
+				this.logout();
+			} catch (error) {
+				throw error;
+			}
+		}
     },
 });

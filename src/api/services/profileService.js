@@ -1,8 +1,9 @@
 import api from '@/api/api';
 
 const PROFILE_ENDPOINTS = {
-    GET_PROFILE: (userId) => `/User/${userId}`, 
-    UPDATE_PROFILE: (userId) => `/User/${userId}`, 
+	GET_PROFILE: (userId) => `/User/${userId}`, 
+	UPDATE_PROFILE: (userId) => `/User/${userId}`, 
+	DELETE_PROFILE: (userId) => `/User/${userId}`,
 };
 
 export async function fetchUserProfile(userId) {
@@ -38,6 +39,10 @@ export async function updateProfile(userId, updatedData) {
             country: updatedData.country || 'Brasil'
         }
     };
+
+	if (updatedData.password) {
+		payload.password = updatedData.password;
+	}
     
     try {
         const response = await api.put(PROFILE_ENDPOINTS.UPDATE_PROFILE(userId), payload); 
@@ -46,4 +51,17 @@ export async function updateProfile(userId, updatedData) {
         console.error("Erro ao atualizar perfil:", error.response || error);
         throw new Error(error.response?.data?.message || "Ocorreu um erro ao salvar as alterações.");
     }
+}
+
+export async function deleteProfile(userId) {
+	if (!userId) {
+		throw new Error("ID do usuário é obrigatório para excluir o perfil.");
+	}
+
+	try {
+		await api.delete(PROFILE_ENDPOINTS.DELETE_PROFILE(userId));
+	} catch (error) {
+		console.error("Erro ao excluir perfil:", error.response || error);
+		throw new Error(error.response?.data?.message || "Não foi possível excluir a conta. Tente novamente." );
+	}
 }

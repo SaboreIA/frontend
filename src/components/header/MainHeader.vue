@@ -50,13 +50,6 @@
 
         <div class="flex items-center space-x-3">
           <router-link
-            to="/restaurantes/cadastrar"
-            class="hidden md:inline-flex items-center px-4 py-2 rounded-full bg-slate-600 font-semibold text-sm md:text-base shadow-sm hover:bg-slate-700 transition-colors duration-150 text-white"
-          >
-            Cadastrar Restaurante 
-          </router-link>
-
-          <router-link
             v-if="!authStore.isLoggedIn"
             to="/login"
             class="inline-flex items-center px-4 py-2 rounded-full bg-yellow-600 font-semibold text-sm md:text-base shadow-sm hover:bg-yellow-700 transition-colors duration-150 text-white"
@@ -72,14 +65,14 @@
             Logout
           </button>
           
-          <button
+          <router-link
             v-if="authStore.isLoggedIn"
-            @click="abrirModalEdicao"
+            to="/usuario"
             class="p-2 rounded-full text-yellow-600 hover:bg-gray-100 transition duration-150"
-            title="Editar perfil"
+            title="Perfil do usuário"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          </button>
+          </router-link>
 
         </div>
 
@@ -153,36 +146,26 @@
         </router-link>
 
         <router-link
-          to="/restaurantes/cadastrar"
-          class="md:hidden inline-flex items-center justify-center px-4 py-2 rounded-full bg-purple-600 text-white font-semibold text-base shadow-sm hover:bg-purple-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-600 transition-colors duration-150"
+          v-if="authStore.isLoggedIn"
+          to="/usuario"
+          class="mt-2 inline-flex items-center justify-center px-4 py-2 rounded-full border border-yellow-600 text-yellow-700 font-semibold text-base shadow-sm hover:bg-yellow-50 transition-colors duration-150"
           @click="isNavOpen = false"
         >
-          Cadastrar Restaurante
+          Perfil do usuário
         </router-link>
       </nav>
     </div>
 
-    <UserModal
-      v-if="mostrarModal"
-      :isOpen="mostrarModal"
-      :userData="authStore.user" @close="fecharModal"
-      @save="salvarDadosUsuario"
-    />
   </header>
 </template>
 
 
 <script>
-import UserModal from '../userModal/UserModal.vue';
 import { useAuthStore } from '@/api/stores/authStore';
-import { computed } from 'vue'; 
 
 export default {
     name: 'MainHeader',
-    components: {
-        UserModal
-    },
-    
+
     setup() {
         const authStore = useAuthStore();
         return { authStore }; 
@@ -200,8 +183,6 @@ export default {
             isUserThemeOverride: false,
             themeMediaQuery: null,
             themeTransitionTimeout: null,
-            mostrarModal: false,
-            dadosUsuario: null, 
             
             isNavOpen: false,
             navItems: [
@@ -330,16 +311,6 @@ export default {
                 } catch (error) {
                 }
             }
-        },
-        abrirModalEdicao() {
-            this.mostrarModal = true;
-        },
-        fecharModal() {
-            this.mostrarModal = false;
-        },
-        salvarDadosUsuario(novosDados) {
-            console.log('Dados recebidos do modal, assumindo que o UserModal salvou via store.');
-            this.fecharModal();
         },
         toggleMobileNav() {
             if (!this.showMenuToggle) {
