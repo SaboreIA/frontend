@@ -1,28 +1,37 @@
 <template>
-  <div class="gallery-grid">
-    <figure class="main-panel group">
+  <div
+    class="grid gap-3 w-full auto-rows-auto lg:grid-cols-[minmax(0,3fr)_minmax(0,1fr)] lg:h-[clamp(260px,40vw,430px)]"
+  >
+    <figure
+      class="group relative w-full rounded-2xl overflow-hidden bg-slate-50 shadow-[0_25px_50px_-20px_rgba(15,23,42,0.35)] aspect-[4/3] lg:h-full lg:aspect-auto"
+    >
       <img
         :src="displayedMainImage"
         alt="Imagem principal"
-        class="main-panel__image"
+        class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.02]"
       />
     </figure>
 
-    <div class="thumbs-column">
+    <div
+      class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 lg:grid-rows-3 gap-2 sm:gap-3 lg:h-full"
+    >
       <button
         v-for="(thumb, index) in allThumbnails"
         :key="index"
         type="button"
         @click="handleThumbnailClick(thumb)"
-        :class="['thumb-card group', { 'thumb-card--active': currentMainImage === thumb }]"
+        :class="[
+          'relative h-0 pb-[75%] sm:pb-[65%] lg:pb-0 lg:h-full rounded-xl overflow-hidden shadow-[0_20px_35px_-25px_rgba(15,23,42,0.6)] bg-transparent cursor-pointer transition-outline duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500',
+          currentMainImage === thumb ? 'outline outline-4 outline-offset-4 outline-amber-500/80' : ''
+        ]"
       >
         <img
           :src="thumb"
           :alt="`Miniatura ${index + 1}`"
           loading="lazy"
-          class="thumb-card__image"
+          class="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
         />
-        <span class="thumb-card__overlay"></span>
+        <span class="absolute inset-0 bg-black/25 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
       </button>
     </div>
   </div>
@@ -61,115 +70,3 @@ watch(
   { immediate: true }
 );
 </script>
-
-<style scoped>
-.gallery-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
-  gap: 0.75rem;
-  width: 100%;
-  height: clamp(260px, 40vw, 430px);
-}
-
-.main-panel {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 1rem;
-  overflow: hidden;
-  background: #f8fafc;
-  box-shadow: 0 25px 50px -20px rgba(15, 23, 42, 0.35);
-}
-
-.main-panel__image {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.45s ease;
-}
-
-.main-panel:hover .main-panel__image {
-  transform: scale(1);
-}
-
-
-.thumbs-column {
-  display: grid;
-  grid-template-rows: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
-  height: 100%;
-}
-
-.thumb-card {
-  position: relative;
-  border: none;
-  background: transparent;
-  border-radius: 0.85rem;
-  overflow: hidden;
-  padding: 0;
-  cursor: pointer;
-  box-shadow: 0 20px 35px -25px rgba(15, 23, 42, 0.6);
-  height: 100%;
-}
-
-.thumb-card__image {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.thumb-card__overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.25);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.thumb-card:hover .thumb-card__image {
-  transform: scale(1.005);
-}
-
-.thumb-card:hover .thumb-card__overlay {
-  opacity: 1;
-}
-
-.thumb-card--active {
-  outline: 3px solid #f97316;
-  outline-offset: 3px;
-}
-
-@media (max-width: 1024px) {
-  .gallery-grid {
-    grid-template-columns: 4fr;
-    height: auto;
-  }
-
-  .thumbs-column {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: auto;
-    height: auto;
-  }
-
-  .thumb-card {
-    padding-bottom: 65%;
-    height: auto;
-  }
-}
-
-@media (max-width: 640px) {
-  .thumbs-column {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.5rem;
-  }
-
-  .thumb-card {
-    padding-bottom: 75%;
-  }
-}
-</style>
