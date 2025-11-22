@@ -77,7 +77,6 @@
           <div>
             <h2 class="text-lg font-semibold text-gray-900">Informações de endereço</h2>
           </div>
-          <button v-if="!isEditing" class="inline-flex items-center text-sm font-semibold text-amber-600" @click="startEditing">Atualizar</button>
         </div>
 
         <dl class="grid gap-4 md:grid-cols-2 text-sm text-gray-600">
