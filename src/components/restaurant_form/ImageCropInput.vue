@@ -66,6 +66,10 @@ const props = defineProps({
     type: [File, null],
     default: null,
   },
+  initialPreview: {
+    type: String,
+    default: '',
+  },
   label: {
     type: String,
     required: true,
@@ -190,9 +194,15 @@ const setPreviewFromFile = (file) => {
   }
 };
 
+const applyInitialPreview = () => {
+  if (props.modelValue) return;
+  previewUrl.value = props.initialPreview || '';
+};
+
 const clearImage = () => {
   emit('update:modelValue', null);
   clearPreview();
+  applyInitialPreview();
 };
 
 watch(
@@ -200,9 +210,20 @@ watch(
   (newFile) => {
     if (!newFile) {
       clearPreview();
+      applyInitialPreview();
       return;
     }
     setPreviewFromFile(newFile);
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.initialPreview,
+  () => {
+    if (!props.modelValue) {
+      previewUrl.value = props.initialPreview || '';
+    }
   },
   { immediate: true }
 );
