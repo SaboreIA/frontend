@@ -6,14 +6,11 @@ export const useAuthStore = defineStore('auth', {
         token: localStorage.getItem('token') || null,
         user: JSON.parse(localStorage.getItem('user')) || null, 
     }),
-    
+  
     getters: {
         isLoggedIn: (state) => !!state.token && !!state.user?.id, 
-        
-        userId: (state) => state.user?.id, 
-        
-        userName: (state) => state.user?.name || 'Visitante',
-        
+        userId: (state) => state.user?.id,        
+        userName: (state) => state.user?.name || 'Visitante',       
         firstName: (state) => {
             const name = state.user?.name;
             if (!name) return 'Visitante';
@@ -25,13 +22,12 @@ export const useAuthStore = defineStore('auth', {
     actions: {
         loginSuccess(data) {
             this.token = data.token;
-            this.user = data.user; 
-            
+            this.user = data.user;            
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user)); 
         },
 
-        updateProfile(updatedUser) {
+        setUser(updatedUser) {
             this.user = updatedUser;
             localStorage.setItem('user', JSON.stringify(updatedUser));
         },
@@ -64,15 +60,13 @@ export const useAuthStore = defineStore('auth', {
             }
             
             try {
-                const updatedUser = await apiUpdateProfile(id, updatedData);
-                
+                const updatedUser = await apiUpdateProfile(id, updatedData);               
                 this.user = updatedUser;
-                localStorage.setItem('user', JSON.stringify(updatedUser));
-                
+                localStorage.setItem('user', JSON.stringify(updatedUser));          
                 return updatedUser;
             } catch (error) {
                 throw error;
-            }
-        }
+            };
+        },
     },
 });
