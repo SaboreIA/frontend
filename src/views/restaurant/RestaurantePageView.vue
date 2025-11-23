@@ -22,7 +22,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-16 relative">
       
       <div class="lg:col-span-2 mt-24">
-        <GeneralInfoView :restaurante="restaurante" />
+        <GeneralInfoView :restaurante="restaurante" class="pl-2"/>
 
         <LocationCardView
           :address="restaurante.address"
