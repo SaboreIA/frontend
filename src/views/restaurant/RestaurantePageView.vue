@@ -4,11 +4,14 @@
     class="max-w-6xl mx-auto p-4 md:p-8 bg-white shadow-xl rounded-lg"
   >
     <HeaderInfoView
+      :restaurant-id="restaurante.id"
       :name="restaurante.name"
       :rating="averageRating"
       :nReviews="totalReviews"
       :isSaved="isRestaurantSaved"
       @toggleSave="toggleSaveStatus"
+      @restaurant-updated="handleRestaurantUpdated"
+      @restaurant-deleted="handleRestaurantDeleted"
     />
 
     <div class="w-full mt-4 relative z-0">
@@ -76,7 +79,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from "vue"
-import { useRoute } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import axios from "axios"
 
 import HeaderInfoView from "../../components/restaurant_page/HeaderInfo.vue"
@@ -90,6 +93,7 @@ import CommentsSection from "../../components/comments/CommentsSection.vue"
 import RestaurantReview from "../../components/restaurant_page/RestaurantReview.vue"
 
 const route = useRoute()
+const router = useRouter()
 
 const restaurante = ref({})
 const loading = ref(true)
@@ -104,6 +108,15 @@ const scrollToComments = () => {
   document
     .getElementById('commentsSection')
     ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+const handleRestaurantUpdated = async (updatedData) => {
+  restaurante.value = updatedData
+  await carregarAvaliacoes(updatedData.id)
+}
+
+const handleRestaurantDeleted = () => {
+  router.push('/restaurantes')
 }
 
 const carregarRestaurante = async (id) => {
