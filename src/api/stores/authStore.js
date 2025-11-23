@@ -53,6 +53,7 @@ export const useAuthStore = defineStore('auth', {
         },
 
 		async updateProfile(updatedData) {
+            console.log(updatedData)
             const id = this.userId;
             if (!id) {
                 throw new Error("Usuário não identificado. Não é possível salvar o perfil.");

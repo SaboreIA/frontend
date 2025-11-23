@@ -24,24 +24,29 @@ export async function updateProfile(userId, updatedData) {
         throw new Error("ID do usuário é obrigatório para atualizar o perfil.");
     }
 
-    const payload = {
-        name: updatedData.name,
-        email: updatedData.email,
-        phone: updatedData.phone || '', 
-        imageURL: updatedData.imageURL || '',
-        address: {
-            zipCode: updatedData.zipCode || '',
-            street: updatedData.street || '',
-            number: updatedData.number || '',
-            complement: updatedData.complement || '',
-            city: updatedData.city || '',
-            state: updatedData.state || '',
-            country: updatedData.country || 'Brasil'
-        }
-    };
+	const normalizedImageUrl = updatedData.imageUrl ?? updatedData.imageURL ?? '';
+	const address = updatedData.address || {};
 
-	if (updatedData.password) {
-		payload.password = updatedData.password;
+	const payload = {
+		name: updatedData.name,
+		email: updatedData.email,
+		phone: updatedData.phone || '', 
+		password: updatedData.password,
+		imageUrl: normalizedImageUrl,
+		active: typeof updatedData.active === 'boolean' ? updatedData.active : true,
+		address: {
+	           zipCode: address.zipCode || '',
+	           street: address.street || '',
+	           number: address.number || '',
+	           complement: address.complement || '',
+	           city: address.city || '',
+	           state: address.state || '',
+	           country: address.country || 'Brasil'
+	       }
+	};
+
+	if (!payload.password?.trim()) {
+		delete payload.password;
 	}
     
     try {

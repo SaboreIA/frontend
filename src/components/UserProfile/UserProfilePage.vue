@@ -212,6 +212,7 @@ const createEmptyForm = () => ({
   phone: '',
   password: '',
   imageUrl: '',
+  active: true,
   address: defaultAddress(),
 });
 
@@ -262,6 +263,7 @@ const hydrateForm = (user) => {
   form.phone = safeUser.phone || '';
   form.password = '';
   form.imageUrl = safeUser.imageURL || safeUser.imageUrl || '';
+  form.active = typeof safeUser.active === 'boolean' ? safeUser.active : true;
   const address = safeUser.address || {};
   form.address.street = address.street || '';
   form.address.number = address.number || '';
@@ -314,16 +316,19 @@ const cancelEdit = () => {
 const buildPayload = () => ({
   name: form.name,
   email: form.email,
+  password: form.password?.trim() ? form.password : undefined,
   phone: form.phone,
-  password: form.password,
-  imageURL: form.imageUrl,
-  zipCode: form.address.zipCode,
-  street: form.address.street,
-  number: form.address.number,
-  complement: form.address.complement,
-  city: form.address.city,
-  state: form.address.state,
-  country: form.address.country,
+  imageUrl: form.imageUrl,
+  active: typeof form.active === 'boolean' ? form.active : true,
+  address: {
+    zipCode: form.address.zipCode,
+    street: form.address.street,
+    number: form.address.number,
+    complement: form.address.complement,
+    city: form.address.city,
+    state: form.address.state,
+    country: form.address.country,
+  },
 });
 
 const saveChanges = async () => {
