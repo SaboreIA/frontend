@@ -2,43 +2,141 @@
   <div class="container mx-auto p-4 sm:p-6 lg:p-10 bg-white">
     <h1 class="text-3xl font-bold text-yellow-600 mb-6 text-center">DESTAQUES</h1>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+    <div v-if="loading" class="py-10 text-center text-gray-500">
+      Carregando restaurantes em destaque...
+    </div>
+
+    <div v-else-if="errorMessage" class="py-10 text-center text-red-500">
+      {{ errorMessage }}
+    </div>
+
+    <div
+      v-else-if="restaurantesFiltrados.length === 0"
+      class="py-10 text-center text-gray-500"
+    >
+      Nenhum restaurante em destaque disponível no momento.
+    </div>
+
+    <div
+      v-else
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6"
+    >
       <RestauranteCard
         v-for="restaurante in restaurantesFiltrados"
         :key="restaurante.id"
         :restaurante="restaurante"
+        :average-rating="restaurante.averageRating"
+        :total-reviews="restaurante.totalReviews"
       />
     </div>
-
-
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import RestauranteCard from './DestaqueContent_Cards.vue'; 
-const restaurantes = ref([
-  { id: 1, nome: 'Sabor Oriental', tipo: 'Japonesa', nota: 4.8, descricao: 'Melhor sushi da cidade.', imgUrl: 'https://restauranteyu.com.br/wp-content/uploads/2024/05/AMBIENTE_YU5-1-scaled.jpg' },
-  { id: 2, nome: 'O Burrito Loco', tipo: 'Mexicana', nota: 4.5, descricao: 'Tacos e burritos autênticos.', imgUrl: 'https://uploads.dicasdadisneyeorlando.com/sites/5/2019/10/comida-mexicana-orlando.jpg' },
-  { id: 3, nome: 'Pizza Fantástica', tipo: 'Pizzaria', nota: 4.9, descricao: 'Forno à lenha e ingredientes frescos.', imgUrl: 'https://cdn6.campograndenews.com.br/uploads/noticias/2024/04/11/ff4a4d2f15d176841c0d647dccb66774a35c7103.jpg' },
-  { id: 4, nome: 'Hamburgueria do Zé', tipo: 'Lanchonete', nota: 4.2, descricao: 'Hambúrgueres artesanais e batatas fritas.', imgUrl: 'https://www.divvino.com.br/blog/wp-content/uploads/2020/05/hamb%C3%BArguer-e-cerveja-.jpg' },
-  { id: 5, nome: 'Green Piece', tipo: 'Vegana', nota: 4.7, descricao: 'Opções veganas e fitness.', imgUrl: 'https://ciclovivo.com.br/wp-content/uploads/2024/06/purana-brunch-vegano-1024x663.jpg' },
-  { id: 6, nome: 'Temaki Express', tipo: 'Japonesa', nota: 4.6, descricao: 'Temakis feitos na hora.', imgUrl: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/24/85/e1/f6/temaki-now.jpg?w=1100&h=1100&s=1' },
-]);
+import { ref, computed, onMounted } from 'vue';
+import RestauranteCard from './DestaqueContent_Cards.vue';
+import api from '@/api/api';
 
-const tipoSelecionado = ref('Todos');
+const restaurantes = ref([]);
+const loading = ref(true);
+const errorMessage = ref('');
 
-const selecionarTipo = (tipo) => {
-  tipoSelecionado.value = tipo;
+const HIGHLIGHT_LIMIT = 6;
+const DEFAULT_IMAGE = 'https://placehold.co/600x400?text=Restaurante';
+
+const parseResponseList = (data) => {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.items)) return data.items;
+  if (Array.isArray(data?.data)) return data.data;
+  if (Array.isArray(data?.results)) return data.results;
+  return [];
 };
 
-const restaurantesFiltrados = computed(() => {
-  if (tipoSelecionado.value === 'Todos') {
-    return restaurantes.value;
+const extractAverageRating = (restaurant) => {
+  const ratingCandidates = [
+    restaurant.averageRating,
+    restaurant.avgRating,
+    restaurant.rating,
+    restaurant.score,
+    restaurant.mediaAvaliacoes,
+  ];
+  const rating = ratingCandidates.find((value) => value != null);
+  return rating != null ? Number(rating) : null;
+};
+
+const extractTotalReviews = (restaurant) => {
+  const reviewCandidates = [
+    restaurant.totalReviews,
+    restaurant.reviewsCount,
+    restaurant.reviewCount,
+    restaurant.qtdAvaliacoes,
+  ];
+  const reviews = reviewCandidates.find((value) => value != null);
+  return reviews != null ? Number(reviews) : 0;
+};
+
+const computeRelevanceScore = (restaurant) => {
+  const rating = extractAverageRating(restaurant) ?? 0;
+  const reviews = extractTotalReviews(restaurant);
+  return rating * 10 + reviews;
+};
+
+const enrichRestaurant = (restaurant) => {
+  const fallbackImage =
+    restaurant.coverImageUrl ||
+    restaurant.imageUrl ||
+    restaurant.imageURL ||
+    restaurant.imageUrl1 ||
+    restaurant.imageUrl2 ||
+    DEFAULT_IMAGE;
+
+  const averageRating = extractAverageRating(restaurant);
+  const totalReviews = extractTotalReviews(restaurant);
+
+  return {
+    ...restaurant,
+    coverImageUrl: fallbackImage,
+    averageRating,
+    totalReviews,
+    relevanceScore: computeRelevanceScore(restaurant),
+  };
+};
+
+const carregarDestaques = async () => {
+  loading.value = true;
+  errorMessage.value = '';
+
+  try {
+    const { data } = await api.get('/Restaurants', {
+      params: {
+        pageNumber: 1,
+        pageSize: 24,
+      },
+    });
+
+    const lista = parseResponseList(data).map(enrichRestaurant);
+
+    lista.sort((a, b) => {
+      if (b.relevanceScore === a.relevanceScore) {
+        return (b.createdAt || '').localeCompare(a.createdAt || '');
+      }
+      return b.relevanceScore - a.relevanceScore;
+    });
+
+    restaurantes.value = lista.slice(0, HIGHLIGHT_LIMIT);
+  } catch (error) {
+    console.error('Erro ao carregar destaques:', error);
+    errorMessage.value =
+      'Não foi possível carregar os restaurantes em destaque. Tente novamente mais tarde.';
+    restaurantes.value = [];
+  } finally {
+    loading.value = false;
   }
-  
-  return restaurantes.value.filter(
-    (restaurante) => restaurante.tipo === tipoSelecionado.value
-  );
+};
+
+onMounted(() => {
+  carregarDestaques();
 });
+
+const restaurantesFiltrados = computed(() => restaurantes.value);
 </script>
