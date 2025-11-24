@@ -1,37 +1,49 @@
 <template>
   <div class="mt-12">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b border-gray-200 pb-2">
+    <h2
+      class="text-2xl font-bold text-gray-800 mb-6 border-b border-gray-200 pb-2"
+    >
       Avaliações dos Clientes ({{ reviews.length }})
     </h2>
 
-  <div v-if="reviews.length > 0">
-    <CommentCard
-      v-for="c in visibleComments"
-      :key="c.id || c.timestamp"
-      :commentId="c.id"
-      :authorName="c.userName || c.authorName"
-      :avatarUrl="c.imageUrl || c.userPhoto || c.authorPhoto || 'https://placehold.co/150x150/f4f4f4/666?text=U'"
-      :timestamp="c.createdAt || c.timestamp"
-      :rating="c.avgRating"
-      :content="c.comment || c.content"
-      :likes="c.likes || 0"
-      :imageUrl="c.imageUrl"
-      :categories="formatCategories(c.ratings)"
-      :reviewTitle="c.reviewTitle || c.title"
-    />
+    <div v-if="reviews.length > 0">
+      <CommentCard
+        v-for="c in visibleComments"
+        :key="c.id || c.timestamp"
+        :commentId="c.id"
+        :authorName="c.userName || c.authorName"
+        :avatarUrl="
+          c.userImageUrl ||
+          c.userPhoto ||
+          c.authorPhoto ||
+          c.imageUrl ||
+          'https://placehold.co/150x150/f4f4f4/666?text=U'
+        "
+        :timestamp="c.createdAt || c.timestamp"
+        :rating="c.avgRating"
+        :content="c.comment || c.content"
+        :likes="c.likes || 0"
+        :imageUrl="c.imageUrl"
+        :categories="formatCategories(c.ratings)"
+        :reviewTitle="c.reviewTitle || c.title"
+      />
 
       <div v-if="hasMoreComments" class="mt-8 text-center">
         <button
           @click="loadMoreComments"
           class="px-6 py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg shadow-md hover:bg-gray-200 transition-colors"
         >
-          Carregar Mais Avaliações ({{ reviews.length - visibleComments.length }} restantes)
+          Carregar Mais Avaliações ({{
+            reviews.length - visibleComments.length
+          }}
+          restantes)
         </button>
       </div>
     </div>
 
     <div v-else class="text-gray-500 italic p-4 border rounded-lg">
-      Nenhuma avaliação encontrada para este restaurante. Seja o primeiro a avaliar!
+      Nenhuma avaliação encontrada para este restaurante. Seja o primeiro a
+      avaliar!
     </div>
   </div>
 </template>
@@ -45,8 +57,8 @@ const props = defineProps({
     type: [String, Number],
     required: true,
   },
-  reviews: { 
-    type: Array, 
+  reviews: {
+    type: Array,
     default: () => [],
     required: true,
   },
@@ -63,21 +75,20 @@ const props = defineProps({
 const COMMENTS_PER_LOAD = 3;
 const commentsToShow = ref(COMMENTS_PER_LOAD);
 
-
 const getMockPhoto = (userId) => {
-  const imgIndex = (userId || 1) % 50; 
+  const imgIndex = (userId || 1) % 50;
   return `https://i.pravatar.cc/150?img=${imgIndex}`;
 };
 
 const formatCategories = (ratings) => {
-    if (!ratings) return [];
-    
-    const categoryMap = {
-        comida: 'Comida',
-        ambiente: 'Ambiente',
-        atendimento: 'Atendimento',
-        precos: 'Preços',
-    };
+  if (!ratings) return [];
+
+  const categoryMap = {
+    comida: "Comida",
+    ambiente: "Ambiente",
+    atendimento: "Atendimento",
+    precos: "Preços",
+  };
 
   return Object.keys(ratings)
     .filter((key) => ratings[key] !== null)
@@ -86,7 +97,6 @@ const formatCategories = (ratings) => {
       rating: ratings[key],
     }));
 };
-
 
 const visibleComments = computed(() => {
   return props.reviews.slice(0, commentsToShow.value);
@@ -99,7 +109,6 @@ const hasMoreComments = computed(() => {
 const loadMoreComments = () => {
   commentsToShow.value += COMMENTS_PER_LOAD;
 };
-
 
 const handleToggleLike = (commentId) => {
   console.log(`[CommentsSection] Like toggled for comment ID: ${commentId}`);

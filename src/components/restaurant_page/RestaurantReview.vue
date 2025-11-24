@@ -70,7 +70,10 @@
         </div>
 
         <div>
-          <label for="review-title" class="block text-gray-700 font-medium mb-2">
+          <label
+            for="review-title"
+            class="block text-gray-700 font-medium mb-2"
+          >
             Título da Avaliação
           </label>
           <input
@@ -137,17 +140,11 @@
             </span>
           </div>
 
-          <p
-            v-if="uploadStatus.loading"
-            class="text-sm text-blue-500 mt-2"
-          >
+          <p v-if="uploadStatus.loading" class="text-sm text-blue-500 mt-2">
             Fazendo upload da imagem...
           </p>
 
-          <p
-            v-if="uploadStatus.error"
-            class="text-sm text-red-500 mt-2"
-          >
+          <p v-if="uploadStatus.error" class="text-sm text-red-500 mt-2">
             Erro no upload: {{ uploadStatus.error }}
           </p>
         </div>
@@ -165,9 +162,9 @@
             :disabled="isSubmitting || uploadStatus.loading"
             :class="[
               'font-semibold py-3 px-6 rounded-lg transition shadow-md',
-              (isSubmitting || uploadStatus.loading)
+              isSubmitting || uploadStatus.loading
                 ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                : 'bg-yellow-600 text-white hover:bg-yellow-700'
+                : 'bg-yellow-600 text-white hover:bg-yellow-700',
             ]"
           >
             {{
@@ -180,14 +177,110 @@
           </button>
         </div>
       </form>
+
+      <Transition name="modal-fade">
+        <div
+          v-if="isCropping"
+          class="fixed inset-0 z-50 flex items-center justify-center px-6 py-10 bg-black/60 backdrop-blur-sm"
+        >
+          <div class="absolute inset-0" @click="cancelCrop"></div>
+          <div
+            class="relative max-w-3xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-white/30"
+          >
+            <div
+              class="bg-gradient-to-r from-yellow-500 via-amber-600 to-orange-500 px-6 py-4 flex items-center justify-between"
+            >
+              <div>
+                <h3 class="text-lg font-semibold text-white">Ajustar imagem</h3>
+                <p class="text-sm text-white/80">
+                  Reposicione e dê zoom para ajustar a imagem da sua avaliação.
+                </p>
+              </div>
+              <button
+                @click="cancelCrop"
+                class="p-2 rounded-full bg-white/20 hover:bg-white/30 transition"
+              >
+                &times;
+              </button>
+            </div>
+
+            <div class="p-6 bg-white">
+              <div
+                class="grid gap-8 md:grid-cols-[minmax(0,1fr)_220px] items-start"
+              >
+                <div
+                  class="relative w-full rounded-2xl overflow-hidden bg-gray-100 border border-gray-200 shadow-inner"
+                >
+                  <img
+                    v-if="imageToCrop"
+                    :src="imageToCrop"
+                    ref="cropperImage"
+                    alt="Imagem para recorte"
+                    class="max-h-[480px] w-full object-contain select-none"
+                  />
+                  <div
+                    v-else
+                    class="flex items-center justify-center h-80 text-gray-400 text-sm"
+                  >
+                    Carregando imagem...
+                  </div>
+                </div>
+
+                <div class="space-y-6">
+                  <div>
+                    <h4
+                      class="text-sm font-semibold text-gray-700 uppercase tracking-wide"
+                    >
+                      Pré-visualização
+                    </h4>
+                    <div class="mt-3 flex items-center justify-center">
+                      <div
+                        class="w-36 h-36 rounded-md border border-yellow-400 shadow-xl overflow-hidden bg-gray-100 flex items-center justify-center"
+                      >
+                        <img
+                          v-if="previewImage"
+                          :src="previewImage"
+                          alt="Pré-visualização"
+                          class="w-full h-full object-cover"
+                        />
+                        <div v-else class="w-14 h-14 bg-gray-200"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex gap-3">
+                    <button
+                      type="button"
+                      class="flex-1 px-5 py-3 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50"
+                      @click="cancelCrop"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      class="flex-1 px-5 py-3 rounded-xl bg-gradient-to-r from-yellow-500 to-amber-600 text-white font-semibold"
+                      :disabled="isProcessingCrop"
+                      @click="confirmCrop"
+                    >
+                      <span v-if="isProcessingCrop">Processando...</span>
+                      <span v-else>Confirmar recorte</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, defineModel } from "vue";
+import { ref, reactive, defineModel, nextTick, onBeforeUnmount } from "vue";
 import RatingGroup from "./RatingGroup.vue";
 import { uploadReviewImage, postReview } from "@/api/services/reviewService.js";
+import Cropper from "cropperjs";
+import "cropperjs/dist/cropper.css";
 
 const model = defineModel({ type: Boolean, default: false });
 
@@ -203,6 +296,7 @@ const emit = defineEmits(["reviewSubmitted"]);
 
 const fileName = ref(null);
 const fileToUpload = ref(null);
+const originalFileName = ref(null);
 const fileInputRef = ref(null);
 
 const validationError = ref(null);
@@ -227,6 +321,14 @@ const defaultFormData = {
 
 const formData = reactive({ ...defaultFormData });
 
+// Cropping state
+const isCropping = ref(false);
+const imageToCrop = ref(null);
+const previewImage = ref(null);
+const isProcessingCrop = ref(false);
+const cropper = ref(null);
+const cropperImage = ref(null);
+
 function closeModal() {
   if (model.value) resetForm();
   model.value = false;
@@ -234,7 +336,10 @@ function closeModal() {
 
 function resetForm() {
   Object.keys(defaultFormData).forEach((key) => {
-    if (typeof defaultFormData[key] === "object" && defaultFormData[key] !== null) {
+    if (
+      typeof defaultFormData[key] === "object" &&
+      defaultFormData[key] !== null
+    ) {
       Object.assign(formData[key], defaultFormData[key]);
     } else {
       formData[key] = defaultFormData[key];
@@ -242,16 +347,32 @@ function resetForm() {
   });
   fileName.value = null;
   fileToUpload.value = null;
+  originalFileName.value = null;
   validationError.value = null;
   uploadStatus.loading = false;
   uploadStatus.error = null;
   if (fileInputRef.value) fileInputRef.value.value = null;
+  cancelCrop(false);
 }
 
 function handleFileUpload(event) {
   const file = event.target.files?.[0];
-  fileName.value = file?.name || null;
-  fileToUpload.value = file || null;
+  if (!file) return;
+  fileName.value = file.name || null;
+  originalFileName.value = file.name || "upload.jpg";
+
+  // Open cropper modal instead of setting file directly
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    imageToCrop.value = e.target?.result || null;
+    if (!imageToCrop.value) return;
+    isCropping.value = true;
+    previewImage.value = null;
+    nextTick(() => {
+      initializeCropper();
+    });
+  };
+  reader.readAsDataURL(file);
 }
 
 function calculateAvgRating(ratings) {
@@ -302,7 +423,10 @@ async function submitReview() {
 
     if (fileToUpload.value) {
       uploadStatus.loading = true;
-      finalReview = await uploadReviewImage(createdReviewId, fileToUpload.value);
+      finalReview = await uploadReviewImage(
+        createdReviewId,
+        fileToUpload.value
+      );
       uploadStatus.loading = false;
     }
 
@@ -314,7 +438,7 @@ async function submitReview() {
       id: createdReviewId,
       userName: props.userName,
       userPhoto: props.userPhoto,
-      reviewImageUrl: formData.image_url, 
+      reviewImageUrl: formData.image_url,
     });
 
     resetForm();
@@ -332,6 +456,105 @@ async function submitReview() {
     uploadStatus.loading = false;
   }
 }
+
+// Cropper helpers
+const resetFileInput = () => {
+  if (fileInputRef.value) fileInputRef.value.value = null;
+};
+
+const cancelCrop = (resetPreview = true) => {
+  if (cropper.value) {
+    try {
+      cropper.value.destroy();
+    } catch (e) {
+      /* ignore */
+    }
+    cropper.value = null;
+  }
+  isCropping.value = false;
+  imageToCrop.value = null;
+  if (resetPreview) previewImage.value = null;
+  isProcessingCrop.value = false;
+  resetFileInput();
+};
+
+const initializeCropper = () => {
+  const imageElement = cropperImage.value;
+  if (!imageElement) return;
+  cropper.value = new Cropper(imageElement, {
+    aspectRatio: 16 / 9,
+    viewMode: 2,
+    autoCropArea: 1,
+    dragMode: "move",
+    background: false,
+    guides: false,
+    highlight: false,
+    movable: true,
+    zoomable: true,
+    scalable: false,
+    responsive: true,
+    minContainerHeight: 320,
+    crop: () => updatePreview(),
+    ready: () => updatePreview(),
+  });
+};
+
+const updatePreview = () => {
+  if (!cropper.value) return;
+  const canvas = cropper.value.getCroppedCanvas({
+    width: 800,
+    height: 450,
+    fillColor: "#fff",
+  });
+  if (!canvas) return;
+  previewImage.value = canvas.toDataURL("image/png");
+};
+
+const confirmCrop = () => {
+  if (!cropper.value) return;
+  isProcessingCrop.value = true;
+  const canvas = cropper.value.getCroppedCanvas({
+    width: 1200,
+    height: 675,
+    fillColor: "#fff",
+  });
+  if (!canvas) {
+    isProcessingCrop.value = false;
+    return;
+  }
+
+  canvas.toBlob(
+    async (blob) => {
+      if (!blob) {
+        isProcessingCrop.value = false;
+        return;
+      }
+
+      try {
+        // Convert blob to File so uploadReviewImage can handle it like a file input
+        const filename = originalFileName.value || "upload.jpg";
+        const file = new File([blob], filename, { type: blob.type });
+        fileToUpload.value = file;
+        fileName.value = filename;
+        // Set preview to show user the chosen/cropped image
+        previewImage.value = canvas.toDataURL("image/jpeg", 0.92);
+        cancelCrop(false);
+      } catch (err) {
+        console.error("Erro ao processar crop:", err);
+        uploadStatus.error = err.message || "Erro ao processar imagem.";
+        cancelCrop(true);
+      } finally {
+        isProcessingCrop.value = false;
+      }
+    },
+    "image/jpeg",
+    0.92
+  );
+};
+
+onBeforeUnmount(() => {
+  cancelCrop(false);
+});
 </script>
 
 <style scoped>
@@ -340,5 +563,15 @@ async function submitReview() {
 }
 .transition-all {
   transition: all 0.3s ease-in-out;
+}
+
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
 }
 </style>

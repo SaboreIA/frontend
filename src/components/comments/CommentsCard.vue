@@ -3,7 +3,7 @@
     <div class="flex items-start justify-between mb-3">
       <div class="flex items-center">
         <img
-          :src="avatarUrl"
+          :src="avatarSrc"
           alt="Avatar"
           class="w-10 h-10 rounded-full mr-3 object-cover border border-gray-200"
         />
@@ -20,7 +20,7 @@
             :key="n"
             :class="[
               'w-3 h-3 rounded-full mr-1',
-              n <= rating ? 'bg-yellow-600' : 'bg-gray-300'
+              n <= rating ? 'bg-yellow-600' : 'bg-gray-300',
             ]"
           ></span>
         </div>
@@ -28,7 +28,9 @@
         <button
           @click="toggleLike"
           class="flex items-center mr-3 transition-colors cursor-pointer"
-          :class="liked ? 'text-yellow-600' : 'hover:text-yellow-600 text-gray-600'"
+          :class="
+            liked ? 'text-yellow-600' : 'hover:text-yellow-600 text-gray-600'
+          "
         >
           <component
             :is="liked ? HandThumbUpSolidIcon : HandThumbUpOutlineIcon"
@@ -38,12 +40,14 @@
           <span class="text-sm font-medium ml-1">{{ currentLikes }}</span>
         </button>
 
-        <EllipsisVerticalIcon class="w-5 h-5 text-gray-500 hover:text-gray-700" />
+        <EllipsisVerticalIcon
+          class="w-5 h-5 text-gray-500 hover:text-gray-700"
+        />
       </div>
     </div>
-    
+
     <h4 v-if="reviewTitle" class="text-xl font-bold text-gray-800 mb-2">
-    {{ reviewTitle }}
+      {{ reviewTitle }}
     </h4>
 
     <div class="text-gray-700 text-base leading-relaxed mb-4">
@@ -66,7 +70,7 @@
             :key="n"
             :class="[
               'w-3 h-3 rounded-full mr-1',
-              n <= cat.rating ? 'bg-yellow-600' : 'bg-gray-300'
+              n <= cat.rating ? 'bg-yellow-600' : 'bg-gray-300',
             ]"
           ></span>
         </div>
@@ -95,7 +99,7 @@ const props = defineProps({
   commentId: [String, Number],
   avatarUrl: {
     type: String,
-    default: "https://i.pravatar.cc/150?img=1",
+    default: null,
   },
   authorName: {
     type: String,
@@ -142,6 +146,15 @@ onMounted(() => {
   if (localStorage.getItem(`liked_comment_${props.commentId}`) === "true") {
     liked.value = true;
   }
+});
+
+const avatarSrc = computed(() => {
+  // Prefer explicit avatarUrl from the database when provided.
+  if (props.avatarUrl) {
+    return props.avatarUrl;
+  }
+  const initials = encodeURIComponent(props.authorName || "Usuário");
+  return `https://ui-avatars.com/api/?name=${initials}&background=facc15&color=111827&bold=true`;
 });
 
 const formattedDate = computed(() => {
