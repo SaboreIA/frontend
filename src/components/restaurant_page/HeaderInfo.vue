@@ -92,11 +92,10 @@ import RestaurantEditModal from "./RestaurantEditModal.vue";
 import { useRestaurantEdit } from "@/composables/useRestaurantEdit";
 
 const props = defineProps({
-	restaurantId: {
-		type: [Number, String],
-		required: true,
-	},
-
+    restaurantId: { 
+        type: [String, Number], 
+        required: true 
+    },
     name: {
         type: String,
         required: true,
@@ -163,7 +162,32 @@ const displayName = computed(() => {
 const buttonBaseClass =
   "inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs md:text-sm font-semibold tracking-wide uppercase border-2 transition duration-200 shadow-sm hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2";
 
-const isEditModalOpen = isModalOpen;
-const openEditModal = openModal;
-const closeEditModal = closeModal;
+const fetchRestaurant = async (id) => {
+  if (!id || id === 'undefined' || id === null) {
+        console.warn('HeaderInfo: ID do restaurante ausente ou inválido. Abortando fetch.');
+        loading.value = false;
+        return; 
+    }
+
+  loading.value = true;
+  error.value = false;
+  try {
+    const response = await api.get(`/restaurants/${id}`);
+    restaurant.value = response.data;
+  } catch (e) {
+    error.value = true;
+  } finally {
+    loading.value = false;
+  }
+};
+
+watch(
+  () => props.restaurantId,
+  (newId) => {
+    fetchRestaurant(newId);
+  },
+  { immediate: true }
+);
+
+defineEmits(["toggleSave"]);
 </script>

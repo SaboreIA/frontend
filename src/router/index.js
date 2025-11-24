@@ -13,6 +13,8 @@ import RestaurantAdminView from "../views/restaurant/RestaurantAdminView.vue";
 import RestaurantCreateView from "../views/restaurant/RestaurantCreateView.vue";
 import UserProfilePage from "../components/UserProfile/UserProfilePage.vue";
 
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -21,6 +23,7 @@ const router = createRouter({
       name: "home",
       component: HomeView,
     },
+
     {
       path: "/sobre",
       name: "sobre",
@@ -63,21 +66,25 @@ const router = createRouter({
       name: "destaque",
       component: DestaqueView,
     },
+
     {
       path: "/planos",
       name: "planos",
       component: PlanosView,
     },
+
     {
       path: "/contato",
       name: "contato",
       component: ContatoView,
     },
+
     {
       path: "/login",
       name: "login",
       component: LoginView,
     },
+
     {
       path: "/cadastro",
       name: "cadastro",

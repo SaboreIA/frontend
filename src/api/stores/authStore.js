@@ -2,87 +2,78 @@ import { defineStore } from 'pinia';
 import { fetchUserProfile, updateProfile as apiUpdateProfile, deleteProfile as apiDeleteProfile } from '@/api/services/profileService';
 
 export const useAuthStore = defineStore('auth', {
-    state: () => ({
-        token: localStorage.getItem('token') || null,
-        user: JSON.parse(localStorage.getItem('user')) || null, 
-    }),
-    
-    getters: {
-        isLoggedIn: (state) => !!state.token && !!state.user?.id, 
-        
-        userId: (state) => state.user?.id, 
-        
-        userName: (state) => state.user?.name || 'Visitante',
-        
-        firstName: (state) => {
-            const name = state.user?.name;
-            if (!name) return 'Visitante';
-            const parts = name.trim().split(' ');
-            return parts[0]; 
-        }
-    },
-    
-		actions: {
-        loginSuccess(data) {
-            this.token = data.token;
-            this.user = data.user; 
-            
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user)); 
-        },
+    state: () => ({
+        token: localStorage.getItem('token') || null,
+        user: JSON.parse(localStorage.getItem('user')) || null, 
+    }),
+    
+    getters: {
+        isLoggedIn: (state) => !!state.token && !!state.user?.id, 
+        
+        userId: (state) => state.user?.id, 
+        
+        userName: (state) => state.user?.name || 'Visitante',
+         
+        firstName: (state) => {
+            const name = state.user?.name;
+            if (!name) return 'Visitante';
+            const parts = name.trim().split(' ');
+            return parts[0]; 
+        }
+    },
+    
+    actions: {
+        loginSuccess(data) {
+            this.token = data.token;
+            this.user = data.user; 
+            
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user)); 
+        },
 
-        logout() {
-            this.token = null;
-            this.user = null;
-            
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-        },
+        setUser(updatedUser) {
+            this.user = updatedUser;
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            return updatedUser;
+        },
 
-        async fetchProfile() {
-            const id = this.userId;
-            if (!id) return;
+        logout() {
+            this.token = null;
+            this.user = null;
+            
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+        },
 
-            try {
-                const profileData = await fetchUserProfile(id);
-                this.user = profileData;
-                localStorage.setItem('user', JSON.stringify(profileData));
-            } catch (error) {
-                console.error("Falha ao buscar perfil:", error);
-            }
-        },
+        async fetchProfile() {
+            const id = this.userId;
+            if (!id) return;
 
-		async updateProfile(updatedData) {
-            console.log(updatedData)
-            const id = this.userId;
-            if (!id) {
-                throw new Error("Usuário não identificado. Não é possível salvar o perfil.");
-            }
-            
-            try {
-                const updatedUser = await apiUpdateProfile(id, updatedData);
-                
-                this.user = updatedUser;
-                localStorage.setItem('user', JSON.stringify(updatedUser));
-                
-                return updatedUser;
-            } catch (error) {
-                throw error;
-            }
-		},
+            try {
+                const profileData = await fetchUserProfile(id);
+                this.user = profileData;
+                localStorage.setItem('user', JSON.stringify(profileData));
+            } catch (error) {
+                console.error("Falha ao buscar perfil:", error);
+            }
+        },
 
-		async deleteAccount() {
-			const id = this.userId;
-			if (!id) {
-				throw new Error("Usuário não identificado. Não é possível excluir o perfil.");
-			}
-
-			try {
-				await apiDeleteProfile(id);
-				this.logout();
-			} catch (error) {
-				throw error;
-			}
-		}
-    },
+        async updateProfile(updatedData) {
+            const id = this.userId;
+            if (!id) {
+                throw new Error("Usuário não identificado. Não é possível salvar o perfil.");
+            }
+            
+            try {
+                const updatedUser = await apiUpdateProfile(id, updatedData);
+                
+                this.user = updatedUser;
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                
+                return updatedUser;
+            } catch (error) {
+                throw error;
+            }
+        }
+    },
 });
