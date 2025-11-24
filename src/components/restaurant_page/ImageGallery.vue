@@ -3,7 +3,7 @@
     class="grid gap-3 w-full auto-rows-auto lg:grid-cols-[minmax(0,3fr)_minmax(0,1fr)] lg:h-[clamp(260px,40vw,430px)]"
   >
     <figure
-      class="group relative w-full rounded-2xl overflow-hidden bg-slate-50 shadow-[0_25px_50px_-20px_rgba(15,23,42,0.35)] aspect-[4/3] lg:h-full lg:aspect-auto"
+      class="group relative w-full rounded-2xl overflow-hidden bg-slate-50 aspect-[4/3] lg:h-full lg:aspect-auto"
     >
       <img
         :src="displayedMainImage"
@@ -21,7 +21,7 @@
         type="button"
         @click="handleThumbnailClick(thumb)"
         :class="[
-          'relative h-0 pb-[75%] sm:pb-[65%] lg:pb-0 lg:h-full rounded-xl overflow-hidden shadow-[0_20px_35px_-25px_rgba(15,23,42,0.6)] bg-transparent cursor-pointer transition-outline duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500',
+          'relative h-0 pb-[75%] sm:pb-[65%] lg:pb-0 lg:h-full rounded-xl overflow-hidden bg-transparent cursor-pointer transition-outline duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500',
           currentMainImage === thumb ? 'outline outline-4 outline-offset-4 outline-amber-500/80' : ''
         ]"
       >
