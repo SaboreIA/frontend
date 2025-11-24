@@ -17,6 +17,7 @@
       :likes="c.likes || 0"
       :imageUrl="c.imageUrl"
       :categories="formatCategories(c.ratings)"
+      :reviewTitle="c.reviewTitle || c.title"
     />
 
       <div v-if="hasMoreComments" class="mt-8 text-center">
