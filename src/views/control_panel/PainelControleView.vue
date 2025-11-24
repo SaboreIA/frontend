@@ -58,11 +58,14 @@
 </template>
 
 <script>
+import { useToastStore } from '@/api/stores/toastStore';
+
 export default {
   name: 'DashboardView',
   methods: {
     handleLogout() {
-      alert('Logout realizado com sucesso!');
+      const toastStore = useToastStore();
+      toastStore.success('Logout realizado com sucesso!');
       this.$router.push('/login'); 
     }
   }

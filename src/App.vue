@@ -7,6 +7,7 @@
     <router-view class="flex-grow mb-20" />
     <ChatBot />
     <FooterComponent/>
+    <ToastStack />
   </div>
 </template>
 
@@ -16,13 +17,15 @@ import ChatBot from '@/components/chatbot/ChatBot.vue';
 
 
 import FooterComponent from '@/components/footer/footer.vue';
+import ToastStack from '@/components/ui/ToastStack.vue';
 
 export default {
   name: 'App',
   components: {
     MainHeader,
     FooterComponent,
-    ChatBot 
+    ChatBot,
+    ToastStack,
   },
   computed: {
     headerVariant() {

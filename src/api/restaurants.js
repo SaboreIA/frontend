@@ -2,6 +2,27 @@ import api from './api';
 
 export const createRestaurant = (payload) => api.post('/restaurants', payload);
 
+export const fetchRestaurantById = (restaurantId) => {
+	if (!restaurantId) {
+		throw new Error('restaurantId é obrigatório para buscar o restaurante');
+	}
+	return api.get(`/restaurants/${restaurantId}`);
+};
+
+export const updateRestaurant = (restaurantId, payload) => {
+	if (!restaurantId) {
+		throw new Error('restaurantId é obrigatório para atualizar o restaurante');
+	}
+	return api.put(`/Restaurants/${restaurantId}`, payload);
+};
+
+export const deleteRestaurant = (restaurantId) => {
+	if (!restaurantId) {
+		throw new Error('restaurantId é obrigatório para excluir o restaurante');
+	}
+	return api.delete(`/Restaurants/${restaurantId}`);
+};
+
 export const uploadRestaurantImages = (restaurantId, files) => {
 	if (!restaurantId) {
 		throw new Error('restaurantId é obrigatório para enviar imagens');
