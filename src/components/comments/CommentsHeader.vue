@@ -1,12 +1,5 @@
 <template>
-  <div class="bg-white p-4 rounded-lg shadow-md border border-gray-100 mb-6 flex items-center">
-    
-    <img 
-      :src="restaurantIconUrl" 
-      :alt="`Logo ${restaurantName}`" 
-      class="w-16 h-16 rounded-full mr-4 object-cover border border-yellow-600 p-1"
-    />
-    
+  <div class="bg-white p-4 rounded-lg shadow-md border border-gray-100 mb-6 flex items-center">  
     <div>
       <h2 class="font-bold text-xl text-gray-800">{{ restaurantName }}</h2>
       
@@ -31,11 +24,6 @@ defineProps({
         type: String,
         required: true,
         default: 'Restaurante Desconhecido'
-    },
-    restaurantIconUrl: {
-        type: String,
-        required: true,
-        default: 'https://via.placeholder.com/60/FFD700/000000?text=Logo'
     },
     generalRating: {
         type: Number,
