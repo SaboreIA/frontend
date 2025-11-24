@@ -31,9 +31,10 @@ export const useAuthStore = defineStore('auth', {
             localStorage.setItem('user', JSON.stringify(data.user)); 
         },
 
-        updateProfile(updatedUser) {
+        setUser(updatedUser) {
             this.user = updatedUser;
             localStorage.setItem('user', JSON.stringify(updatedUser));
+            return updatedUser;
         },
 
         logout() {

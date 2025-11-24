@@ -44,7 +44,10 @@ import {
 import { BookmarkIcon as BookmarkSolidIcon } from "@heroicons/vue/24/solid";
 
 const props = defineProps({
-
+    restaurantId: { 
+        type: [String, Number], 
+        required: true 
+    },
     name: {
         type: String,
         required: true,
@@ -91,6 +94,12 @@ const displayRating = computed(() => {
 });
 
 const fetchRestaurant = async (id) => {
+  if (!id || id === 'undefined' || id === null) {
+        console.warn('HeaderInfo: ID do restaurante ausente ou inválido. Abortando fetch.');
+        loading.value = false;
+        return; 
+    }
+
   loading.value = true;
   error.value = false;
   try {

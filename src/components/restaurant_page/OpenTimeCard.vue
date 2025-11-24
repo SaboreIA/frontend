@@ -21,7 +21,7 @@
       <div v-for="day in hoursData" :key="day.label" class="flex justify-between">
         <span class="font-medium text-gray-700 w-1/3">{{ day.label }}</span>
         <span :class="['font-semibold text-right w-2/3', day.hours.toLowerCase().includes('fechado') ? 'text-red-500' : 'text-gray-800']">
-          {{ day.hours }}
+          {{ formatHourRange(day.hours) }}
         </span>
       </div>
     </div>
@@ -52,4 +52,44 @@ defineProps({
         default: () => ({ text: 'HORÁRIO INDISPONÍVEL', color: 'text-gray-400' })
     }
 });
+
+/**
+ * @param {string} timeString
+ * @returns {string}
+ */
+const cleanTime = (timeString) => {
+    let cleaned = timeString.replace('.', ':'); 
+    
+    const firstColonIndex = cleaned.indexOf(':');
+    if (firstColonIndex === -1) return timeString;
+
+    const secondColonIndex = cleaned.indexOf(':', firstColonIndex + 1);
+
+    if (secondColonIndex !== -1) {
+        cleaned = cleaned.substring(0, secondColonIndex);
+    }
+
+    return cleaned;
+};
+
+/**
+ * @param {string} hours
+ * @returns {string}
+ */
+const formatHourRange = (hours) => {
+    if (typeof hours === 'string' && hours.toLowerCase().includes('fechado')) {
+        return hours;
+    }
+
+    if (hours.includes(' - ')) {
+        const [startTime, endTime] = hours.split(' - ');
+        
+        const formattedStartTime = cleanTime(startTime);
+        const formattedEndTime = cleanTime(endTime);
+        
+        return `${formattedStartTime} - ${formattedEndTime}`;
+    }
+
+    return cleanTime(hours);
+};
 </script>
