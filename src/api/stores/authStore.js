@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { fetchUserProfile, updateProfile as apiUpdateProfile, deleteProfile as apiDeleteProfile } from '@/api/services/profileService';
+import { fetchUserProfile, updateProfile as apiUpdateProfile} from '@/api/services/profileService';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({

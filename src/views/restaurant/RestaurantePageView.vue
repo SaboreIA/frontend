@@ -23,7 +23,7 @@
       />
     </div>
 
-    <div class="mt-40 relative">
+    <div class="mt-6 relative">
       <div class="mt-4">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div class="lg:col-span-2">
@@ -55,7 +55,7 @@
               :totalReviews="totalReviews"
               primaryColor="bg-yellow-600"
               @scrollToComments="scrollToComments"
-            class="pr-80"/>
+            />
           </div>
 
           <RestaurantReview
