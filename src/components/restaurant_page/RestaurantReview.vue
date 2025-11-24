@@ -16,6 +16,7 @@
           <h3 class="text-2xl font-semibold text-gray-800">
             Avaliar Restaurante
           </h3>
+
           <button
             type="button"
             @click="closeModal"
@@ -25,6 +26,7 @@
             &times;
           </button>
         </div>
+
         <p class="text-sm text-yellow-600 font-medium mt-1">
           {{ restaurantName || "Restaurante Desconhecido" }}
         </p>
@@ -37,58 +39,81 @@
             :src="userPhoto"
             alt="Foto do Usuário"
           />
+
           <div>
-            <p class="text-lg font-semibold text-gray-800">
-              {{ userName }}
-            </p>
+            <p class="text-lg font-semibold text-gray-800">{{ userName }}</p>
             <p class="text-sm text-gray-500">Avaliando agora</p>
           </div>
         </div>
 
         <div class="space-y-6">
-          <RatingGroup label="Comida" name="comida" v-model:rating="formData.ratings.comida" />
-          <RatingGroup label="Ambiente" name="ambiente" v-model:rating="formData.ratings.ambiente" />
-          <RatingGroup label="Atendimento" name="atendimento" v-model:rating="formData.ratings.atendimento" />
-          <RatingGroup label="Preços" name="precos" v-model:rating="formData.ratings.precos" />
+          <RatingGroup
+            label="Comida"
+            name="comida"
+            v-model:rating="formData.ratings.comida"
+          />
+          <RatingGroup
+            label="Ambiente"
+            name="ambiente"
+            v-model:rating="formData.ratings.ambiente"
+          />
+          <RatingGroup
+            label="Atendimento"
+            name="atendimento"
+            v-model:rating="formData.ratings.atendimento"
+          />
+          <RatingGroup
+            label="Preços"
+            name="precos"
+            v-model:rating="formData.ratings.precos"
+          />
         </div>
 
         <div>
-          <label for="review-title" class="block text-gray-700 font-medium mb-2">Título da Avaliação</label>
+          <label for="review-title" class="block text-gray-700 font-medium mb-2">
+            Título da Avaliação
+          </label>
+
           <input
             type="text"
             id="review-title"
             v-model="formData.review_title"
-            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition"
             placeholder="Ex: 'Comida excelente e serviço impecável!'"
             required
           />
         </div>
 
         <div>
-          <label for="review-text" class="block text-gray-700 font-medium mb-2">Comentário da Avaliação</label>
+          <label for="review-text" class="block text-gray-700 font-medium mb-2">
+            Comentário da Avaliação
+          </label>
+
           <textarea
             id="review-text"
             v-model="formData.review_text"
             rows="4"
-            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition"
             placeholder="Escreva sua opinião detalhada..."
             required
           ></textarea>
         </div>
 
         <div>
-          <label for="image-upload" class="block text-gray-700 font-medium mb-2">Subir Imagem (Opcional)</label>
+          <label class="block text-gray-700 font-medium mb-2">
+            Subir Imagem (Opcional)
+          </label>
+
           <div class="flex items-center space-x-4">
             <label
               for="image-upload"
-              class="bg-gray-100 text-gray-700 py-2 px-4 rounded-lg border border-gray-300 hover:bg-gray-200 cursor-pointer transition duration-150"
+              class="bg-gray-100 text-gray-700 py-2 px-4 rounded-lg border border-gray-300 hover:bg-gray-200 cursor-pointer transition"
             >
               <svg
                 class="w-5 h-5 inline-block mr-2"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
               >
                 <path
                   stroke-linecap="round"
@@ -97,30 +122,37 @@
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                 ></path>
               </svg>
+
               Escolher Imagem
             </label>
+
             <input
               type="file"
               id="image-upload"
               @change="handleFileUpload"
               class="hidden"
               accept="image/*"
-              aria-describedby="file-name"
-              ref="fileInputRef" 
+              ref="fileInputRef"
             />
-            <span id="file-name" class="text-sm text-gray-500 truncate max-w-xs">{{
-              fileName || "Nenhum arquivo selecionado."
-            }}</span>
+
+            <span class="text-sm text-gray-500 truncate max-w-xs">
+              {{ fileName || "Nenhum arquivo selecionado." }}
+            </span>
           </div>
-          <p v-if="uploadStatus.loading" class="text-sm text-blue-500 mt-2 font-medium">
-              Fazendo upload da imagem...
+
+          <p v-if="uploadStatus.loading" class="text-sm text-blue-500 mt-2">
+            Fazendo upload da imagem...
           </p>
-          <p v-if="uploadStatus.error" class="text-sm text-red-500 mt-2 font-medium">
-              Erro no upload: {{ uploadStatus.error }}
+
+          <p v-if="uploadStatus.error" class="text-sm text-red-500 mt-2">
+            Erro no upload: {{ uploadStatus.error }}
           </p>
         </div>
-        
-        <div v-if="validationError" class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm font-medium">
+
+        <div
+          v-if="validationError"
+          class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm font-medium"
+        >
           ⚠️ {{ validationError }}
         </div>
 
@@ -129,13 +161,19 @@
             type="submit"
             :disabled="isSubmitting || uploadStatus.loading"
             :class="[
-              'font-semibold py-3 px-6 rounded-lg transition duration-150 ease-in-out shadow-md',
-              (isSubmitting || uploadStatus.loading) 
-                ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+              'font-semibold py-3 px-6 rounded-lg transition shadow-md',
+              (isSubmitting || uploadStatus.loading)
+                ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
                 : 'bg-yellow-600 text-white hover:bg-yellow-700'
             ]"
           >
-            {{ isSubmitting ? 'Enviando...' : (uploadStatus.loading ? 'Carregando Imagem...' : 'Enviar Avaliação') }}
+            {{
+              isSubmitting
+                ? "Enviando..."
+                : uploadStatus.loading
+                ? "Carregando Imagem..."
+                : "Enviar Avaliação"
+            }}
           </button>
         </div>
       </form>
@@ -144,44 +182,47 @@
 </template>
 
 <script setup>
-import RatingGroup from './RatingGroup.vue';
 import { ref, reactive, defineModel } from "vue";
-import { uploadImage, postReview } from '@/api/services/reviewService.js'; 
+import RatingGroup from "./RatingGroup.vue";
+import { uploadReviewImage, postReview } from "@/api/services/reviewService.js";
 
 const model = defineModel({ type: Boolean, default: false });
+
 const props = defineProps({
   restaurantName: { type: String, default: "Restaurante Desconhecido" },
   restaurantId: { type: Number, required: true },
-  
-  userId: { type: Number, required: true }, 
+  userId: { type: Number, required: true },
   userName: { type: String, required: true },
   userPhoto: { type: String, required: true, default: "URL_PADRAO_AVATAR" },
 });
+
 const emit = defineEmits(["reviewSubmitted"]);
 
 const fileName = ref(null);
 const fileToUpload = ref(null);
 const fileInputRef = ref(null);
+
 const validationError = ref(null);
 const isSubmitting = ref(false);
-const uploadStatus = reactive({ 
-    loading: false,
-    error: null,
+
+const uploadStatus = reactive({
+  loading: false,
+  error: null,
 });
 
 const defaultFormData = {
-  review_title: "", 
-  review_text: "", 
+  review_title: "",
+  review_text: "",
   image_url: null,
   ratings: {
-    comida: null, 
-    ambiente: null, 
-    atendimento: null, 
-    precos: null, 
+    comida: null,
+    ambiente: null,
+    atendimento: null,
+    precos: null,
   },
 };
-const formData = reactive({...defaultFormData});
 
+const formData = reactive({ ...defaultFormData });
 
 function closeModal() {
   model.value = false;
@@ -198,8 +239,8 @@ function resetForm() {
 }
 
 function handleFileUpload(event) {
-  const file = event.target.files?.[0]; 
-  
+  const file = event.target.files?.[0];
+
   if (!file) {
     fileName.value = null;
     fileToUpload.value = null;
@@ -211,74 +252,90 @@ function handleFileUpload(event) {
 }
 
 function calculateAvgRating(ratings) {
-    const validRatings = Object.values(ratings)
-        .filter(rating => typeof rating === 'number' && rating >= 1 && rating <= 5);
-    if (validRatings.length === 0) return null;
-    const sum = validRatings.reduce((acc, current) => acc + current, 0);
-    return Math.round(sum / validRatings.length);
+  const validRatings = Object.values(ratings).filter(
+    (r) => typeof r === "number" && r >= 1 && r <= 5
+  );
+
+  if (!validRatings.length) return null;
+
+  const sum = validRatings.reduce((a, b) => a + b, 0);
+  return Math.round(sum / validRatings.length);
 }
 
 function isFormValid() {
-    const unratedKeys = Object.keys(formData.ratings).filter(key => formData.ratings[key] === null);
-    if (unratedKeys.length > 0) {
-        validationError.value = "Por favor, avalie todas as 4 categorias.";
-        return false;
-    }
-    validationError.value = null;
-    return true;
+  const unrated = Object.values(formData.ratings).some((r) => r === null);
+
+  if (unrated) {
+    validationError.value = "Por favor, avalie todas as 4 categorias.";
+    return false;
+  }
+
+  validationError.value = null;
+  return true;
 }
 
-
 async function submitReview() {
-  if (isSubmitting.value || uploadStatus.loading || !isFormValid()) {
-    return;
-  }
-  
-  isSubmitting.value = true;
-  uploadStatus.error = null;
+    if (isSubmitting.value || uploadStatus.loading || !isFormValid()) {
+        return;
+    }
+    
+    isSubmitting.value = true;
+    uploadStatus.error = null;
+    let createdReviewId = null; 
 
-  let finalImageUrl = null;
-  
-  try {
-    if (fileToUpload.value) {
-      uploadStatus.loading = true;
-      finalImageUrl = await uploadImage(fileToUpload.value);
-      uploadStatus.loading = false;
-    }
-    
-    const avgRating = calculateAvgRating(formData.ratings);
-    const submittedData = {
-      restaurantId: props.restaurantId,
-      userId: props.userId,
-      userName: props.userName, 
-      title: formData.review_title, 
-      comment: formData.review_text, 
-      imageUrl: finalImageUrl, 
-      ratings: formData.ratings,
-      avgRating: avgRating, 
-      createdAt: new Date().toISOString(), 
-    };
+    try {
+        const avgRating = calculateAvgRating(formData.ratings);
 
-    await postReview(submittedData); 
-    
-    model.value = false;
-    emit("reviewSubmitted", submittedData);
-    resetForm();
+        const reviewPayload = {
+            title: formData.review_title,
+            comment: formData.review_text,
+            rating1: formData.ratings.comida,
+            rating2: formData.ratings.ambiente,
+            rating3: formData.ratings.atendimento,
+            rating4: formData.ratings.precos,
+            avgRating,
+            userId: props.userId,
+            restaurantId: props.restaurantId,
+        };
 
-  } catch (error) {
-    console.error("Falha na submissão da avaliação:", error);
-    
-    const apiErrorMessage = 
-      error.response?.data?.message || 
-      error.message ||               
-      "Falha ao enviar avaliação. Verifique sua conexão e tente novamente.";
-      
-    validationError.value = apiErrorMessage; 
 
-  } finally {
-    isSubmitting.value = false;
-    uploadStatus.loading = false; 
-  }
+        const createdReview = await postReview(reviewPayload); 
+        createdReviewId = createdReview.id; 
+        let finalReview = createdReview;
+
+        if (fileToUpload.value) {
+            uploadStatus.loading = true;
+            const updatedReviewWithImage = await uploadReviewImage(createdReviewId, fileToUpload.value);
+            finalReview = updatedReviewWithImage;
+            uploadStatus.loading = false;
+        }
+        
+        model.value = false;
+        emit("reviewSubmitted", finalReview);
+        resetForm();
+
+    } catch (error) {
+        console.error("Falha na submissão completa:", error);
+        
+        if (createdReviewId) {
+            try {
+                console.log(`Tentativa de rollback: Review ID ${createdReviewId} criada e deletada devido à falha.`);
+            } catch (deleteError) {
+                console.error("Falha ao executar rollback (deleteReview):", deleteError);
+            }
+        }
+
+        const apiErrorMessage = 
+            error.response?.data?.message || 
+            error.message ||           
+            "Falha ao enviar avaliação. Verifique sua conexão e tente novamente.";
+        
+        validationError.value = apiErrorMessage; 
+
+    } finally {
+        isSubmitting.value = false;
+        uploadStatus.loading = false; 
+    }
 }
 </script>
 
