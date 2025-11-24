@@ -73,7 +73,6 @@
           <label for="review-title" class="block text-gray-700 font-medium mb-2">
             Título da Avaliação
           </label>
-
           <input
             type="text"
             id="review-title"
@@ -88,7 +87,6 @@
           <label for="review-text" class="block text-gray-700 font-medium mb-2">
             Comentário da Avaliação
           </label>
-
           <textarea
             id="review-text"
             v-model="formData.review_text"
@@ -122,7 +120,6 @@
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                 ></path>
               </svg>
-
               Escolher Imagem
             </label>
 
@@ -140,11 +137,17 @@
             </span>
           </div>
 
-          <p v-if="uploadStatus.loading" class="text-sm text-blue-500 mt-2">
+          <p
+            v-if="uploadStatus.loading"
+            class="text-sm text-blue-500 mt-2"
+          >
             Fazendo upload da imagem...
           </p>
 
-          <p v-if="uploadStatus.error" class="text-sm text-red-500 mt-2">
+          <p
+            v-if="uploadStatus.error"
+            class="text-sm text-red-500 mt-2"
+          >
             Erro no upload: {{ uploadStatus.error }}
           </p>
         </div>
@@ -225,11 +228,18 @@ const defaultFormData = {
 const formData = reactive({ ...defaultFormData });
 
 function closeModal() {
+  if (model.value) resetForm();
   model.value = false;
 }
 
 function resetForm() {
-  Object.assign(formData, defaultFormData);
+  Object.keys(defaultFormData).forEach((key) => {
+    if (typeof defaultFormData[key] === "object" && defaultFormData[key] !== null) {
+      Object.assign(formData[key], defaultFormData[key]);
+    } else {
+      formData[key] = defaultFormData[key];
+    }
+  });
   fileName.value = null;
   fileToUpload.value = null;
   validationError.value = null;
@@ -240,102 +250,86 @@ function resetForm() {
 
 function handleFileUpload(event) {
   const file = event.target.files?.[0];
-
-  if (!file) {
-    fileName.value = null;
-    fileToUpload.value = null;
-    return;
-  }
-
-  fileName.value = file.name;
-  fileToUpload.value = file;
+  fileName.value = file?.name || null;
+  fileToUpload.value = file || null;
 }
 
 function calculateAvgRating(ratings) {
   const validRatings = Object.values(ratings).filter(
     (r) => typeof r === "number" && r >= 1 && r <= 5
   );
-
   if (!validRatings.length) return null;
-
-  const sum = validRatings.reduce((a, b) => a + b, 0);
-  return Math.round(sum / validRatings.length);
+  return validRatings.reduce((a, b) => a + b, 0) / validRatings.length;
 }
 
 function isFormValid() {
   const unrated = Object.values(formData.ratings).some((r) => r === null);
-
   if (unrated) {
     validationError.value = "Por favor, avalie todas as 4 categorias.";
     return false;
   }
-
   validationError.value = null;
   return true;
 }
 
 async function submitReview() {
-    if (isSubmitting.value || uploadStatus.loading || !isFormValid()) {
-        return;
-    }
-    
-    isSubmitting.value = true;
-    uploadStatus.error = null;
-    let createdReviewId = null; 
+  if (isSubmitting.value || uploadStatus.loading || !isFormValid()) return;
 
-    try {
-        const avgRating = calculateAvgRating(formData.ratings);
+  isSubmitting.value = true;
+  uploadStatus.error = null;
+  let createdReviewId = null;
 
-        const reviewPayload = {
-            title: formData.review_title,
-            comment: formData.review_text,
-            rating1: formData.ratings.comida,
-            rating2: formData.ratings.ambiente,
-            rating3: formData.ratings.atendimento,
-            rating4: formData.ratings.precos,
-            avgRating,
-            userId: props.userId,
-            restaurantId: props.restaurantId,
-        };
+  try {
+    const avgRating = calculateAvgRating(formData.ratings);
 
+    const reviewPayload = {
+      title: formData.review_title,
+      comment: formData.review_text,
+      imageUrl: props.userPhoto,
+      rating1: formData.ratings.comida,
+      rating2: formData.ratings.ambiente,
+      rating3: formData.ratings.atendimento,
+      rating4: formData.ratings.precos,
+      avgRating,
+      userId: props.userId,
+      restaurantId: props.restaurantId,
+      userName: props.userName,
+    };
 
-        const createdReview = await postReview(reviewPayload); 
-        createdReviewId = createdReview.id; 
-        let finalReview = createdReview;
+    const createdReview = await postReview(reviewPayload);
+    createdReviewId = createdReview.id;
+    let finalReview = createdReview;
 
-        if (fileToUpload.value) {
-            uploadStatus.loading = true;
-            const updatedReviewWithImage = await uploadReviewImage(createdReviewId, fileToUpload.value);
-            finalReview = updatedReviewWithImage;
-            uploadStatus.loading = false;
-        }
-        
-        model.value = false;
-        emit("reviewSubmitted", finalReview);
-        resetForm();
+    if (fileToUpload.value) {
+      uploadStatus.loading = true;
+      finalReview = await uploadReviewImage(createdReviewId, fileToUpload.value);
+      uploadStatus.loading = false;
+    }
 
-    } catch (error) {
-        console.error("Falha na submissão completa:", error);
-        
-        if (createdReviewId) {
-            try {
-                console.log(`Tentativa de rollback: Review ID ${createdReviewId} criada e deletada devido à falha.`);
-            } catch (deleteError) {
-                console.error("Falha ao executar rollback (deleteReview):", deleteError);
-            }
-        }
+    model.value = false;
 
-        const apiErrorMessage = 
-            error.response?.data?.message || 
-            error.message ||           
-            "Falha ao enviar avaliação. Verifique sua conexão e tente novamente.";
-        
-        validationError.value = apiErrorMessage; 
+    emit("reviewSubmitted", {
+      ...reviewPayload,
+      ...finalReview,
+      id: createdReviewId,
+      userName: props.userName,
+      imageUrl: props.userPhoto,
+    });
 
-    } finally {
-        isSubmitting.value = false;
-        uploadStatus.loading = false; 
-    }
+    resetForm();
+  } catch (error) {
+    console.error("Falha na submissão completa:", error);
+
+    const apiErrorMessage =
+      error.response?.data?.message ||
+      error.message ||
+      "Falha ao enviar avaliação. Verifique sua conexão e tente novamente.";
+
+    validationError.value = apiErrorMessage;
+  } finally {
+    isSubmitting.value = false;
+    uploadStatus.loading = false;
+  }
 }
 </script>
 
