@@ -38,7 +38,6 @@ const props = defineProps({
     type: [String, Number],
     required: true,
   },
-  // 💡 RECEBE AS AVALIAÇÕES DO COMPONENTE PAI
   reviews: { 
     type: Array, 
     default: () => [],
@@ -57,10 +56,8 @@ const props = defineProps({
 const COMMENTS_PER_LOAD = 3;
 const commentsToShow = ref(COMMENTS_PER_LOAD);
 
-// --- Funções de Formatação e Mock (mantidas para compatibilidade) ---
 
 const getMockPhoto = (userId) => {
-  // Simplesmente retorna uma URL mock baseada no userId
   const imgIndex = (userId || 1) % 50; 
   return `https://i.pravatar.cc/150?img=${imgIndex}`;
 };
@@ -68,7 +65,6 @@ const getMockPhoto = (userId) => {
 const formatCategories = (ratings) => {
     if (!ratings) return [];
     
-    // Mapeamento dos campos do seu modelo de review (comida, ambiente, etc.)
     const categoryMap = {
         comida: 'Comida',
         ambiente: 'Ambiente',
@@ -84,15 +80,12 @@ const formatCategories = (ratings) => {
         }));
 };
 
-// --- Lógica de Paginação Local ---
 
 const visibleComments = computed(() => {
-  // Usa a prop 'reviews'
   return props.reviews.slice(0, commentsToShow.value);
 });
 
 const hasMoreComments = computed(() => {
-  // Usa a prop 'reviews'
   return commentsToShow.value < props.reviews.length;
 });
 
@@ -100,14 +93,11 @@ const loadMoreComments = () => {
   commentsToShow.value += COMMENTS_PER_LOAD;
 };
 
-// --- Lógica de Like (mantida) ---
 
 const handleToggleLike = (commentId) => {
-  // Lógica mock de like - você pode adicionar chamada de API real aqui
   console.log(`[CommentsSection] Like toggled for comment ID: ${commentId}`);
   const comment = props.reviews.find(c => (c.id === commentId || c.timestamp === commentId));
   if (comment) {
-    // Adiciona o campo 'likes' no objeto para o componente reativo
     comment.likes = (comment.likes || 0) + 1;
   }
 };
