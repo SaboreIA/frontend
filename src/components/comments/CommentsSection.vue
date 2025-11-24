@@ -45,8 +45,8 @@ const props = defineProps({
     type: [String, Number],
     required: true,
   },
-  reviews: {
-    type: Array,
+  reviews: { 
+    type: Array, 
     default: () => [],
     required: true,
   },
@@ -63,15 +63,21 @@ const props = defineProps({
 const COMMENTS_PER_LOAD = 3;
 const commentsToShow = ref(COMMENTS_PER_LOAD);
 
-const formatCategories = (ratings) => {
-  if (!ratings) return [];
 
-  const categoryMap = {
-    comida: "Comida",
-    ambiente: "Ambiente",
-    atendimento: "Atendimento",
-    precos: "Preços",
-  };
+const getMockPhoto = (userId) => {
+  const imgIndex = (userId || 1) % 50; 
+  return `https://i.pravatar.cc/150?img=${imgIndex}`;
+};
+
+const formatCategories = (ratings) => {
+    if (!ratings) return [];
+    
+    const categoryMap = {
+        comida: 'Comida',
+        ambiente: 'Ambiente',
+        atendimento: 'Atendimento',
+        precos: 'Preços',
+    };
 
   return Object.keys(ratings)
     .filter((key) => ratings[key] !== null)
@@ -80,6 +86,7 @@ const formatCategories = (ratings) => {
       rating: ratings[key],
     }));
 };
+
 
 const visibleComments = computed(() => {
   return props.reviews.slice(0, commentsToShow.value);
@@ -92,6 +99,7 @@ const hasMoreComments = computed(() => {
 const loadMoreComments = () => {
   commentsToShow.value += COMMENTS_PER_LOAD;
 };
+
 
 const handleToggleLike = (commentId) => {
   console.log(`[CommentsSection] Like toggled for comment ID: ${commentId}`);
