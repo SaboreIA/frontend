@@ -285,7 +285,7 @@ async function submitReview() {
     const reviewPayload = {
       title: formData.review_title,
       comment: formData.review_text,
-      imageUrl: props.userPhoto,
+      imageUrl: null,
       rating1: formData.ratings.comida,
       rating2: formData.ratings.ambiente,
       rating3: formData.ratings.atendimento,
@@ -313,7 +313,8 @@ async function submitReview() {
       ...finalReview,
       id: createdReviewId,
       userName: props.userName,
-      imageUrl: props.userPhoto,
+      userPhoto: props.userPhoto,
+      reviewImageUrl: formData.image_url, 
     });
 
     resetForm();

@@ -52,7 +52,7 @@
               :totalReviews="totalReviews"
               primaryColor="bg-yellow-600"
               @scrollToComments="scrollToComments"
-            />
+            class="pr-80"/>
           </div>
 
           <RestaurantReview
