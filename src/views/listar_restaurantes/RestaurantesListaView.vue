@@ -94,7 +94,7 @@ const currentPage = ref(1);
 const hasMorePages = ref(true);
 
 const API_BASE = "http://localhost:5001/api";
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 8;
 
 const getAverageRating = (restaurantId) => {
   return reviews.value[restaurantId]
