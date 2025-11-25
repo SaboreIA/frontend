@@ -121,7 +121,6 @@ const handleSearch = async (query) => {
     const response = await searchRestaurants(query);
     const data = response.data;
 
-    // Check if response has a 'message' (error case)
     if (data.message) {
       searchError.value = data.message;
       searchErrorTimeout.value = setTimeout(() => {
@@ -130,14 +129,12 @@ const handleSearch = async (query) => {
       return;
     }
 
-    // If it's an array with restaurants, redirect to the first one
     if (Array.isArray(data) && data.length > 0) {
       const restaurantId = data[0].id;
       router.push(`/restaurantes/${restaurantId}`);
       return;
     }
 
-    // Fallback: no restaurants found
     searchError.value = "Nenhum restaurante encontrado para sua busca.";
     searchErrorTimeout.value = setTimeout(() => {
       searchError.value = "";
