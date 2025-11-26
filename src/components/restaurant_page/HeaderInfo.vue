@@ -9,13 +9,23 @@
       </h1>
     </div>
     <div class="flex items-center gap-3">
-      <router-link
-        :to="{ name: 'restaurante-admin', params: { id: props.restaurantId } }"
+      <button
+        @click="editRestaurant"
+        aria-label="Editar restaurante"
         class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-amber-600 text-white hover:bg-amber-700 transition duration-150 shadow-md"
       >
-        <AdjustmentsHorizontalIcon class="w-5 h-5" />
-        <span>Admin</span>
-      </router-link>
+        <PencilSquareIcon class="w-5 h-5" />
+        <span>Editar</span>
+      </button>
+      <button
+        @click="deleteRestaurant"
+        aria-label="Excluir restaurante"
+        :disabled="isDeleting"
+        class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition duration-150 border-2 border-red-500 text-red-600 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        <TrashIcon class="w-5 h-5" />
+        <span>{{ isDeleting ? 'Excluindo...' : 'Excluir' }}</span>
+      </button>
       <button
         @click="$emit('toggleSave')"
         aria-label="Salvar restaurante"
@@ -32,16 +42,38 @@
       </button>
     </div>
   </div>
+
+  <RestaurantEditModal
+    :open="isEditModalOpen"
+    :form="form"
+    :media="media"
+    :days="days"
+    :available-tags="availableTags"
+    :tags-loading="tagsLoading"
+    :tags-error="tagsError"
+    :tag-limit="TAG_LIMIT"
+    :selected-tag-count="selectedTagCount"
+    :disable-new-tag-selection="disableNewTagSelection"
+    :is-tag-selected="isTagSelected"
+    :is-submitting="isSubmitting"
+    @close="closeModal"
+    @submit="submitEdit"
+    @toggle-tag="toggleTag"
+    @update-media="handleUpdateMedia"
+  />
 </template>
 
 <script setup>
-import { ref, watch, defineProps, defineEmits, computed } from "vue";
+import { ref, watch, defineProps, defineEmits, computed, toRef } from "vue";
 import api from "../../api/api";
 import {
-  AdjustmentsHorizontalIcon,
+  PencilSquareIcon,
+  TrashIcon,
   BookmarkIcon as BookmarkOutlineIcon,
 } from "@heroicons/vue/24/outline";
 import { BookmarkIcon as BookmarkSolidIcon } from "@heroicons/vue/24/solid";
+import RestaurantEditModal from "./RestaurantEditModal.vue";
+import { useRestaurantEdit } from "@/composables/useRestaurantEdit";
 
 const props = defineProps({
     restaurantId: { 
@@ -66,6 +98,10 @@ const props = defineProps({
         default: false,
     },
 });
+
+const emit = defineEmits(["toggleSave", "restaurant-updated", "restaurant-deleted"]);
+
+const restaurantIdRef = toRef(props, "restaurantId");
 
 const restaurant = ref(null);
 const loading = ref(true);
@@ -93,6 +129,49 @@ const displayRating = computed(() => {
   return extractRating(rating);
 });
 
+const {
+  form,
+  media,
+  isModalOpen: isEditModalOpen,
+  isSubmitting,
+  isDeleting,
+  availableTags,
+  tagsLoading,
+  tagsError,
+  TAG_LIMIT,
+  days,
+  selectedTagCount,
+  disableNewTagSelection,
+  isTagSelected,
+  toggleTag,
+  updateMediaField,
+  openModal,
+  closeModal,
+  submitEdit: submitEditComposable,
+  confirmDelete: confirmDeleteComposable,
+} = useRestaurantEdit({
+  restaurantId: restaurantIdRef,
+  onUpdated: (data) => emit("restaurant-updated", data),
+  onDeleted: () => emit("restaurant-deleted"),
+});
+
+const handleUpdateMedia = ({ field, file }) => {
+  if (!field) return;
+  updateMediaField(field, file);
+};
+
+const editRestaurant = () => {
+  openModal();
+};
+
+const deleteRestaurant = async () => {
+  await confirmDeleteComposable();
+};
+
+const submitEdit = async () => {
+  await submitEditComposable();
+};
+
 const fetchRestaurant = async (id) => {
   if (!id || id === 'undefined' || id === null) {
         console.warn('HeaderInfo: ID do restaurante ausente ou inválido. Abortando fetch.');
@@ -119,6 +198,4 @@ watch(
   },
   { immediate: true }
 );
-
-defineEmits(["toggleSave"]);
 </script>
