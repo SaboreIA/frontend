@@ -8,24 +8,7 @@
         {{ name || displayName }}
       </h1>
     </div>
-    <div class="flex items-center gap-3">
-      <button
-        @click="editRestaurant"
-        aria-label="Editar restaurante"
-        class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-amber-600 text-white hover:bg-amber-700 transition duration-150 shadow-md"
-      >
-        <PencilSquareIcon class="w-5 h-5" />
-        <span>Editar</span>
-      </button>
-      <button
-        @click="deleteRestaurant"
-        aria-label="Excluir restaurante"
-        :disabled="isDeleting"
-        class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition duration-150 border-2 border-red-500 text-red-600 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed"
-      >
-        <TrashIcon class="w-5 h-5" />
-        <span>{{ isDeleting ? 'Excluindo...' : 'Excluir' }}</span>
-      </button>
+    <div class="flex items-center gap-3 ml-auto">
       <button
         @click="$emit('toggleSave')"
         aria-label="Salvar restaurante"
@@ -39,6 +22,23 @@
         <BookmarkSolidIcon v-if="isSaved" class="w-5 h-5" />
         <BookmarkOutlineIcon v-else class="w-5 h-5" />
         <span class="uppercase">Salvar</span>
+      </button>
+      <button
+        @click="deleteRestaurant"
+        aria-label="Excluir restaurante"
+        :disabled="isDeleting"
+        class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition duration-150 border-2 border-red-500 text-red-600 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        <TrashIcon class="w-5 h-5" />
+        <span>{{ isDeleting ? 'Excluindo...' : 'Excluir' }}</span>
+      </button>
+      <button
+        @click="editRestaurant"
+        aria-label="Editar restaurante"
+        class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-amber-600 text-white hover:bg-amber-700 transition duration-150 shadow-md"
+      >
+        <PencilSquareIcon class="w-5 h-5" />
+        <span>Editar</span>
       </button>
     </div>
   </div>

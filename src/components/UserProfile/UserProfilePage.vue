@@ -6,7 +6,7 @@
       </header>
 
       <section class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm space-y-6">
-        <div class="flex flex-col gap-6 md:flex-row md:items-center">
+        <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div class="flex items-center gap-4">
             <div class="relative">
               <img :src="profileAvatar" alt="Foto do usuário" class="w-20 h-20 rounded-full border-2 border-amber-200 object-cover" />
@@ -18,18 +18,18 @@
             </div>
           </div>
 
-          <div class="flex flex-col gap-3 md:ml-auto w-full md:w-auto">
+          <div class="flex flex-col gap-3 items-stretch md:items-end w-full md:w-auto">
             <router-link
               to="/restaurantes/cadastrar"
               class="inline-flex items-center justify-center rounded-xl bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-700 border border-amber-200 hover:bg-amber-100"
             >
               Cadastrar restaurante
             </router-link>
-            <div class="flex flex-wrap gap-3">
+            <div class="flex flex-wrap gap-3 justify-end">
               <button
                 v-if="!isEditing"
                 type="button"
-                class="inline-flex flex-1 items-center justify-center rounded-xl border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                class="inline-flex items-center justify-center rounded-xl border border-gray-200 px-6 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
                 @click="startEditing"
               >
                 Editar dados
@@ -37,14 +37,14 @@
               <button
                 v-else
                 type="button"
-                class="inline-flex flex-1 items-center justify-center rounded-xl border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                class="inline-flex items-center justify-center rounded-xl border border-gray-200 px-6 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
                 @click="cancelEdit"
               >
                 Cancelar edição
               </button>
               <button
                 type="button"
-                class="inline-flex flex-1 items-center justify-center rounded-xl border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-60"
+                class="inline-flex items-center justify-center rounded-xl border border-red-200 px-6 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-60"
                 :disabled="isDeleting"
                 @click="handleDelete"
               >
