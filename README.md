@@ -41,7 +41,6 @@ Exemplos:
 - Pizza  
 - Churrasco  
 - Vegano  
-Um restaurante pode ter várias tags.
 
 ### **Product**
 Produtos ou pratos oferecidos pelos restaurantes.  
@@ -93,6 +92,7 @@ npm run dev
 ```
 
 Acesse `http://localhost:5173` e use o botão do header para abrir o formulário.
+
 
 
 
