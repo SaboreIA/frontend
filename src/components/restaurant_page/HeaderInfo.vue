@@ -23,23 +23,25 @@
         <BookmarkOutlineIcon v-else class="w-5 h-5" />
         <span class="uppercase">Salvar</span>
       </button>
-      <button
-        @click="deleteRestaurant"
-        aria-label="Excluir restaurante"
-        :disabled="isDeleting"
-        class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition duration-150 border-2 border-red-500 text-red-600 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed"
-      >
-        <TrashIcon class="w-5 h-5" />
-        <span>{{ isDeleting ? 'Excluindo...' : 'Excluir' }}</span>
-      </button>
-      <button
-        @click="editRestaurant"
-        aria-label="Editar restaurante"
-        class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-amber-600 text-white hover:bg-amber-700 transition duration-150 shadow-md"
-      >
-        <PencilSquareIcon class="w-5 h-5" />
-        <span>Editar</span>
-      </button>
+      <template v-if="canManageRestaurant">
+        <button
+          @click="deleteRestaurant"
+          aria-label="Excluir restaurante"
+          :disabled="isDeleting"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition duration-150 border-2 border-red-500 text-red-600 hover:bg-red-50 disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          <TrashIcon class="w-5 h-5" />
+          <span>{{ isDeleting ? 'Excluindo...' : 'Excluir' }}</span>
+        </button>
+        <button
+          @click="editRestaurant"
+          aria-label="Editar restaurante"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-amber-600 text-white hover:bg-amber-700 transition duration-150 shadow-md"
+        >
+          <PencilSquareIcon class="w-5 h-5" />
+          <span>Editar</span>
+        </button>
+      </template>
     </div>
   </div>
 
@@ -76,27 +78,30 @@ import RestaurantEditModal from "./RestaurantEditModal.vue";
 import { useRestaurantEdit } from "@/composables/useRestaurantEdit";
 
 const props = defineProps({
-    restaurantId: { 
-        type: [String, Number], 
-        required: true 
-    },
-    name: {
-        type: String,
-        required: true,
-    },
-    rating: {
-        type: [Number, String],
-        default: '4.5',
-    },
-    nReviews: {
-        type: [Number, String],
-        default: '120',
-    },
-
-    isSaved: {
-        type: Boolean,
-        default: false,
-    },
+  restaurantId: {
+    type: [String, Number],
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  rating: {
+    type: [Number, String],
+    default: "4.5",
+  },
+  nReviews: {
+    type: [Number, String],
+    default: "120",
+  },
+  isSaved: {
+    type: Boolean,
+    default: false,
+  },
+  canManageRestaurant: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["toggleSave", "restaurant-updated", "restaurant-deleted"]);
@@ -155,6 +160,8 @@ const {
   onDeleted: () => emit("restaurant-deleted"),
 });
 
+const canManageRestaurant = computed(() => props.canManageRestaurant);
+
 const handleUpdateMedia = ({ field, file }) => {
   if (!field) return;
   updateMediaField(field, file);
@@ -173,11 +180,11 @@ const submitEdit = async () => {
 };
 
 const fetchRestaurant = async (id) => {
-  if (!id || id === 'undefined' || id === null) {
-        console.warn('HeaderInfo: ID do restaurante ausente ou inválido. Abortando fetch.');
-        loading.value = false;
-        return; 
-    }
+  if (!id || id === "undefined" || id === null) {
+    console.warn("HeaderInfo: ID do restaurante ausente ou inválido. Abortando fetch.");
+    loading.value = false;
+    return;
+  }
 
   loading.value = true;
   error.value = false;

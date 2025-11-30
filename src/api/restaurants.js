@@ -13,14 +13,16 @@ export const updateRestaurant = (restaurantId, payload) => {
   if (!restaurantId) {
     throw new Error("restaurantId é obrigatório para atualizar o restaurante");
   }
-  return api.put(`/Restaurants/${restaurantId}`, payload);
+  console.log('🌐 API updateRestaurant - URL:', `/restaurants/${restaurantId}`);
+  console.log('🌐 API updateRestaurant - Payload:', payload);
+  return api.put(`/restaurants/${restaurantId}`, payload);
 };
 
 export const deleteRestaurant = (restaurantId) => {
   if (!restaurantId) {
     throw new Error("restaurantId é obrigatório para excluir o restaurante");
   }
-  return api.delete(`/Restaurants/${restaurantId}`);
+  return api.delete(`/restaurants/${restaurantId}`);
 };
 
 export const uploadRestaurantImages = (restaurantId, files) => {
@@ -35,7 +37,7 @@ export const uploadRestaurantImages = (restaurantId, files) => {
   if (files.image2) formData.append("image2", files.image2);
   if (files.image3) formData.append("image3", files.image3);
 
-  return api.post(`/Restaurants/${restaurantId}/upload-all-images`, formData, {
+  return api.post(`/restaurants/${restaurantId}/upload-all-images`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
 };
@@ -44,5 +46,5 @@ export const searchRestaurants = (userInput) => {
   if (!userInput || userInput.trim() === "") {
     throw new Error("userInput é obrigatório para buscar restaurantes");
   }
-  return api.post("/Restaurants/search", { userInput: userInput.trim() });
+  return api.post("/restaurants/search", { userInput: userInput.trim() });
 };

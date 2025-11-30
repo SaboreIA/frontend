@@ -10,6 +10,7 @@
       :nReviews="totalReviews"
       :isSaved="isRestaurantSaved"
       :restaurantId="restaurante.id"
+      :can-manage-restaurant="canManageRestaurant"
       @toggleSave="toggleSaveStatus"
       @restaurant-updated="handleRestaurantUpdated"
       @restaurant-deleted="handleRestaurantDeleted"
@@ -140,6 +141,26 @@ const scrollToComments = () => {
     ?.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
+const handleRestaurantUpdated = async (updatedRestaurant) => {
+  console.log('🔔 handleRestaurantUpdated chamado!');
+  console.log('📦 Dados recebidos:', updatedRestaurant);
+  
+  if (updatedRestaurant && updatedRestaurant.id) {
+    console.log('🔄 Recarregando restaurante ID:', updatedRestaurant.id);
+    await carregarRestaurante(updatedRestaurant.id);
+    console.log('✅ Restaurante recarregado!');
+  } else {
+    console.warn('⚠️ updatedRestaurant sem ID válido');
+  }
+};
+
+const handleRestaurantDeleted = () => {
+  console.log('🗑️ handleRestaurantDeleted chamado!');
+  restaurante.value = {};
+  reviews.value = [];
+  router.push({ name: "restaurantes-lista" });
+};
+
 const openReviewModal = () => {
   if (!authStore.isLoggedIn) {
     router.push({ path: "/login", query: { redirect: route.fullPath } });
@@ -191,6 +212,28 @@ const carregarAvaliacoes = async (id) => {
 };
 
 const totalReviews = computed(() => reviews.value.length);
+
+const ownerIdCandidates = computed(() => {
+  const r = restaurante.value || {};
+  return [
+    r.userId,
+    r.ownerId,
+    r.createdBy,
+    r.createdById,
+    r.usuarioId,
+    r.user?.id,
+    r.owner?.id,
+  ].filter((id) => id !== undefined && id !== null && id !== "");
+});
+
+const canManageRestaurant = computed(() => {
+  if (!authStore.isLoggedIn) return false;
+  const currentUserId = authStore.userId;
+  if (!currentUserId) return false;
+  return ownerIdCandidates.value.some(
+    (ownerId) => String(ownerId) === String(currentUserId)
+  );
+});
 
 const averageRating = computed(() => {
   if (totalReviews.value === 0) return "0.0";

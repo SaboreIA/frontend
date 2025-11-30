@@ -239,14 +239,32 @@ export const useRestaurantEdit = ({
   };
 
   const submitEdit = async () => {
-    if (!restaurantIdRef?.value) return;
+    if (!restaurantIdRef?.value) {
+      console.error('❌ submitEdit: restaurantId está vazio');
+      return;
+    }
     if (!ensureAuthenticated('Você precisa estar autenticado para editar o restaurante.')) return;
+    
+    // Verificar autenticação
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    console.log('🔵 Iniciando submitEdit...');
+    console.log('� Token existe:', !!token);
+    console.log('🔑 Token (primeiros 30 chars):', token ? token.substring(0, 30) + '...' : 'NENHUM');
+    console.log('👤 User ID:', user.id);
+    console.log('👤 User:', user);
+    console.log('�📝 Restaurant ID:', restaurantIdRef.value);
+    console.log('📝 Form data:', JSON.stringify(buildUpdatePayload(), null, 2));
+    
     isSubmitting.value = true;
     try {
+      console.log('📤 Enviando PUT request...');
       const { data } = await updateRestaurant(restaurantIdRef.value, buildUpdatePayload());
+      console.log('✅ Resposta recebida:', data);
       restaurant.value = data;
 
       if (hasNewMedia.value) {
+        console.log('📸 Enviando imagens...');
         await uploadRestaurantImages(restaurantIdRef.value, buildMediaPayload());
         await fetchRestaurant({ silent: true });
       } else {
@@ -255,9 +273,18 @@ export const useRestaurantEdit = ({
 
       closeModal();
       toastStore.success('Restaurante atualizado com sucesso!');
+      console.log('🎉 Chamando onUpdated callback...');
       onUpdated(restaurant.value);
     } catch (error) {
-      console.error('Erro ao atualizar restaurante:', error);
+      console.error('❌ Erro ao atualizar restaurante:', error);
+      const responseData = error.response?.data;
+      try {
+        console.error('❌ Response (json):', JSON.stringify(responseData, null, 2));
+      } catch (jsonErr) {
+        console.error('❌ Response (raw):', responseData);
+      }
+      console.error('❌ Status:', error.response?.status);
+      console.error('❌ Headers enviados:', error.config?.headers);
       handleAuthError(error, 'Não foi possível atualizar o restaurante.');
     } finally {
       isSubmitting.value = false;
